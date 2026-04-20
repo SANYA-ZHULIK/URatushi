@@ -12,15 +12,25 @@ async function initAdmin() {
         console.log('Waiting for Supabase...');
         return;
     }
-    
-    const { data: { user } } = await client.auth.getUser();
-    if (!user) {
+
+    try {
+        const { data: { user }, error } = await client.auth.getUser();
+        if (error) {
+            console.log('Auth error:', error);
+            showLoginForm();
+            return;
+        }
+        if (!user) {
+            showLoginForm();
+            return;
+        }
+        showAdminPanel();
+        await loadAllData();
+        setupRealtime();
+    } catch (err) {
+        console.error('Init admin error:', err);
         showLoginForm();
-        return;
     }
-    showAdminPanel();
-    await loadAllData();
-    setupRealtime();
 }
 
 function showLoginForm() {
@@ -35,23 +45,46 @@ function showAdminPanel() {
 
 async function loginAdmin(event) {
     event.preventDefault();
+    event.stopPropagation();
+
     const client = getClient();
     if (!client) {
-        alert('Подождите, идёт загрузка...');
+        alert('Подождите, загрузка Supabase...');
         return;
     }
-    
-    const email = document.getElementById('admin-email').value;
-    const password = document.getElementById('admin-password').value;
-    
-    const { data, error } = await client.auth.signInWithPassword({ email, password });
-    if (error) {
-        alert('Ошибка входа: ' + error.message);
+
+    const email = document.getElementById('admin-email');
+    const password = document.getElementById('admin-password');
+
+    if (!email?.value?.trim() || !password?.value) {
+        alert('Введите email и пароль');
         return;
     }
-    showAdminPanel();
-    await loadAllData();
-    setupRealtime();
+
+    try {
+        const { data, error } = await client.auth.signInWithPassword({
+            email: email.value.trim(),
+            password: password.value
+        });
+
+        if (error) {
+            console.error('Login error:', error);
+            alert('Ошибка входа: ' + (error.message || 'Неверные данные'));
+            return;
+        }
+
+        if (data?.user) {
+            console.log('Admin logged in:', data.user.email);
+            showAdminPanel();
+            await loadAllData();
+            setupRealtime();
+        } else {
+            alert('Не удалось войти');
+        }
+    } catch (err) {
+        console.error('Unexpected login error:', err);
+        alert('Ошибка: ' + (err.message || err));
+    }
 }
 
 async function logoutAdmin() {
@@ -69,25 +102,60 @@ async function loadAllData() {
 async function loadTables() {
     const client = getClient();
     if (!client) return;
-    
-    const { data, error } = await client.from('tables').select('*').order('id');
-    if (error) console.error('Error:', error);
-    allTables = data || [];
-    populateTableSelect();
+
+    try {
+        const { data, error } = await client.from('tables').select('*').order('id');
+        if (error) throw error;
+        allTables = (data || [])
+            .filter(t => t && t.id != null)
+            .map(t => ({
+                ...t,
+                id: Number(t.id),
+                seats: Number(t.seats),
+                x: Number(t.x),
+                y: Number(t.y),
+                is_active: !!t.is_active
+            }));
+        populateTableSelect();
+    } catch (err) {
+        console.error('Load tables error:', err);
+        allTables = [];
+        populateTableSelect();
+    }
 }
 
 async function loadBookings() {
     const client = getClient();
     if (!client) return;
-    
-    const { data, error } = await client.from('bookings').select('*').order('created_at', { ascending: false });
-    if (error) console.error('Error:', error);
-    allBookings = data || [];
-    renderBookingsTable();
+
+    try {
+        const { data, error } = await client.from('bookings').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+
+        console.log('Raw bookings data:', data);
+
+        allBookings = (data || [])
+            .filter(b => b && b.id != null)
+            .map(b => ({
+                ...b,
+                id: Number(b.id),
+                table_id: Number(b.table_id),
+                guests_count: Number(b.guests_count),
+                status: (b.status || 'new').toString().toLowerCase()
+            }));
+
+        console.log('Normalized bookings:', allBookings);
+        renderBookingsTable();
+    } catch (err) {
+        console.error('Load bookings error:', err);
+        allBookings = [];
+        renderBookingsTable();
+    }
 }
 
 function getTableNumber(tableId) {
-    const t = allTables.find(x => x.id === tableId);
+    const tid = Number(tableId);
+    const t = allTables.find(x => Number(x.id) === tid);
     return t ? t.number : '?';
 }
 
@@ -96,33 +164,38 @@ function formatDate(dateStr) {
 }
 
 function getStatusClass(status) {
-    return { 'new': 'status-new', 'confirmed': 'status-confirmed', 'completed': 'status-completed', 'cancelled': 'status-cancelled' }[status] || '';
+    const s = (status || '').toLowerCase();
+    return { 'new': 'status-new', 'confirmed': 'status-confirmed', 'completed': 'status-completed', 'cancelled': 'status-cancelled' }[s] || '';
 }
 
 function getStatusText(status) {
-    return { 'new': 'Новая', 'confirmed': 'Подтверждена', 'completed': 'Завершена', 'cancelled': 'Отменена' }[status] || status;
+    const s = (status || '').toLowerCase();
+    return { 'new': 'Новая', 'confirmed': 'Подтверждена', 'completed': 'Завершена', 'cancelled': 'Отменена' }[s] || (status || '');
 }
 
 function renderBookingsTable() {
     const tbody = document.getElementById('bookings-tbody');
     if (!tbody) return;
-    
+
     if (allBookings.length === 0) {
         tbody.innerHTML = '<tr><td colspan="9">Нет бронирований</td></tr>';
         return;
     }
-    
-    tbody.innerHTML = allBookings.map(b => `
-        <tr${editingBookingId === b.id ? ' style="background:#fffde7"' : ''}>
-            <td>${b.id}</td>
+
+    tbody.innerHTML = allBookings.map(b => {
+        const safeId = b.id || '';
+        const isEditing = editingBookingId === b.id;
+        return `
+        <tr${isEditing ? ' style="background:#fffde7"' : ''}>
+            <td>${safeId}</td>
             <td>${getTableNumber(b.table_id)}</td>
-            <td>${editingBookingId === b.id ? '<input type="text" id="edit-name" value="'+b.customer_name+'">' : b.customer_name}</td>
-            <td>${editingBookingId === b.id ? '<input type="tel" id="edit-phone" value="'+b.customer_phone+'">' : b.customer_phone}</td>
-            <td>${b.date}</td>
-            <td>${b.time_slot}</td>
-            <td>${b.guests_count}</td>
+            <td>${isEditing ? '<input type="text" id="edit-name" value="'+ (b.customer_name || '') +'">' : (b.customer_name || '-')}</td>
+            <td>${isEditing ? '<input type="tel" id="edit-phone" value="'+ (b.customer_phone || '') +'">' : (b.customer_phone || '-')}</td>
+            <td>${b.date || '-'}</td>
+            <td>${b.time_slot || '-'}</td>
+            <td>${b.guests_count || '-'}</td>
             <td>
-                <select onchange="updateStatus(${b.id}, this.value)" ${editingBookingId === b.id ? 'disabled' : ''}>
+                <select onchange="updateStatus(${safeId}, this.value)" ${isEditing ? 'disabled' : ''}>
                     <option value="new" ${b.status === 'new' ? 'selected' : ''}>Новая</option>
                     <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Подтверждена</option>
                     <option value="completed" ${b.status === 'completed' ? 'selected' : ''}>Завершена</option>
@@ -130,15 +203,20 @@ function renderBookingsTable() {
                 </select>
             </td>
             <td>
-                ${editingBookingId === b.id ? 
-                    '<button onclick="saveEdit('+b.id+')">Сохранить</button><button onclick="cancelEdit()">Отмена</button>' :
-                    '<button onclick="startEdit('+b.id+')">Ред.</button><button onclick="deleteBooking('+b.id+')">Удал.</button>'}
+                ${isEditing ?
+                    '<button onclick="saveEdit('+safeId+')">Сохранить</button><button onclick="cancelEdit()">Отмена</button>' :
+                    '<button onclick="startEdit('+safeId+')">Ред.</button><button onclick="deleteBooking('+safeId+')">Удал.</button>'}
             </td>
         </tr>
-    `).join('');
+    `;
+    }).join('');
 }
 
 function startEdit(id) {
+    if (!id) {
+        console.warn('startEdit: invalid id', id);
+        return;
+    }
     editingBookingId = id;
     renderBookingsTable();
 }
@@ -149,53 +227,95 @@ function cancelEdit() {
 }
 
 async function saveEdit(id) {
-    const client = getClient();
-    if (!client) return;
-    
-    const name = document.getElementById('edit-name').value;
-    const phone = document.getElementById('edit-phone').value;
-    
-    const { error } = await client.from('bookings').update({ customer_name: name, customer_phone: phone }).eq('id', id);
-    if (error) {
-        alert('Ошибка: ' + error.message);
+    if (!id) {
+        editingBookingId = null;
+        renderBookingsTable();
         return;
     }
-    editingBookingId = null;
-    await loadBookings();
+    const client = getClient();
+    if (!client) return;
+
+    const name = document.getElementById('edit-name').value;
+    const phone = document.getElementById('edit-phone').value;
+
+    try {
+        const { error } = await client.from('bookings').update({ customer_name: name, customer_phone: phone }).eq('id', id);
+        if (error) throw error;
+        editingBookingId = null;
+        await loadBookings();
+    } catch (err) {
+        console.error('Save edit error:', err);
+        alert('Ошибка сохранения: ' + (err.message || err));
+    }
 }
 
 async function updateStatus(id, status) {
-    const client = getClient();
-    if (!client) return;
-    
-    const { error } = await client.from('bookings').update({ status }).eq('id', id);
-    if (error) {
-        alert('Ошибка: ' + error.message);
+    if (!id) {
+        console.error('Invalid booking ID:', id);
         return;
     }
-    await loadBookings();
+    const client = getClient();
+    if (!client) return;
+
+    try {
+        const { error } = await client.from('bookings').update({ status: status || 'new' }).eq('id', id);
+        if (error) throw error;
+        await loadBookings();
+    } catch (err) {
+        console.error('Status update error:', err);
+        alert('Ошибка обновления статуса: ' + (err.message || err));
+    }
 }
 
 async function deleteBooking(id) {
-    if (!confirm('Удалить бронь?')) return;
-    
-    const client = getClient();
-    if (!client) return;
-    
-    const { error } = await client.from('bookings').delete().eq('id', id);
-    if (error) {
-        alert('Ошибка: ' + error.message);
+    if (!id) {
+        console.error('Invalid booking ID for deletion:', id);
         return;
     }
-    await loadBookings();
+    if (!confirm('Удалить бронь?')) return;
+
+    const client = getClient();
+    if (!client) {
+        console.error('No Supabase client');
+        return;
+    }
+
+    try {
+        console.log('Deleting booking:', id);
+        const { data, error } = await client
+            .from('bookings')
+            .delete()
+            .eq('id', id)
+            .select(); // Запрашиваем удалённую запись для проверки
+
+        if (error) {
+            console.error('Delete error details:', error);
+            alert('Ошибка удаления: ' + (error.message || JSON.stringify(error)));
+            return;
+        }
+
+        console.log('Delete result:', data);
+        alert('Бронь удалена');
+        await loadBookings();
+    } catch (err) {
+        console.error('Unexpected delete error:', err);
+        alert('Ошибка: ' + (err.message || err));
+    }
 }
 
 function populateTableSelect() {
     const select = document.getElementById('manual-table');
     if (!select) return;
-    
-    select.innerHTML = '<option value="">Выберите</option>' + 
-        allTables.map(t => `<option value="${t.id}">Стол ${t.number} (${t.seats} мест)${t.is_active === false ? ' - ЗАБЛОКИРОВАН' : ''}</option>`).join('');
+
+    const options = allTables.map(t => {
+        const id = Number(t.id) || '';
+        const number = t.number || '?';
+        const seats = Number(t.seats) || 0;
+        const blocked = t.is_active === false ? ' - ЗАБЛОКИРОВАН' : '';
+        return `<option value="${id}">Стол ${number} (${seats} мест)${blocked}</option>`;
+    }).join('');
+
+    select.innerHTML = '<option value="">Выберите</option>' + options;
 }
 
 function populateTimeSelect() {
@@ -224,61 +344,93 @@ function populateGuestsSelect() {
 
 async function addManualBooking(event) {
     event.preventDefault();
-    
+
     const client = getClient();
     if (!client) return;
-    
-    const data = {
-        table_id: parseInt(document.getElementById('manual-table').value),
-        customer_name: document.getElementById('manual-name').value,
-        customer_phone: document.getElementById('manual-phone').value,
-        date: document.getElementById('manual-date').value,
-        time_slot: document.getElementById('manual-time').value,
-        guests_count: parseInt(document.getElementById('manual-guests').value),
-        comment: document.getElementById('manual-comment').value || null,
-        status: 'confirmed'
-    };
-    
-    const { error } = await client.from('bookings').insert(data);
-    if (error) {
-        alert('Ошибка: ' + error.message);
+
+    const tableSelect = document.getElementById('manual-table');
+    const tableId = parseInt(tableSelect.value, 10);
+    if (!tableId || isNaN(tableId)) {
+        alert('Выберите столик');
         return;
     }
-    
-    alert('Добавлено!');
-    document.getElementById('manual-booking-form').reset();
-    await loadBookings();
+
+    const name = document.getElementById('manual-name').value.trim();
+    const phone = document.getElementById('manual-phone').value.trim();
+    const date = document.getElementById('manual-date').value;
+    const time = document.getElementById('manual-time').value;
+    const guests = parseInt(document.getElementById('manual-guests').value, 10);
+
+    if (!name || !phone || !date || !time || !guests) {
+        alert('Заполните все обязательные поля');
+        return;
+    }
+
+    const data = {
+        table_id: tableId,
+        customer_name: name,
+        customer_phone: phone,
+        date: date,
+        time_slot: time,
+        guests_count: guests,
+        comment: document.getElementById('manual-comment').value.trim() || null,
+        status: 'confirmed'
+    };
+
+    try {
+        const { error } = await client.from('bookings').insert(data);
+        if (error) throw error;
+        alert('Добавлено!');
+        document.getElementById('manual-booking-form').reset();
+        const dateInput = document.getElementById('manual-date');
+        if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+        await loadBookings();
+    } catch (err) {
+        console.error('Add booking error:', err);
+        alert('Ошибка добавления: ' + (err.message || err));
+    }
 }
 
 function renderTablesList() {
     const container = document.getElementById('tables-list');
     if (!container) return;
-    
+
     if (allTables.length === 0) {
         container.innerHTML = '<p>Загрузка...</p>';
         return;
     }
-    
-    container.innerHTML = allTables.map(t => `
-        <div class="table-block ${t.is_active === false ? 'blocked' : ''}">
-            <div><strong>Стол ${t.number}</strong> - ${t.seats} мест - ${t.zone_name}</div>
-            <button onclick="toggleTable(${t.id}, ${t.is_active === false})">
-                ${t.is_active === false ? 'Разблокировать' : 'Заблокировать (ремонт)'}
+
+    container.innerHTML = allTables.map(t => {
+        const id = Number(t.id) || '';
+        const number = t.number || '?';
+        const seats = Number(t.seats) || 0;
+        const zone = t.zone_name || '';
+        const blocked = t.is_active === false ? ' blocked' : '';
+        const btnText = t.is_active === false ? 'Разблокировать' : 'Заблокировать (ремонт)';
+        return `
+        <div class="table-block${blocked}">
+            <div><strong>Стол ${number}</strong> - ${seats} мест - ${zone}</div>
+            <button onclick="toggleTable(${id}, ${t.is_active === false})">
+                ${btnText}
             </button>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 async function toggleTable(id, unblock) {
+    if (!id) return;
     const client = getClient();
     if (!client) return;
-    
-    const { error } = await client.from('tables').update({ is_active: unblock }).eq('id', id);
-    if (error) {
-        alert('Ошибка: ' + error.message);
-        return;
+
+    try {
+        const { error } = await client.from('tables').update({ is_active: unblock }).eq('id', id);
+        if (error) throw error;
+        await loadTables();
+    } catch (err) {
+        console.error('Toggle table error:', err);
+        alert('Ошибка: ' + (err.message || err));
     }
-    await loadTables();
 }
 
 function setupRealtime() {
@@ -294,21 +446,35 @@ function setupRealtime() {
 document.addEventListener('DOMContentLoaded', () => {
     initSupabase(function() {
         console.log('Admin panel ready');
-        
-        document.getElementById('login-form').addEventListener('submit', loginAdmin);
-        
+
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                loginAdmin(e);
+            });
+        }
+
         const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) logoutBtn.addEventListener('click', logoutAdmin);
-        
+        if (logoutBtn) logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            logoutAdmin();
+        });
+
         const form = document.getElementById('manual-booking-form');
-        if (form) form.addEventListener('submit', addManualBooking);
-        
+        if (form) form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            addManualBooking(e);
+        });
+
         populateTimeSelect();
         populateGuestsSelect();
-        
+
         const dateInput = document.getElementById('manual-date');
         if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-        
+
         initAdmin();
     });
 });
