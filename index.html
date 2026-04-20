@@ -639,7 +639,6 @@
                     <iframe
                         src="https://yandex.ru/map-widget/v1/?ll=27.556665%2C53.9044536&z=17&pt=27.556665,53.9044536,pm2rdl&lang=ru_RU&indoorLevel=1"
                         width="100%"
-                        height="450"
                         style="border:0;border-radius:8px;display:block;"
                         allowfullscreen=""
                         loading="lazy"
@@ -694,24 +693,24 @@
             const menuCategories = document.querySelectorAll('.menu-category');
             const menuItems = document.querySelectorAll('.menu-item');
 
+            function filterMenu(category) {
+                menuItems.forEach(item => {
+                    item.style.display = (item.dataset.category === category) ? 'block' : 'none';
+                });
+            }
+
             menuCategories.forEach(category => {
                 category.addEventListener('click', () => {
                     menuCategories.forEach(c => c.classList.remove('active'));
                     category.classList.add('active');
-
-                    const categoryValue = category.dataset.category;
-                    menuItems.forEach(item => {
-                        if (item.dataset.category === categoryValue) {
-                            item.style.display = 'block';
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
+                    filterMenu(category.dataset.category);
                 });
             });
 
-            // Показываем все блюда при загрузке
-            menuItems.forEach(item => item.style.display = 'block');
+            const activeCategory = document.querySelector('.menu-category.active');
+            if (activeCategory) {
+                filterMenu(activeCategory.dataset.category);
+            }
         });
     </script>
 </body>
