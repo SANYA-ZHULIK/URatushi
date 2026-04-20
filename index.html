@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ресторан "У Ратуши" - Минск</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="stylesheet" href="style.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <header>
+        <div class="container header-inner">
+            <a href="/" class="logo"><img src="logo.png" alt="У Ратуши">У Ратуши</a>
+            <nav>
+                <ul>
+                    <li><a href="#about">О ресторане</a></li>
+                    <li><a href="#menu">Меню</a></li>
+                    <li><a href="#booking">Бронирование</a></li>
+                    <li><a href="#contacts">Контакты</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+        </div>
+    </header>
+
+    <section class="hero" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('ratusha.webp'); background-size: cover; background-position: center;">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Ресторан "У Ратуши"</h1>
+                <p class="hero-subtitle">Уютная атмосфера в самом сердце Минска</p>
+                <a href="#booking" class="btn-primary">Забронировать столик</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">О ресторане</h2>
+            
+            <div class="about-description">
+                <p>Приглашаем вас насладиться атмосферой настоящего уюта и тепла в самом сердце Минска. Наш ресторан "У Ратуши" — это место, где древние стены хранят множество историй, а гостеприимство становится искусством.</p>
+                
+                <p>Порадуйте себя изысканной кухней, приготовленной с любовью и вниманием к каждой детали. Наше меню — это гармоничное сочетание европейских традиций и блюд кухни народов мира. Вас ждет большой выбор разливного и бутылочного пива от лучших производителей.</p>
+                
+                <p>Каждый вечер вас встречает живая музыка, создающая особую атмосферу праздника и душевного комфорта. Будь то романтический ужин на двоих, семейный обед или встреча с друзьями — мы сделаем ваше времяпровождение незабываемым.</p>
+                
+                <p>Заходите в гости по адресу: улица Герцена, 1 — и откройте для себя мир настоящего вкуса и радушия!</p>
+            </div>
+
+            <div class="gallery">
+                <img src="ratusha.webp" alt="Ресторан У Ратуши">
+                <img src="Ratusha.jpg" alt="Интерьер ресторана">
+                <img src="podval.jpg" alt="Подвал ресторана">
+            </div>
+        </div>
+    </section>
+
+<section id="menu" class="section menu-section">
+        <div class="container">
+            <h2 class="section-title">Наше меню</h2>
+            
+            <div class="menu-categories">
+                <button class="menu-category active" data-category="salads">Салаты</button>
+                <button class="menu-category" data-category="soups">Супы</button>
+                <button class="menu-category" data-category="cold-appetizers">Холодные закуски</button>
+                <button class="menu-category" data-category="beer-snacks">Закуски к пиву</button>
+                <button class="menu-category" data-category="meat">Мясо и птица</button>
+                <button class="menu-category" data-category="fish">Рыба и морепродукты</button>
+                <button class="menu-category" data-category="belarusian">Белорусская кухня</button>
+                <button class="menu-category" data-category="sides">Гарниры</button>
+                <button class="menu-category" data-category="sauces">Соусы</button>
+                <button class="menu-category" data-category="desserts">Десерты</button>
+                <button class="menu-category" data-category="drinks">Напитки</button>
+            </div>
+
+            <div class="menu-items">
+                <!-- САЛАТЫ -->
+                <div class="menu-item" data-category="salads">
+                    <h4>Греческий</h4>
+                    <p>Салат микс, свежие томаты, огурцы, болгарский перец, лук красный, маслины, оливки, сыр фета, оливковое масло, орегано</p>
+                    <span class="price">215г / 25 руб.</span>
+                </div>
+                <div class="menu-item" data-category="salads">
+                    <h4>Цезарь с креветками</h4>
+                    <p>Салат микс, жареные креветки, томаты черри, перепелиные яйца, сыр Пармезан, соус Цезарь, крутоны</p>
+                    <span class="price">230г / 34 руб.</span>
+                </div>
+                <div class="menu-item" data-category="salads">
+                    <h4>Цезарь с куриным филе</h4>
+                    <p>Салат микс, куриное филе, томаты черри, перепелиные яйца, сыр Пармезан, соус Цезарь, крутоны</p>
+                    <span class="price">220г / 30 руб.</span>
+                </div>
+                <div class="menu-item" data-category="salads">
+                    <h4>Салат с ростбифом</h4>
+                    <p>Томленая говядина, салат микс, опята маринованные, черри конфи, соус французский, кранч лук</p>
+                    <span class="price">240г / 33 руб.</span>
+                </div>
+                <div class="menu-item" data-category="salads">
+                    <h4>Салат с запечённой тыквой</h4>
+                    <p>Руккола, тыква, куриное филе, сыр с голубой плесенью, соус бальзамический, оливковое масло, кунжут</p>
+                    <span class="price">200г / 25 руб.</span>
+                </div>
+
+                <!-- СУПЫ -->
+                <div class="menu-item" data-category="soups">
+                    <h4>Борщ</h4>
+                    <p>Куриное филе, свёкла, картофель, морковь, лук репчатый, хлеб бородинский, чеснок, сало, сметана</p>
+                    <span class="price">300/100/50г / 20 руб.</span>
+                </div>
+                <div class="menu-item" data-category="soups">
+                    <h4>Крупеня</h4>
+                    <p>Картофель, лук репчатый, морковь, грибы белые, перловка, шея свиная, петрушка, сметана</p>
+                    <span class="price">300/50г / 18 руб.</span>
+                </div>
+                <div class="menu-item" data-category="soups">
+                    <h4>Солянка сборная мясная</h4>
+                    <p>Ветчина, куриное филе, колбаса сырокопченая, грудинка, лук репчатый, оливки, маслины, каперсы, огурцы маринованные, сметана, лимон</p>
+                    <span class="price">300/50г / 20 руб.</span>
+                </div>
+                <div class="menu-item" data-category="soups">
+                    <h4>Тыквенный крем-суп с креветками</h4>
+                    <p>Картофель, лук репчатый, морковь, тыква запечённая, креветки, кунжут, хлеб чесночный</p>
+                    <span class="price">290/40г / 18 руб.</span>
+                </div>
+
+                <!-- ХОЛОДНЫЕ ЗАКУСКИ -->
+                <div class="menu-item" data-category="cold-appetizers">
+                    <h4>Сельдь с картофелем</h4>
+                    <p>Сельдь, картофель, маринованный лук, сметана</p>
+                    <span class="price">120/90/50г / 25 руб.</span>
+                </div>
+                <div class="menu-item" data-category="cold-appetizers">
+                    <h4>Тар-тар из говядины</h4>
+                    <p>Говяжья вырезка, соус ворчестер, соус табаско, яйцо перепелиное, соус соевый, горчица французская, огурцы маринованные, каперсы, лук красный, чиабатта</p>
+                    <span class="price">280г / 48 руб.</span>
+                </div>
+                <div class="menu-item" data-category="cold-appetizers">
+                    <h4>Карпаччо из говядины</h4>
+                    <p>Говяжья вырезка, оливковое масло, лимон, маслины, каперсы, руккола, сыр Пармезан</p>
+                    <span class="price">185г / 36 руб.</span>
+                </div>
+                <div class="menu-item" data-category="cold-appetizers">
+                    <h4>Мясное плато</h4>
+                    <p>Колбаса сырокопчёная, бастурма, ветчина, грудинка копчёно-варёная, оливки, маслины, огурцы маринованные</p>
+                    <span class="price">200г / 32 руб.</span>
+                </div>
+                <div class="menu-item" data-category="cold-appetizers">
+                    <h4>Сырное плато</h4>
+                    <p>Сыр Маасдам, сыр Пармезан, сыр Камамбер, сыр с голубой плесенью, виноград, грецкий орех, мёд</p>
+                    <span class="price">235г / 38 руб.</span>
+                </div>
+                <div class="menu-item" data-category="cold-appetizers">
+                    <h4>Охотничья закуска</h4>
+                    <p>Грудинка солёная, окорок копчёный на ольхе, сало домашнее, колбаса сыровяленая из свинины и говядины, гренки бородинские, маринады</p>
+                    <span class="price">730г / 65 руб.</span>
+                </div>
+                <div class="menu-item" data-category="cold-appetizers">
+                    <h4>Овощное плато</h4>
+                    <p>Свежие томаты, огурцы, болгарский перец, салат микс</p>
+                    <span class="price">400г / 26 руб.</span>
+                </div>
+                <div class="menu-item" data-category="cold-appetizers">
+                    <h4>Ассорти из маринадов</h4>
+                    <p>Перец маринованный острый, капуста квашеная, огурцы маринованные, опята маринованные, лук зелёный</p>
+                    <span class="price">400г / 29 руб.</span>
+                </div>
+
+<!-- ЗАКУСКИ К ПИВУ -->
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Сырные брусочки</h4>
+                    <p>Сыр моцарелла, соус тар-тар</p>
+                    <span class="price">170/50г / 24 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Гренки бородинские</h4>
+                    <p>Хлеб бородинский с чесночным маслом и соусом тар-тар</p>
+                    <span class="price">150/50г / 16 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Гренки бородинские под сыром</h4>
+                    <p>Сыр Чеддер, майонез, чеснок</p>
+                    <span class="price">19 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Луковые кольца</h4>
+                    <p>Луковые кольца с чесночным соусом</p>
+                    <span class="price">150/50г / 19 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Крылья Баффало</h4>
+                    <p>Куриные крылья, кранч лук, соус огненный, кунжут, перец чили маринованный, соус тар-тар</p>
+                    <span class="price">220/50/40г / 29 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Ребрышки BBQ</h4>
+                    <p>Свиные рёбра в соусе BBQ, картофельные дольки, соус огненный, лук маринованный</p>
+                    <span class="price">300/150/50/30г / 41 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Малое пивное плато</h4>
+                    <p>Колбаски охотничьи, луковые кольца, сырный брусочек, соус чесночный</p>
+                    <span class="price">450/50г / 41 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Закуска к пиву «0.5»</h4>
+                    <p>Бастурма говяжья, сыр копчёный, мясные чипсы, колбаски кабандо, арахис солёный в паприке</p>
+                    <span class="price">260г / 35 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Сет Баварский</h4>
+                    <p>Колбаски куриные, свиные, говяжьи, охотничьи, картофельные дольки, огурец маринованный, капуста квашеная</p>
+                    <span class="price">1140г / 65 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Сет Мюнхенский</h4>
+                    <p>Крылья куриные баффало, ребрышки BBQ, сырный брусочек, колбаски куриные, о��отничьи, гренки, картофельные дольки</p>
+                    <span class="price">1220г / 75 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Пшеничный начос</h4>
+                    <p>Пшеничные чипсы, соус сырный</p>
+                    <span class="price">120г / 12 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Бастурма говяжья</h4>
+                    <p>Бастурма из говядины</p>
+                    <span class="price">50г / 10 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Мясные чипсы</h4>
+                    <p>Мясные чипсы</p>
+                    <span class="price">10 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Колбаски кабандо</h4>
+                    <p>Колбаски кабандо</p>
+                    <span class="price">50г / 7 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Сыр копчёный</h4>
+                    <p>Сыр копчёный</p>
+                    <span class="price">7 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Гренки бородинские</h4>
+                    <p>Хлеб бородинский с чесночным маслом и соусом тар-тар</p>
+                    <span class="price">150/50г / 1.6 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Гренки бородинские под сыром</h4>
+                    <p>Сыр Чеддер, майонез, чеснок</p>
+                    <span class="price">1.9 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Луковые кольца</h4>
+                    <p>Луковые кольца с чесночным соусом</p>
+                    <span class="price">150/50г / 1.9 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Крылья Баффало</h4>
+                    <p>Куриные крылья, кранч лук, соус огненный, кунжут, перец чили маринованный, соус тар-тар</p>
+                    <span class="price">220/50/40г / 2.9 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Ребрышки BBQ</h4>
+                    <p>Свиные рёбра в соусе BBQ, картофельные дольки, соус огненный, лук маринованный</p>
+                    <span class="price">300/150/50/30г / 4.1 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Малое пивное плато</h4>
+                    <p>Колбаски охотничьи, луковые кольца, сырный брусочек, соус чесночный</p>
+                    <span class="price">450/50г / 4.1 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Закуска к пиву «0.5»</h4>
+                    <p>Бастурма говяжья, сыр копчёный, мясные чипсы, колбаски кабандо, арахис солёный в паприке</p>
+                    <span class="price">260г / 3.5 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Сет Баварский</h4>
+                    <p>Колбаски куриные, свиные, говяжьи, охотничьи, картофельные дольки, огурец маринованный, капуста квашеная</p>
+                    <span class="price">1140г / 6.5 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Сет Мюнхенский</h4>
+                    <p>Крылья куриные баффало, ребрышки BBQ, сырный брусочек, колбаски куриные, охотничьи, гренки, картофельные дольки</p>
+                    <span class="price">1220г / 7.5 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Пшеничный начос</h4>
+                    <p>Пшеничные чипсы, соус сырный</p>
+                    <span class="price">120г / 1.2 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Бастурма говяжья</h4>
+                    <p>Бастурма из говядины</p>
+                    <span class="price">50г / 1.0 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Мясные чипсы</h4>
+                    <p>Мясные чи��сы</p>
+                    <span class="price">1.0 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Колбаски кабандо</h4>
+                    <p>Колбаски кабандо</p>
+                    <span class="price">50г / 0.7 руб.</span>
+                </div>
+                <div class="menu-item" data-category="beer-snacks">
+                    <h4>Сыр копчёный</h4>
+                    <p>Сыр копчёный</p>
+                    <span class="price">0.7 руб.</span>
+                </div>
+
+                <!-- МЯСО И ПТИЦА -->
+                <div class="menu-item" data-category="meat">
+                    <h4>Стейк из томлёной свинины</h4>
+                    <p>Шея свиная, картофель жареный, черри конфи, грибы вешенки, шампиньоны, салат микс, соус Цезарь, соус Демигласс</p>
+                    <span class="price">390г / 35 руб.</span>
+                </div>
+                <div class="menu-item" data-category="meat">
+                    <h4>Шашлык из курицы</h4>
+                    <p>Бедро куриное, болгарский перец, баклажаны, цуккини, грибы шампиньоны, соус огненный, томаты черри, лук маринованный, тортилья пшеничная</p>
+                    <span class="price">230/180/50г / 36 руб.</span>
+                </div>
+                <div class="menu-item" data-category="meat">
+                    <h4>Филе миньон</h4>
+                    <p>Говяжья вырезка, салат микс, баклажаны в сладком чили, черри конфи, соус Чимичурри, кунжут</p>
+                    <span class="price">220/120г / 47 руб.</span>
+                </div>
+                <div class="menu-item" data-category="meat">
+                    <h4>Чак-ролл</h4>
+                    <p>Шейно-лопаточная часть говядины, салат микс, баклажаны в сладком чили, черри конфи, соус Чимичурри, кунжут</p>
+                    <span class="price">230/120г / 40 руб.</span>
+                </div>
+                <div class="menu-item" data-category="meat">
+                    <h4>Язык терияки</h4>
+                    <p>Говяжий язык в соусе терияки, перец болгарский, брокколи</p>
+                    <span class="price">270г / 43 руб.</span>
+                </div>
+                <div class="menu-item" data-category="meat">
+                    <h4>Рулька</h4>
+                    <p>Свиная рулька, капуста квашеная, томаты черри, хрен, горчица столовая, картофельные дольки</p>
+                    <span class="price">1000/200/150/60г / 65 руб.</span>
+                </div>
+                <div class="menu-item" data-category="meat">
+                    <h4>Цыплёнок аля табака</h4>
+                    <p>Курица, салат микс, огурец, томат, картофельные дольки</p>
+                    <span class="price">400/150/99г / 36 руб.</span>
+                </div>
+                <div class="menu-item" data-category="meat">
+                    <h4>Куриный рулетик с брокколи</h4>
+                    <p>Куриное филе, грудинка копчёно-варёная, сыр сулугуни, брокколи, карто��ел�� жареный, соус блю-чиз</p>
+                    <span class="price">200/180/50г / 35 руб.</span>
+                </div>
+
+                <!-- РЫБА И МОРЕПРОДУКТЫ -->
+                <div class="menu-item" data-category="fish">
+                    <h4>Филе лосося на шпинатной подушке</h4>
+                    <p>Филе лосося, шпинат, сливки, сыр Пармезан, черри конфи, лимон, соус блю-чиз</p>
+                    <span class="price">310г / 53 руб.</span>
+                </div>
+                <div class="menu-item" data-category="fish">
+                    <h4>Судак с кускусом</h4>
+                    <p>Филе судака, кускус, шпинат, соус блю-чиз, сливки, сыр Пармезан, черри конфи</p>
+                    <span class="price">330г / 40 руб.</span>
+                </div>
+                <div class="menu-item" data-category="fish">
+                    <h4>Креветки в панировке</h4>
+                    <p>Креветки в панировке, салат микс, томаты черри, соус бальзамический, соус сладкий чили, кунжут</p>
+                    <span class="price">120/80/50г / 37 руб.</span>
+                </div>
+                <div class="menu-item" data-category="fish">
+                    <h4>Креветки в соусе терияки</h4>
+                    <p>Тигровые креветки, соус терияки, салат микс, кунжут, перец чили</p>
+                    <span class="price">236г / 42 руб.</span>
+                </div>
+
+                <!-- БЕЛОРУССКАЯ КУХНЯ -->
+                <div class="menu-item" data-category="belarusian">
+                    <h4>Драники с ростбифом</h4>
+                    <p>Оладьи картофельные, руккола, говяжья вырезка, соус блю-чиз, кранч лук</p>
+                    <span class="price">150/120г / 35 руб.</span>
+                </div>
+                <div class="menu-item" data-category="belarusian">
+                    <h4>Горшочек с говядиной</h4>
+                    <p>Картофель, баклажан, перец болгарский, шампиньоны, говяжья вырезка, лечо</p>
+                    <span class="price">420г / 32 руб.</span>
+                </div>
+                <div class="menu-item" data-category="belarusian">
+                    <h4>Колдуны</h4>
+                    <p>Картофельная масса, куриный фарш, сметана</p>
+                    <span class="price">360/50г / 34 руб.</span>
+                </div>
+                <div class="menu-item" data-category="belarusian">
+                    <h4>Драники с грибным соусом</h4>
+                    <p>Оладьи картофельные, грибы вешенки, грибы шампиньоны, белый соус</p>
+                    <span class="price">150/150г / 31 руб.</span>
+                </div>
+                <div class="menu-item" data-category="belarusian">
+                    <h4>Драники со сметаной</h4>
+                    <p>Оладьи картофельные, сметана</p>
+                    <span class="price">150/150г / 26 руб.</span>
+                </div>
+                <div class="menu-item" data-category="belarusian">
+                    <h4>Пельмени жареные</h4>
+                    <p>Пельмени куриные, сливки, шпинат</p>
+                    <span class="price">310г / 29 руб.</span>
+                </div>
+                <div class="menu-item" data-category="belarusian">
+                    <h4>Пельмени отварные</h4>
+                    <p>Пельмени с говядиной и свининой, сметана</p>
+                    <span class="price">260/50г / 28 руб.</span>
+                </div>
+                <div class="menu-item" data-category="belarusian">
+                    <h4>Жаровня по-белорусски</h4>
+                    <p>Картофель, грудинка в/к, соус белый, грибы вешенки, шампиньоны</p>
+                    <span class="price">390г / 29 руб.</span>
+                </div>
+                <div class="menu-item" data-category="belarusian">
+                    <h4>Горшочек по-белорусски</h4>
+                    <p>Шея свиная, оладьи картофельные, грибы шампиньоны, лук репчатый, морковь, белый соус</p>
+                    <span class="price">300/150г / 35 руб.</span>
+                </div>
+                <div class="menu-item" data-category="belarusian">
+                    <h4>Мачанка с блинами</h4>
+                    <p>Блинчики, шея свиная, колбаска куриная, лук репчатый, грибы шампиньоны, белый соус, чесночное масло</p>
+                    <span class="price">400/210г / 35 руб.</span>
+                </div>
+
+                <!-- ГАРНИРЫ -->
+                <div class="menu-item" data-category="sides">
+                    <h4>Картофельные дольки</h4>
+                    <p>Хрустящий картофель дольками</p>
+                    <span class="price">150г / 10 руб.</span>
+                </div>
+                <div class="menu-item" data-category="sides">
+                    <h4>Картофель фри</h4>
+                    <p>Классический картофель фри</p>
+                    <span class="price">150г / 10 руб.</span>
+                </div>
+                <div class="menu-item" data-category="sides">
+                    <h4>Стручковая фасоль</h4>
+                    <p>Стручковая фасоль с чесноком</p>
+                    <span class="price">150г / 10 руб.</span>
+                </div>
+                <div class="menu-item" data-category="sides">
+                    <h4>Овощи гриль</h4>
+                    <p>Овощи гриль с соусом Чимичурри</p>
+                    <span class="price">200г / 18 руб.</span>
+                </div>
+                <div class="menu-item" data-category="sides">
+                    <h4>Хлебная корзина</h4>
+                    <p>Хлеб с пряным маслом</p>
+                    <span class="price">150/40г / 7 руб.</span>
+                </div>
+
+                <!-- СОУСЫ -->
+                <div class="menu-item" data-category="sauces">
+                    <h4>Сырный / Чесночный / Тар-тар / Майонез</h4>
+                    <p>Соус на выбор</p>
+                    <span class="price">50г / 4 руб.</span>
+                </div>
+                <div class="menu-item" data-category="sauces">
+                    <h4>Кетчуп / Горчица / Терияки / Огненный</h4>
+                    <p>Соус на выбор</p>
+                    <span class="price">50г / 3 руб.</span>
+                </div>
+                <div class="menu-item" data-category="sauces">
+                    <h4>Хрен</h4>
+                    <p>Хрен столовый</p>
+                    <span class="price">30г / 4 руб.</span>
+                </div>
+
+                <!-- ДЕСЕРТЫ -->
+                <div class="menu-item" data-category="desserts">
+                    <h4>Чизкейк баскский</h4>
+                    <p>Классический баскский чизкейк</p>
+                    <span class="price">160г / 18 руб.</span>
+                </div>
+                <div class="menu-item" data-category="desserts">
+                    <h4>Домашний Наполеон</h4>
+                    <p>Домашний торт Наполеон</p>
+                    <span class="price">170г / 18 руб.</span>
+                </div>
+                <div class="menu-item" data-category="desserts">
+                    <h4>Шоколадный пирог</h4>
+                    <p>Шоколадный пирог с мороженым</p>
+                    <span class="price">170г / 17 руб.</span>
+                </div>
+                <div class="menu-item" data-category="desserts">
+                    <h4>Торт медовик</h4>
+                    <p>Торт медовик домашний</p>
+                    <span class="price">160г / 18 руб.</span>
+                </div>
+                <div class="menu-item" data-category="desserts">
+                    <h4>Фруктовое плато</h4>
+                    <p>Апельсин, яблоко, грейпфрут, виноград</p>
+                    <span class="price">160г / 19 руб.</span>
+                </div>
+                <div class="menu-item" data-category="desserts">
+                    <h4>Мороженое</h4>
+                    <p>Ассорти: клубника, шоколад, ваниль, фисташка</p>
+                    <span class="price">160г / 17 руб.</span>
+                </div>
+
+                <!-- НАПИТКИ -->
+                <div class="menu-item" data-category="drinks">
+                    <h4>Кофе эспрессо</h4>
+                    <p>Натуральный зерновой кофе</p>
+                    <span class="price">5 руб.</span>
+                </div>
+                <div class="menu-item" data-category="drinks">
+                    <h4>Кофе капучино</h4>
+                    <p>Кофе с молоком</p>
+                    <span class="price">6 руб.</span>
+                </div>
+                <div class="menu-item" data-category="drinks">
+                    <h4>Чай чёрный</h4>
+                    <p>Чай чёрный</p>
+                    <span class="price">5 руб.</span>
+                </div>
+                <div class="menu-item" data-category="drinks">
+                    <h4>Чай зелёный</h4>
+                    <p>Чай зелёный</p>
+                    <span class="price">5 руб.</span>
+                </div>
+                <div class="menu-item" data-category="drinks">
+                    <h4>Свежевыжатый сок</h4>
+                    <p>Апельсин, яблоко, морковь</p>
+                    <span class="price">8 руб.</span>
+                </div>
+                <div class="menu-item" data-category="drinks">
+                    <h4>Морс</h4>
+                    <p>Ягодный морс</p>
+                    <span class="price">6 руб.</span>
+                </div>
+                <div class="menu-item" data-category="drinks">
+                    <h4>Лимонад</h4>
+                    <p>Домашний лимонад</p>
+                    <span class="price">6 руб.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="booking" class="section booking-section">
+        <div class="container">
+            <h2 class="section-title">Бронирование столика</h2>
+            
+            <div class="floor-plan-container">
+                <div id="floor-plan"></div>
+                
+                <div class="mobile-tables-list">
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">Все</button>
+                        <button class="filter-btn" data-filter="2">2 места</button>
+                        <button class="filter-btn" data-filter="4">4 места</button>
+                        <button class="filter-btn" data-filter="6+">6+ мест</button>
+                    </div>
+                    <div id="mobile-tables-container"></div>
+                </div>
+
+                <form id="booking-form" class="booking-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="booking-date">Дата</label>
+                            <input type="date" id="booking-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="booking-time">Время</label>
+                            <select id="booking-time" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="guests-count">Гости</label>
+                            <select id="guests-count" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="table-number">Сталик</label>
+                            <input type="text" id="table-number" placeholder="Выберите на схеме" readonly required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-name">Ваше имя</label>
+                        <input type="text" id="customer-name" required minlength="2">
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-phone">Телефон</label>
+                        <input type="tel" id="customer-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Комментарий</label>
+                        <textarea id="comment" rows="2"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Забронировать</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+<section id="contacts" class="section">
+        <div class="container">
+            <h2 class="section-title">Контакты</h2>
+            
+            <div class="contacts-layout">
+                <div class="contacts-list">
+                    <div class="contact-item">
+                        <div class="contact-label">Адрес</div>
+                        <div class="contact-value">г. Минск, ул. Герцена, 1</div>
+                        <div class="contact-note">Рядом с Ратушной площадью</div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-label">Телефон</div>
+                        <div class="contact-value"><a href="tel:+375256550505">+375 25 655-05-05</a></div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-label">Время работы</div>
+                        <div class="contact-value">Ежедневно 12:00 - 02:00</div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-label">Instagram</div>
+                        <div class="contact-value"><a href="https://instagram.com/uratushi05" target="_blank">@uratushi05</a></div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-label">Бронирование</div>
+                        <div class="contact-value">18:00 - 23:00</div>
+                    </div>
+                </div>
+                
+<div class="map-wrapper">
+                    <iframe
+                        src="https://yandex.ru/map-widget/v1/?ll=27.556665%2C53.9044536&z=17&pt=27.556665,53.9044536,pm2rdl&lang=ru_RU&indoorLevel=1"
+                        width="100%"
+                        height="450"
+                        style="border:0;border-radius:8px;display:block;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">У Ратуши</div>
+                    <p class="footer-text">Уютный ресторан в самом сердце Минска</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Контакты</h4>
+                    <p>г. Минск, ул. Герцена, 1</p>
+                    <p><a href="tel:+375256550505">+375 25 655-05-05</a></p>
+                    <p><a href="https://instagram.com/uratushi05" target="_blank">@uratushi05</a></p>
+                </div>
+                <div class="footer-col">
+                    <h4>Время работы</h4>
+                    <p>Ежедневно: 12:00 - 02:00</p>
+                    <p>Бронирование: 18:00 - 23:00</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Юридическая информация</h4>
+                    <p>СООО "Зафаран"</p>
+                    <p>УНП: 800014371</p>
+                    <p>Зарегистрировано 17.05.2002</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Ресторан "У Ратуши". Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="supabase-config.js"></script>
+    <script src="tables.js"></script>
+    <script src="mobile-tables.js"></script>
+    <script src="booking.js"></script>
+    <script>
+        function toggleMenu() {
+            document.querySelector('nav ul').classList.toggle('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuCategories = document.querySelectorAll('.menu-category');
+            const menuItems = document.querySelectorAll('.menu-item');
+
+            menuCategories.forEach(category => {
+                category.addEventListener('click', () => {
+                    menuCategories.forEach(c => c.classList.remove('active'));
+                    category.classList.add('active');
+
+                    const categoryValue = category.dataset.category;
+                    menuItems.forEach(item => {
+                        if (item.dataset.category === categoryValue) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            // Показываем все блюда при загрузке
+            menuItems.forEach(item => item.style.display = 'block');
+        });
+    </script>
+</body>
+</html>
