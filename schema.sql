@@ -71,6 +71,15 @@ CREATE POLICY "Allow authenticated insert bookings" ON bookings
 CREATE POLICY "Allow authenticated update bookings" ON bookings
     FOR UPDATE USING (auth.role() = 'authenticated');
 
+CREATE POLICY "Allow authenticated delete bookings" ON bookings
+    FOR DELETE USING (auth.role() = 'authenticated');
+
+-- Включение RLS и политики для tables
+ALTER TABLE tables ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow authenticated update tables" ON tables
+    FOR UPDATE USING (auth.role() = 'authenticated');
+
 -- Создание индекса для быстрого поиска бронирований по дате и телефону
 CREATE INDEX idx_bookings_date_phone ON bookings (date, customer_phone);
 CREATE INDEX idx_bookings_table_date_time ON bookings (table_id, date, time_slot);
