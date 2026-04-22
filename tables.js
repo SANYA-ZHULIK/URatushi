@@ -1,6 +1,8 @@
 let tablesData = [];
 let bookingsData = [];
 let selectedTableId = null;
+let currentZoneIndex = 0;
+let zones = [];
 
 function getClient() {
     return window.supabaseClient;
@@ -16,6 +18,7 @@ async function loadTables() {
     const { data, error } = await client
         .from('tables')
         .select('*')
+        .eq('is_active', true)
         .order('id');
 
     if (error) {
@@ -23,8 +26,10 @@ async function loadTables() {
         return;
     }
 
-    tablesData = (data || []).filter(t => t.is_active !== false);
-    console.log('Tables loaded:', tablesData.length);
+    tablesData = data || [];
+    
+    zones = [...new Set(tablesData.map(t => t.zone_name))];
+    console.log('Tables loaded:', tablesData.length, 'Zones:', zones);
     renderFloorPlan();
 }
 
@@ -66,26 +71,41 @@ function renderFloorPlan() {
         return;
     }
 
+    const currentZone = zones[currentZoneIndex];
+    const zoneTables = tablesData.filter(t => t.zone_name === currentZone);
+    
+    // Устанавливаем фон для позиций
+    if (currentZone === 'первая позиция') {
+        floorPlan.style.background = `url('positions_photo/первая.jpg') center/cover no-repeat`;
+    } else if (currentZone === 'вторая позиция') {
+        floorPlan.style.background = `url('positions_photo/вторая.jpg') center/cover no-repeat`;
+    } else if (currentZone === 'третья позиция') {
+        floorPlan.style.background = `url('positions_photo/третья.jpg') center/cover no-repeat`;
+    } else if (currentZone === 'средний зал') {
+        floorPlan.style.background = `url('positions_photo/средний.jpg') center/cover no-repeat`;
+    } else if (currentZone === 'танцпол') {
+        floorPlan.style.background = `url('positions_photo/танцпол.jpg') center/cover no-repeat`;
+    } else {
+        floorPlan.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)';
+    }
+    
+    // Добавляем label зоны
+    const zoneLabel = document.createElement('div');
+    zoneLabel.className = 'zone-label';
+    zoneLabel.textContent = currentZone;
+    floorPlan.appendChild(zoneLabel);
+    
     const dateInput = document.getElementById('booking-date');
     const timeSelect = document.getElementById('booking-time');
     const selectedDate = dateInput?.value;
     const selectedTime = timeSelect?.value;
 
-    tablesData.forEach(table => {
+    zoneTables.forEach(table => {
         const tableEl = document.createElement('div');
         tableEl.className = 'table-marker';
         tableEl.style.left = table.x + 'px';
         tableEl.style.top = table.y + 'px';
         
-        const isVIP = table.zone_name === 'VIP' && table.number !== '8';
-        const isSpecial = table.number === '8';
-        
-        if (isVIP) {
-            tableEl.classList.add('vip-table');
-        } else if (isSpecial) {
-            tableEl.style.backgroundColor = '#f9a825';
-        }
-
         const isBooked = selectedDate && selectedTime && isTableBooked(table.id, selectedDate, selectedTime);
         
         if (isBooked) {
@@ -98,10 +118,9 @@ function renderFloorPlan() {
             tableEl.classList.add('selected');
         }
 
-        const seatsText = table.seats === 1 ? '' : table.seats;
         const displayNumber = table.number.startsWith('B') ? '🍺' : table.number;
         
-        tableEl.innerHTML = `<span>${displayNumber}${seatsText}</span>`;
+        tableEl.innerHTML = `<span>${displayNumber}</span>`;
         tableEl.title = `Стол ${table.number}\n${table.seats} мест\n${table.zone_name}`;
         
         tableEl.addEventListener('click', () => selectTable(table));
@@ -110,7 +129,39 @@ function renderFloorPlan() {
     });
 
     addLegend();
+    updateNavButtons();
 }
+
+function updateNavButtons() {
+    const navLeft = document.getElementById('nav-left');
+    const navRight = document.getElementById('nav-right');
+    const isFirst = currentZoneIndex === 0;
+    const isLast = currentZoneIndex === zones.length - 1;
+    
+    if (navLeft) navLeft.disabled = isFirst;
+    if (navRight) navRight.disabled = isLast;
+}
+
+function prevZone() {
+    if (currentZoneIndex > 0) {
+        currentZoneIndex--;
+        selectedTableId = null;
+        renderFloorPlan();
+        updateNavButtons();
+    }
+}
+
+function nextZone() {
+    if (currentZoneIndex < zones.length - 1) {
+        currentZoneIndex++;
+        selectedTableId = null;
+        renderFloorPlan();
+        updateNavButtons();
+    }
+}
+
+window.prevZone = prevZone;
+window.nextZone = nextZone;
 
 function addLegend() {
     const floorPlan = document.getElementById('floor-plan');

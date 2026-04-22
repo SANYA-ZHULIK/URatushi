@@ -512,32 +512,57 @@ nav ul {
     overflow: hidden;
 }
 
-#floor-plan::before {
-    content: 'ОКНО';
+.floor-plan-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.floor-plan-nav-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 2.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.3s;
+    line-height: 1;
+}
+
+.floor-plan-nav-btn:hover:not(:disabled) {
+    color: var(--primary-dark);
+    transform: scale(1.2);
+}
+
+.floor-plan-nav-btn:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.floor-plan-nav-btn:disabled:hover {
+    transform: none;
+}
+
+.zone-label {
     position: absolute;
     top: 10px;
     left: 50%;
     transform: translateX(-50%);
-    color: rgba(255,255,255,0.3);
-    font-size: 0.8rem;
-    letter-spacing: 3px;
-}
-
-#floor-plan::after {
-    content: 'БАРНАЯ СТОЙКА';
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: rgba(255,255,255,0.3);
-    font-size: 0.8rem;
-    letter-spacing: 3px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    z-index: 10;
 }
 
 .table-marker {
     position: absolute;
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -545,25 +570,27 @@ nav ul {
     cursor: pointer;
     transition: all 0.3s;
     transform: translate(-50%, -50%);
-    font-weight: bold;
+    font-weight: 500;
     color: var(--white);
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    background: rgba(39, 174, 96, 0.6);
+    border: 2px solid rgba(46, 204, 113, 0.8);
 }
 
 .table-marker.available {
-    background: var(--success);
-    border: 3px solid #2ecc71;
+    background: rgba(39, 174, 96, 0.8);
+    border: 2px solid rgba(46, 204, 113, 0.9);
 }
 
 .table-marker.available:hover {
-    background: #2ecc71;
+    background: rgba(39, 174, 96, 0.8);
     transform: translate(-50%, -50%) scale(1.1);
 }
 
 .table-marker.booked {
-    background: var(--danger);
-    border: 3px solid #c0392b;
+    background: rgba(231, 76, 60, 0.6);
+    border: 2px solid rgba(192, 57, 43, 0.8);
     cursor: not-allowed;
 }
 
@@ -572,18 +599,42 @@ nav ul {
 }
 
 .table-marker.selected {
+    background: rgba(249, 168, 37, 0.7);
+    border: 3px solid rgba(249, 168, 37, 0.9);
     box-shadow: 0 0 0 4px var(--secondary), 0 4px 15px rgba(249,168,37,0.5);
     animation: pulse 1.5s infinite;
 }
 
 .table-marker.vip-table {
-    background: #9b59b6;
+    background: rgba(155, 89, 182, 0.6);
     border: 3px solid #8e44ad;
 }
 
 @keyframes pulse {
     0%, 100% { box-shadow: 0 0 0 4px var(--secondary), 0 4px 15px rgba(249,168,37,0.5); }
     50% { box-shadow: 0 0 0 8px rgba(249,168,37,0.3), 0 4px 20px rgba(249,168,37,0.7); }
+}
+
+.zone-nav {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(0,0,0,0.8);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    z-index: 10;
+}
+
+.zone-title {
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    min-width: 150px;
+    text-align: center;
 }
 
 .legend {
@@ -679,6 +730,21 @@ nav ul {
     flex-wrap: wrap;
     justify-content: center;
     margin-bottom: 1.5rem;
+    flex-direction: column;
+}
+
+.filter-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.filter-group span {
+    font-weight: 500;
+    color: var(--gray);
+    margin-right: 0.5rem;
 }
 
 .filter-btn {

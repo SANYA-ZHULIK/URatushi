@@ -551,7 +551,11 @@
             <h2 class="section-title">Бронирование столика</h2>
             
             <div class="floor-plan-container">
-                <div id="floor-plan"></div>
+                <div class="floor-plan-wrapper">
+                    <button class="floor-plan-nav-btn" id="nav-left" onclick="prevZone()">❮</button>
+                    <div id="floor-plan"></div>
+                    <button class="floor-plan-nav-btn" id="nav-right" onclick="nextZone()">❯</button>
+                </div>
                 
                 <div class="mobile-tables-list">
                     <div class="filter-buttons">

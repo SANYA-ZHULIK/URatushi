@@ -1,7 +1,9 @@
 let mobileTablesData = [];
 let mobileBookingsData = [];
 let selectedMobileTableId = null;
-let currentFilter = 'all';
+let currentSeatsFilter = 'all';
+let mobileZones = [];
+let currentZoneFilter = 'all';
 
 function getClient() {
     return window.supabaseClient;
@@ -26,25 +28,46 @@ async function loadMobileTables() {
     }
 
     mobileTablesData = data || [];
+    mobileZones = [...new Set(mobileTablesData.map(t => t.zone_name))];
+    renderMobileZoneButtons();
     renderMobileTableList();
 }
 
-async function loadMobileBookings() {
-    const client = getClient();
-    if (!client) return;
+function renderMobileZoneButtons() {
+    const container = document.querySelector('.filter-buttons');
+    if (!container) return;
     
-    const { data, error } = await client
-        .from('bookings')
-        .select('*')
-        .in('status', ['new', 'confirmed']);
-
-    if (error) {
-        console.error('Error loading bookings:', error);
-        return;
-    }
-
-    mobileBookingsData = data || [];
-    renderMobileTableList();
+    const allZones = ['all', ...mobileZones];
+    const seatsFilters = ['all', '2', '4', '6+'];
+    
+    container.innerHTML = '<div class="filter-group"><span>Зона:</span>' + 
+        allZones.map(z => {
+            const label = z === 'all' ? 'Все' : z;
+            return `<button class="filter-btn ${currentZoneFilter === z ? 'active' : ''}" data-zone="${z}">${label}</button>`;
+        }).join('') + 
+        '</div><div class="filter-group"><span>Места:</span>' +
+        seatsFilters.map(s => {
+            const label = s === 'all' ? 'Все' : (s === '6+' ? '6+' : s);
+            return `<button class="filter-btn seats-filter ${currentSeatsFilter === s ? 'active' : ''}" data-seats="${s}">${label}</button>`;
+        }).join('') + '</div>';
+    
+    container.querySelectorAll('.filter-btn[data-zone]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentZoneFilter = btn.dataset.zone;
+            renderMobileTableList();
+        });
+    });
+    
+    container.querySelectorAll('.filter-btn[data-seats]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            container.querySelectorAll('.seats-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentSeatsFilter = btn.dataset.seats;
+            renderMobileTableList();
+        });
+    });
 }
 
 function isMobileTableBooked(tableId, date, timeSlot) {
@@ -57,20 +80,26 @@ function isMobileTableBooked(tableId, date, timeSlot) {
 }
 
 function filterTables(tables) {
-    if (currentFilter === 'all') return tables;
-    if (currentFilter === '2') return tables.filter(t => t.seats === 2);
-    if (currentFilter === '4') return tables.filter(t => t.seats === 4);
-    if (currentFilter === '6+') return tables.filter(t => t.seats >= 6);
-    return tables;
+    let filtered = tables;
+    
+    if (currentZoneFilter !== 'all') {
+        filtered = filtered.filter(t => t.zone_name === currentZoneFilter);
+    }
+    
+    if (currentSeatsFilter === 'all') return filtered;
+    if (currentSeatsFilter === '2') return filtered.filter(t => t.seats === 2);
+    if (currentSeatsFilter === '4') return filtered.filter(t => t.seats === 4);
+    if (currentSeatsFilter === '6+') return filtered.filter(t => t.seats >= 6);
+    return filtered;
 }
 
 function getZoneIcon(zoneName) {
     const icons = {
-        'у окна': '🪟',
-        'у стены': '🧱',
-        'VIP': '👑',
-        'бар': '🍺',
-        'центр': '🍽️'
+        'первая позиция': '1️⃣',
+        'вторая позиция': '2️⃣',
+        'средний зал': '🍽️',
+        'танцпол': '💃',
+        'подвал': '🔻'
     };
     return icons[zoneName] || '🍽️';
 }
@@ -135,19 +164,6 @@ function selectMobileTable(tableNumber) {
     document.getElementById('booking-form').scrollIntoView({ behavior: 'smooth' });
 }
 
-function setupMobileFilters() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    
-    filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentFilter = btn.dataset.filter;
-            renderMobileTableList();
-        });
-    });
-}
-
 function setupMobileRealtime() {
     const client = getClient();
     if (!client) return;
@@ -164,10 +180,27 @@ function setupMobileRealtime() {
         .subscribe();
 }
 
+async function loadMobileBookings() {
+    const client = getClient();
+    if (!client) return;
+    
+    const { data, error } = await client
+        .from('bookings')
+        .select('*')
+        .in('status', ['new', 'confirmed']);
+
+    if (error) {
+        console.error('Error loading bookings:', error);
+        return;
+    }
+
+    mobileBookingsData = data || [];
+    renderMobileTableList();
+}
+
 function initMobileTables() {
     loadMobileTables();
     loadMobileBookings();
-    setupMobileFilters();
     setupMobileRealtime();
     
     const dateInput = document.getElementById('booking-date');
