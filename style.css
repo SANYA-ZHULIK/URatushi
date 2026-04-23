@@ -35,9 +35,9 @@ body {
 }
 
 header {
-    background: linear-gradient(to bottom, rgba(26,26,26,1) 0%, rgba(26,26,26,0) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
     padding: 1.2rem 0;
-    position: absolute;
+    position: fixed;
     width: 100%;
     top: 0;
     left: 0;
@@ -45,6 +45,7 @@ header {
     box-shadow: none;
     border: none;
     margin: 0;
+    transition: background 0.4s ease, box-shadow 0.4s ease;
 }
 
 .header-inner {
@@ -107,6 +108,7 @@ nav ul {
     padding: 0;
     margin: 0;
     border: 0;
+    position: relative;
 }
 
 .hero-content h1 {
@@ -144,6 +146,11 @@ nav ul {
 .section {
     padding: 4rem 0;
     background: var(--light);
+}
+
+/* Add top padding to sections after hero to account for fixed header */
+section {
+    position: relative;
 }
 
 .section-title {

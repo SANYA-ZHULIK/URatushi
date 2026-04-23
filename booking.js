@@ -2,6 +2,55 @@ function getClient() {
     return window.supabaseClient;
 }
 
+// Header scroll effect - black-to-transparent at top, orange when scrolled
+function initHeaderScroll() {
+    const header = document.querySelector('header');
+    if (!header) return;
+    
+    let ticking = false;
+    let isScrolled = false;
+    
+    function updateHeaderOnScroll() {
+        const scrollY = window.scrollY;
+        
+        // В самом верху (0-100px): от черного к прозрачному
+        if (scrollY < 100) {
+            if (isScrolled) {
+                isScrolled = false;
+                header.style.background = 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)';
+                header.style.boxShadow = 'none';
+            }
+        } 
+        // При скролле вниз: оранжевая полупрозрачная шапка
+        else {
+            if (!isScrolled) {
+                isScrolled = true;
+                header.style.background = 'linear-gradient(to bottom, rgba(212, 165, 116, 0.9))';
+                header.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
+            }
+        }
+        
+        ticking = false;
+    }
+    
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(updateHeaderOnScroll);
+            ticking = true;
+        }
+    }, { passive: true });
+    
+    // Initialize
+    updateHeaderOnScroll();
+}
+
+// Initialize on DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHeaderScroll);
+} else {
+    initHeaderScroll();
+}
+
 const COOKIE_KEYS = {
     name: 'booking_name',
     phone: 'booking_phone',
