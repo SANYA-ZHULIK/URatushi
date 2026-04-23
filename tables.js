@@ -4,8 +4,24 @@ let selectedTableId = null;
 let currentZoneIndex = 0;
 let zones = [];
 
+const ZONE_COOKIE_KEY = 'booking_zone';
+
 function getClient() {
     return window.supabaseClient;
+}
+
+function saveZoneToStorage(zone) {
+    try {
+        localStorage.setItem(ZONE_COOKIE_KEY, zone);
+    } catch (e) {}
+}
+
+function loadZoneFromStorage() {
+    try {
+        return localStorage.getItem(ZONE_COOKIE_KEY) || '';
+    } catch (e) {
+        return '';
+    }
 }
 
 async function loadTables() {
@@ -30,6 +46,12 @@ async function loadTables() {
     
     zones = [...new Set(tablesData.map(t => t.zone_name))];
     console.log('Tables loaded:', tablesData.length, 'Zones:', zones);
+    
+    const savedZone = loadZoneFromStorage();
+    if (savedZone && zones.includes(savedZone)) {
+        currentZoneIndex = zones.indexOf(savedZone);
+    }
+    
     renderFloorPlan();
 }
 
@@ -146,6 +168,7 @@ function prevZone() {
     if (currentZoneIndex > 0) {
         currentZoneIndex--;
         selectedTableId = null;
+        saveZoneToStorage(zones[currentZoneIndex]);
         renderFloorPlan();
         updateNavButtons();
     }
@@ -155,6 +178,7 @@ function nextZone() {
     if (currentZoneIndex < zones.length - 1) {
         currentZoneIndex++;
         selectedTableId = null;
+        saveZoneToStorage(zones[currentZoneIndex]);
         renderFloorPlan();
         updateNavButtons();
     }

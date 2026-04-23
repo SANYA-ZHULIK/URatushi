@@ -2,6 +2,71 @@ function getClient() {
     return window.supabaseClient;
 }
 
+const COOKIE_KEYS = {
+    name: 'booking_name',
+    phone: 'booking_phone',
+    date: 'booking_date',
+    time: 'booking_time',
+    guests: 'booking_guests',
+    table: 'booking_table',
+    zone: 'booking_zone'
+};
+
+function saveToStorage(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (e) {}
+}
+
+function loadFromStorage(key) {
+    try {
+        return localStorage.getItem(key) || '';
+    } catch (e) {
+        return '';
+    }
+}
+
+function saveBookingData() {
+    const fields = ['customer-name', 'customer-phone', 'booking-date', 'booking-time', 'guests-count', 'table-number', 'comment'];
+    const keys = [COOKIE_KEYS.name, COOKIE_KEYS.phone, COOKIE_KEYS.date, COOKIE_KEYS.time, COOKIE_KEYS.guests, COOKIE_KEYS.table, ''];
+    
+    fields.forEach((field, i) => {
+        const el = document.getElementById(field);
+        if (el && el.value) {
+            if (i === 6) {
+                saveToStorage(COOKIE_KEYS.table + '_comment', el.value);
+            } else {
+                saveToStorage(keys[i], el.value);
+            }
+        }
+    });
+}
+
+function loadBookingData() {
+    const name = loadFromStorage(COOKIE_KEYS.name);
+    const phone = loadFromStorage(COOKIE_KEYS.phone);
+    const date = loadFromStorage(COOKIE_KEYS.date);
+    const time = loadFromStorage(COOKIE_KEYS.time);
+    const guests = loadFromStorage(COOKIE_KEYS.guests);
+    const table = loadFromStorage(COOKIE_KEYS.table);
+    
+    if (name) document.getElementById('customer-name').value = name;
+    if (phone) document.getElementById('customer-phone').value = phone;
+    if (date) document.getElementById('booking-date').value = date;
+    if (time) document.getElementById('booking-time').value = time;
+    if (guests) document.getElementById('guests-count').value = guests;
+    if (table) document.getElementById('table-number').value = table;
+    
+    return loadFromStorage(COOKIE_KEYS.zone);
+}
+
+function clearBookingData() {
+    Object.values(COOKIE_KEYS).forEach(key => {
+        localStorage.removeItem(key);
+    });
+    localStorage.removeItem(COOKIE_KEYS.table + '_comment');
+}
+
 const phoneMask = '+7 (___) ___-__-__';
 
 function formatPhone(value) {
@@ -219,6 +284,7 @@ async function submitBooking(event) {
     }
 
     alert('Бронирование успешно!');
+    clearBookingData();
     document.getElementById('booking-form').reset();
     document.getElementById('table-number').value = '';
 }
@@ -228,11 +294,24 @@ function initBookingForm() {
     setupDateValidation();
     setupTimeSlots();
     setupGuestsCount();
-
+    
+    const savedZone = loadBookingData();
+    if (savedZone) {
+        window.savedFloorPlanZone = savedZone;
+    }
+    
     const form = document.getElementById('booking-form');
     if (form) {
         form.addEventListener('submit', submitBooking);
     }
+    
+    ['customer-name', 'customer-phone', 'booking-date', 'booking-time', 'guests-count', 'table-number', 'comment'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('change', saveBookingData);
+            el.addEventListener('input', saveBookingData);
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', initBookingForm);
