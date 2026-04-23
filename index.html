@@ -600,10 +600,16 @@
                     <label for="customer-name">Ваше имя</label>
                     <input type="text" id="customer-name" required minlength="2">
                 </div>
-                <div class="form-group">
-                    <label for="customer-phone">Телефон</label>
-                    <input type="tel" id="customer-phone" required>
-                </div>
+<div class="form-group">
+                        <label for="customer-phone">Телефон</label>
+                        <div class="phone-input-wrapper">
+                            <select id="country-code">
+                                <option value="+7">Россия (+7)</option>
+                                <option value="+375">Беларусь (+375)</option>
+                            </select>
+                            <input type="tel" id="customer-phone" required>
+                        </div>
+                    </div>
                 <div class="form-group">
                     <label for="comment">Комментарий</label>
                     <textarea id="comment" rows="2"></textarea>

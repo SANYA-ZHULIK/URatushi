@@ -34,8 +34,8 @@ body {
 }
 
 header {
-    background: #f0e2cd;
-    padding: 1rem 0;
+    background: #ffeac8;
+    padding: 1.2rem 0;
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -707,6 +707,26 @@ nav ul {
     font-family: 'Montserrat', sans-serif;
     transition: border-color 0.3s;
     background: var(--white);
+}
+
+.phone-input-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.phone-input-wrapper select {
+    padding: 0.8rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    background: var(--white);
+    width: auto;
+}
+
+.phone-input-wrapper input {
+    flex: 1;
 }
 
 .form-group input:focus,

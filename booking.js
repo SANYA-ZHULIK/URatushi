@@ -40,6 +40,11 @@ function saveBookingData() {
             }
         }
     });
+    
+    const countryCodeSelect = document.getElementById('country-code');
+    if (countryCodeSelect) {
+        saveToStorage('booking_country_code', countryCodeSelect.value);
+    }
 }
 
 function loadBookingData() {
@@ -49,13 +54,26 @@ function loadBookingData() {
     const time = loadFromStorage(COOKIE_KEYS.time);
     const guests = loadFromStorage(COOKIE_KEYS.guests);
     const table = loadFromStorage(COOKIE_KEYS.table);
+    const countryCode = loadFromStorage('booking_country_code');
     
     if (name) document.getElementById('customer-name').value = name;
-    if (phone) document.getElementById('customer-phone').value = phone;
     if (date) document.getElementById('booking-date').value = date;
     if (time) document.getElementById('booking-time').value = time;
     if (guests) document.getElementById('guests-count').value = guests;
     if (table) document.getElementById('table-number').value = table;
+    
+    if (countryCode) {
+        document.getElementById('country-code').value = countryCode;
+        currentCountryCode = countryCode;
+    }
+    
+    if (phone) {
+        const phoneInput = document.getElementById('customer-phone');
+        if (phoneInput) {
+            const digits = extractDigitsFromPhone(phone);
+            phoneInput.value = formatPhoneWithMask(digits, currentCountryCode);
+        }
+    }
     
     return loadFromStorage(COOKIE_KEYS.zone);
 }
@@ -67,46 +85,156 @@ function clearBookingData() {
     localStorage.removeItem(COOKIE_KEYS.table + '_comment');
 }
 
-const phoneMask = '+7 (___) ___-__-__';
+// Phone formats
+const phoneFormats = {
+    '+7': { code: '+7', codeDigits: '7', length: 10, mask: '+7 (___) ___-__-__', prefixLength: 5 },
+    '+375': { code: '+375', codeDigits: '375', length: 9, mask: '+375 (__) ___ __-__', prefixLength: 6 }
+};
 
-function formatPhone(value) {
-    const cleaned = value.replace(/\D/g, '');
-    let result = '+7 (';
-    if (cleaned.length > 0) {
-        result += cleaned.substring(0, 3);
-    } else {
-        result += '___';
-    }
-    if (cleaned.length >= 3) {
-        result += ') ';
-        result += cleaned.substring(3, 6);
-        if (cleaned.length >= 6) {
-            result += '-';
-            result += cleaned.substring(6, 8);
-            if (cleaned.length >= 8) {
-                result += '-';
-                result += cleaned.substring(8, 10);
+let currentCountryCode = '+7';
+
+function getMaskForCode(code) {
+    return phoneFormats[code] || phoneFormats['+7'];
+}
+
+function formatPhoneWithMask(digits, countryCode) {
+    const format = getMaskForCode(countryCode);
+    const maxLength = format.length;
+    const limitedDigits = digits.slice(0, maxLength);
+    
+    let result = '';
+    let digitIndex = 0;
+    
+    for (let i = 0; i < format.mask.length; i++) {
+        const char = format.mask[i];
+        if (char === '_') {
+            if (digitIndex < limitedDigits.length) {
+                result += limitedDigits[digitIndex];
+                digitIndex++;
+            } else {
+                result += '_';
             }
+        } else {
+            result += char;
         }
     }
+    
     return result;
+}
+
+function extractDigitsFromPhone(value) {
+    if (!value) return '';
+    const digits = value.replace(/\D/g, '');
+    const format = getMaskForCode(currentCountryCode);
+    const countryCodeDigits = format.codeDigits;
+    
+    if (digits.startsWith(countryCodeDigits)) {
+        return digits.slice(countryCodeDigits.length);
+    }
+    return digits;
+}
+
+function validatePhone(value) {
+    const digits = extractDigitsFromPhone(value);
+    const format = getMaskForCode(currentCountryCode);
+    return digits.length === format.length;
+}
+
+function setCursorToEnd(input) {
+    setTimeout(() => {
+        if (document.activeElement === input) {
+            const length = input.value.length;
+            input.setSelectionRange(length, length);
+        }
+    }, 0);
 }
 
 function setupPhoneMask() {
     const phoneInput = document.getElementById('customer-phone');
-    if (!phoneInput) return;
-
-    phoneInput.addEventListener('input', (e) => {
-        const cursorPos = e.target.selectionStart;
-        const oldValue = e.target.value;
-        const formatted = formatPhone(e.target.value);
-        e.target.value = formatted;
-        const newCursorPos = cursorPos + (formatted.length - oldValue.length);
-        e.target.setSelectionRange(newCursorPos, newCursorPos);
+    const countryCodeSelect = document.getElementById('country-code');
+    
+    if (!phoneInput || !countryCodeSelect) return;
+    
+    let ignoreEvent = false;
+    
+    function updatePhoneValue(digits) {
+        const formatted = formatPhoneWithMask(digits, currentCountryCode);
+        phoneInput.value = formatted;
+        return formatted;
+    }
+    
+    countryCodeSelect.addEventListener('change', (e) => {
+        currentCountryCode = e.target.value;
+        
+        let currentDigits = '';
+        const currentValue = phoneInput.value;
+        if (currentValue) {
+            currentDigits = extractDigitsFromPhone(currentValue);
+        }
+        
+        updatePhoneValue(currentDigits);
+        setCursorToEnd(phoneInput);
+        
+        saveToStorage('booking_country_code', currentCountryCode);
+        saveBookingData();
     });
-
+    
+    phoneInput.addEventListener('input', (e) => {
+        if (ignoreEvent) return;
+        
+        const rawValue = phoneInput.value;
+        const digits = extractDigitsFromPhone(rawValue);
+        const format = getMaskForCode(currentCountryCode);
+        
+        let limitedDigits = digits.slice(0, format.length);
+        
+        const newFormatted = formatPhoneWithMask(limitedDigits, currentCountryCode);
+        
+        if (newFormatted !== rawValue) {
+            ignoreEvent = true;
+            phoneInput.value = newFormatted;
+            ignoreEvent = false;
+        }
+        
+        setCursorToEnd(phoneInput);
+        saveBookingData();
+    });
+    
+    phoneInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace') {
+            const currentDigits = extractDigitsFromPhone(phoneInput.value);
+            
+            if (currentDigits.length > 0) {
+                e.preventDefault();
+                
+                const newDigits = currentDigits.slice(0, -1);
+                const newFormatted = formatPhoneWithMask(newDigits, currentCountryCode);
+                phoneInput.value = newFormatted;
+                setCursorToEnd(phoneInput);
+                saveBookingData();
+            }
+        }
+        
+        if (e.key === 'Delete') {
+            e.preventDefault();
+        }
+    });
+    
+    phoneInput.addEventListener('focus', () => {
+        const currentDigits = extractDigitsFromPhone(phoneInput.value);
+        if (currentDigits.length === 0) {
+            const format = getMaskForCode(currentCountryCode);
+            phoneInput.value = format.mask;
+        }
+        setCursorToEnd(phoneInput);
+    });
+    
     phoneInput.addEventListener('blur', () => {
-        if (phoneInput.value === phoneMask) phoneInput.value = '';
+        const digits = extractDigitsFromPhone(phoneInput.value);
+        if (digits.length === 0) {
+            phoneInput.value = '';
+        }
+        saveBookingData();
     });
 }
 
@@ -172,13 +300,13 @@ async function validateBooking() {
         errors.push('Введите имя (мин 2 символа)');
     }
 
-    const phoneDigits = phoneInput.value.replace(/\D/g, '');
-    if (phoneDigits.length !== 11) {
-        errors.push('Введите корректный телефон');
+    if (!validatePhone(phoneInput.value)) {
+        errors.push('Введите корректный номер телефона');
     }
 
     if (!guestsSelect.value) errors.push('Выберите количество гостей');
     if (!tableInput.value) errors.push('Выберите столик');
+    if (!timeSelect.value) errors.push('Выберите время');
 
     if (errors.length > 0) {
         alert(errors.join('\n'));
@@ -191,9 +319,12 @@ async function validateBooking() {
         return false;
     }
 
-    const phoneBookings = await checkPhoneBookingLimit(phoneInput.value, dateInput.value);
+    const phoneDigits = extractDigitsFromPhone(phoneInput.value);
+    const fullPhone = currentCountryCode.replace(/\D/g, '') + phoneDigits;
+    
+    const phoneBookings = await checkPhoneBookingLimit(fullPhone, dateInput.value);
     if (phoneBookings) {
-        alert('Максимум 2 брони в день');
+        alert('С этого номера уже есть 2 брони на эту дату');
         return false;
     }
 
@@ -249,14 +380,17 @@ async function submitBooking(event) {
 
     const alreadyBooked = await isTableAlreadyBooked(tableId, dateInput.value, timeSelect.value);
     if (alreadyBooked) {
-        alert('Столик уже забронирован');
+        alert('Столик уже забронирован на это время');
         return;
     }
+
+    const phoneDigits = extractDigitsFromPhone(phoneInput.value);
+    const fullPhone = currentCountryCode.replace(/\D/g, '') + phoneDigits;
 
     const bookingData = {
         table_id: tableId,
         customer_name: nameInput.value.trim(),
-        customer_phone: phoneInput.value,
+        customer_phone: fullPhone,
         date: dateInput.value,
         time_slot: timeSelect.value,
         guests_count: parseInt(guestsSelect.value),
@@ -279,7 +413,7 @@ async function submitBooking(event) {
         return;
     }
 
-    alert('Бронирование успешно!');
+    alert('Бронирование успешно отправлено! Администратор подтвердит его в ближайшее время.');
     clearBookingData();
     document.getElementById('booking-form').reset();
     document.getElementById('table-number').value = '';
