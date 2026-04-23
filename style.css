@@ -25,6 +25,7 @@ body {
     line-height: 1.7;
     color: var(--dark);
     background-color: var(--light);
+    margin: 0;
 }
 
 .container {
@@ -34,12 +35,16 @@ body {
 }
 
 header {
-    background: #ffeac8;
+    background: linear-gradient(to bottom, rgba(26,26,26,1) 0%, rgba(26,26,26,0) 100%);
     padding: 1.2rem 0;
-    position: sticky;
+    position: absolute;
+    width: 100%;
     top: 0;
+    left: 0;
     z-index: 1000;
-    box-shadow: var(--shadow);
+    box-shadow: none;
+    border: none;
+    margin: 0;
 }
 
 .header-inner {
@@ -54,25 +59,28 @@ header {
     gap: 0.5rem;
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--white);
     text-decoration: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .logo img {
     height: 40px;
     width: auto;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 nav a {
-    color: var(--dark);
+    color: var(--white);
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 500;
-    transition: color 0.3s;
+    transition: color 0.3s, text-shadow 0.3s;
 }
 
 nav a:hover {
-    color: var(--primary);
+    color: var(--secondary);
+    text-shadow: 0 0 8px rgba(212,165,116,0.5);
 }
 
 nav ul {
@@ -96,7 +104,9 @@ nav ul {
     justify-content: center;
     text-align: center;
     color: var(--white);
-    padding: 4rem 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
 }
 
 .hero-content h1 {
