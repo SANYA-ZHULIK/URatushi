@@ -116,8 +116,6 @@ async function validateBooking() {
         errors.push('Введите корректный телефон');
     }
 
-    if (!dateInput.value) errors.push('Выберите дату');
-    if (!timeSelect.value) errors.push('Выберите время');
     if (!guestsSelect.value) errors.push('Выберите количество гостей');
     if (!tableInput.value) errors.push('Выберите столик');
 

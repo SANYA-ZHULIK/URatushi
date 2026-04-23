@@ -566,45 +566,52 @@
                     </div>
                     <div id="mobile-tables-container"></div>
                 </div>
-
-                <form id="booking-form" class="booking-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="booking-date">Дата</label>
-                            <input type="date" id="booking-date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="booking-time">Время</label>
-                            <select id="booking-time" required></select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="guests-count">Гости</label>
-                            <select id="guests-count" required></select>
-                        </div>
-                        <div class="form-group">
-                            <label for="table-number">Сталик</label>
-                            <input type="text" id="table-number" placeholder="Выберите на схеме" readonly required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="customer-name">Ваше имя</label>
-                        <input type="text" id="customer-name" required minlength="2">
-                    </div>
-                    <div class="form-group">
-                        <label for="customer-phone">Телефон</label>
-                        <input type="tel" id="customer-phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="comment">Комментарий</label>
-                        <textarea id="comment" rows="2"></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary">Забронировать</button>
-                </form>
             </div>
         </div>
     </section>
+
+    <!-- Modal for booking form -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="section-title">Бронирование столика</h2>
+            <form id="booking-form" class="booking-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="booking-date">Дата</label>
+                        <input type="date" id="booking-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-time">Время</label>
+                        <select id="booking-time"></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="guests-count">Гости</label>
+                        <select id="guests-count" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="table-number">Стол</label>
+                        <input type="text" id="table-number" placeholder="Выберите на схеме" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="customer-name">Ваше имя</label>
+                    <input type="text" id="customer-name" required minlength="2">
+                </div>
+                <div class="form-group">
+                    <label for="customer-phone">Телефон</label>
+                    <input type="tel" id="customer-phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="comment">Комментарий</label>
+                    <textarea id="comment" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Забронировать</button>
+            </form>
+        </div>
+    </div>
 
 <section id="contacts" class="section">
         <div class="container">

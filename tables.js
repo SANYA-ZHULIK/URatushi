@@ -184,26 +184,39 @@ function selectTable(table) {
     const dateInput = document.getElementById('booking-date');
     const timeSelect = document.getElementById('booking-time');
     
-    if (!dateInput.value || !timeSelect.value) {
-        alert('Пожалуйста, выберите дату и время бронирования');
-        return;
-    }
-
-    if (isTableBooked(table.id, dateInput.value, timeSelect.value)) {
-        alert('Этот столик уже забронирован на выбранное время');
-        return;
-    }
-
-    selectedTableId = table.id;
-    
+    // Set form values but don't validate date/time here
     const tableNumberInput = document.getElementById('table-number');
     if (tableNumberInput) {
         tableNumberInput.value = table.number;
     }
-
-    renderFloorPlan();
     
-    document.getElementById('booking-form').scrollIntoView({ behavior: 'smooth' });
+    // Open modal instead of scrolling
+    openBookingModal();
+    
+    renderFloorPlan();
+}
+
+// Modal functions
+function openBookingModal() {
+    const modal = document.getElementById('booking-modal');
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+function closeBookingModal() {
+    const modal = document.getElementById('booking-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Close modal when clicking outside content
+window.onclick = function(event) {
+    const modal = document.getElementById('booking-modal');
+    if (modal && event.target === modal) {
+        closeBookingModal();
+    }
 }
 
 function setupRealtime() {

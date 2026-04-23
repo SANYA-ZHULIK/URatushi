@@ -150,18 +150,39 @@ function selectMobileTable(tableNumber) {
     const dateInput = document.getElementById('booking-date');
     const timeSelect = document.getElementById('booking-time');
     
-    if (!dateInput.value || !timeSelect.value) {
-        alert('Выберите дату и время');
-        return;
-    }
-
+    // Set form values but don't validate date/time here
     const tableNumberInput = document.getElementById('table-number');
     if (tableNumberInput) {
         tableNumberInput.value = tableNumber;
     }
-
+    
+    // Open modal instead of scrolling
+    openBookingModal();
+    
     renderMobileTableList();
-    document.getElementById('booking-form').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Modal functions (same as in tables.js)
+function openBookingModal() {
+    const modal = document.getElementById('booking-modal');
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+function closeBookingModal() {
+    const modal = document.getElementById('booking-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Close modal when clicking outside content
+window.onclick = function(event) {
+    const modal = document.getElementById('booking-modal');
+    if (modal && event.target === modal) {
+        closeBookingModal();
+    }
 }
 
 function setupMobileRealtime() {
