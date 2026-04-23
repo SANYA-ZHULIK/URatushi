@@ -90,7 +90,7 @@ nav ul {
 }
 
 .hero {
-    min-height: 70vh;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -675,7 +675,7 @@ nav ul {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
 }
 
 .form-row {
@@ -874,13 +874,28 @@ footer {
 
 .modal-content {
     background-color: var(--white);
-    margin: 5% auto;
     padding: 2rem;
+    
     border-radius: var(--radius);
     width: 90%;
-    max-width: 500px;
-    position: relative;
+    max-width: 600px;
+    position: absolute;
     box-shadow: var(--shadow);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.booking-info-message {
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    color: var(--danger);
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius);
+    margin-bottom: 0.8rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 0.9rem;
 }
 
 .close-modal {

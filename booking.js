@@ -105,10 +105,6 @@ function setupPhoneMask() {
         e.target.setSelectionRange(newCursorPos, newCursorPos);
     });
 
-    phoneInput.addEventListener('focus', () => {
-        if (!phoneInput.value) phoneInput.value = phoneMask;
-    });
-
     phoneInput.addEventListener('blur', () => {
         if (phoneInput.value === phoneMask) phoneInput.value = '';
     });
