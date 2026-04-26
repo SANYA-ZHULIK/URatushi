@@ -49,7 +49,7 @@ async function loginAdmin(event) {
 
     const client = getClient();
     if (!client) {
-        alert('Подождите, загрузка Supabase...');
+        showToast('Подождите, загрузка Supabase...', 'warning');
         return;
     }
 
@@ -57,7 +57,7 @@ async function loginAdmin(event) {
     const password = document.getElementById('admin-password');
 
     if (!email?.value?.trim() || !password?.value) {
-        alert('Введите email и пароль');
+        showToast('Введите email и пароль', 'warning');
         return;
     }
 
@@ -69,7 +69,7 @@ async function loginAdmin(event) {
 
         if (error) {
             console.error('Login error:', error);
-            alert('Ошибка входа: ' + (error.message || 'Неверные данные'));
+            showToast('Ошибка входа: ' + (error.message || 'Неверные данные'), 'error');
             return;
         }
 
@@ -79,11 +79,11 @@ async function loginAdmin(event) {
             await loadAllData();
             setupRealtime();
         } else {
-            alert('Не удалось войти');
+            showToast('Не удалось войти', 'error');
         }
     } catch (err) {
         console.error('Unexpected login error:', err);
-        alert('Ошибка: ' + (err.message || err));
+        showToast('Ошибка: ' + (err.message || err), 'error');
     }
 }
 
@@ -91,6 +91,7 @@ async function logoutAdmin() {
     const client = getClient();
     if (client) await client.auth.signOut();
     showLoginForm();
+    showToast('Вы вышли из системы', 'info');
 }
 
 async function loadAllData() {
@@ -106,16 +107,14 @@ async function loadTables() {
     try {
         const { data, error } = await client.from('tables').select('*').order('id');
         if (error) throw error;
-        allTables = (data || [])
-            .filter(t => t && t.id != null)
-            .map(t => ({
-                ...t,
-                id: Number(t.id),
-                seats: Number(t.seats),
-                x: Number(t.x),
-                y: Number(t.y),
-                is_active: !!t.is_active
-            }));
+        allTables = (data || []).filter(t => t && t.id != null).map(t => ({
+            ...t,
+            id: Number(t.id),
+            seats: Number(t.seats),
+            x: Number(t.x),
+            y: Number(t.y),
+            is_active: !!t.is_active
+        }));
         populateTableSelect();
     } catch (err) {
         console.error('Load tables error:', err);
@@ -132,19 +131,19 @@ async function loadBookings() {
         const { data, error } = await client.from('bookings').select('*').order('created_at', { ascending: false });
         if (error) throw error;
 
-        console.log('Raw bookings data:', data);
-
-        allBookings = (data || [])
-            .filter(b => b && b.id != null)
-            .map(b => ({
+        allBookings = (data || []).filter(b => b && b.id != null).map(b => {
+            let st = b.status;
+            if (typeof st === 'string') st = st.toLowerCase();
+            else st = 'new';
+            return {
                 ...b,
                 id: Number(b.id),
                 table_id: Number(b.table_id),
                 guests_count: Number(b.guests_count),
-                status: (b.status || 'new').toString().toLowerCase()
-            }));
+                status: st
+            };
+        });
 
-        console.log('Normalized bookings:', allBookings);
         renderBookingsTable();
     } catch (err) {
         console.error('Load bookings error:', err);
@@ -154,22 +153,17 @@ async function loadBookings() {
 }
 
 function getTableNumber(tableId) {
-    const tid = Number(tableId);
-    const t = allTables.find(x => Number(x.id) === tid);
+    const t = allTables.find(x => Number(x.id) === Number(tableId));
     return t ? t.number : '?';
 }
 
-function formatDate(dateStr) {
-    return new Date(dateStr).toLocaleDateString('ru-RU');
-}
-
 function getStatusClass(status) {
-    const s = (status || '').toLowerCase();
+    const s = String(status || 'new').toLowerCase();
     return { 'new': 'status-new', 'confirmed': 'status-confirmed', 'completed': 'status-completed', 'cancelled': 'status-cancelled' }[s] || '';
 }
 
 function getStatusText(status) {
-    const s = (status || '').toLowerCase();
+    const s = String(status || 'new').toLowerCase();
     return { 'new': 'Новая', 'confirmed': 'Подтверждена', 'completed': 'Завершена', 'cancelled': 'Отменена' }[s] || (status || '');
 }
 
@@ -178,7 +172,7 @@ function renderBookingsTable() {
     if (!tbody) return;
 
     if (allBookings.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9">Нет бронирований</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="no-data">Нет бронирований</td></tr>';
         return;
     }
 
@@ -186,16 +180,16 @@ function renderBookingsTable() {
         const safeId = b.id || '';
         const isEditing = editingBookingId === b.id;
         return `
-        <tr${isEditing ? ' style="background:#fffde7"' : ''}>
+        <tr${isEditing ? ' class="editing-row"' : ''}>
             <td>${safeId}</td>
-            <td>${getTableNumber(b.table_id)}</td>
-            <td>${isEditing ? '<input type="text" id="edit-name" value="'+ (b.customer_name || '') +'">' : (b.customer_name || '-')}</td>
-            <td>${isEditing ? '<input type="tel" id="edit-phone" value="'+ (b.customer_phone || '') +'">' : (b.customer_phone || '-')}</td>
+            <td><strong>Стол ${getTableNumber(b.table_id)}</strong></td>
+            <td>${isEditing ? '<input type="text" id="edit-name" value="' + (b.customer_name || '') + '" class="edit-input">' : (b.customer_name || '-')}</td>
+            <td>${isEditing ? '<input type="tel" id="edit-phone" value="' + (b.customer_phone || '') + '" class="edit-input">' : (b.customer_phone || '-')}</td>
             <td>${b.date || '-'}</td>
             <td>${b.time_slot || '-'}</td>
             <td>${b.guests_count || '-'}</td>
             <td>
-                <select onchange="updateStatus(${safeId}, this.value)" ${isEditing ? 'disabled' : ''}>
+                <select onchange="updateStatus(${safeId}, this.value)" class="status-select ${getStatusClass(b.status)}" ${isEditing ? 'disabled' : ''}>
                     <option value="new" ${b.status === 'new' ? 'selected' : ''}>Новая</option>
                     <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Подтверждена</option>
                     <option value="completed" ${b.status === 'completed' ? 'selected' : ''}>Завершена</option>
@@ -204,8 +198,8 @@ function renderBookingsTable() {
             </td>
             <td>
                 ${isEditing ?
-                    '<button onclick="saveEdit('+safeId+')">Сохранить</button><button onclick="cancelEdit()">Отмена</button>' :
-                    '<button onclick="startEdit('+safeId+')">Ред.</button><button onclick="deleteBooking('+safeId+')">Удал.</button>'}
+                    '<button onclick="saveEdit(' + safeId + ')" class="btn-action btn-save">Сохранить</button><button onclick="cancelEdit()" class="btn-action btn-cancel">Отмена</button>' :
+                    '<button onclick="startEdit(' + safeId + ')" class="btn-action btn-edit">Ред.</button><button onclick="deleteBooking(' + safeId + ')" class="btn-action btn-delete">Удал.</button>'}
             </td>
         </tr>
     `;
@@ -213,10 +207,7 @@ function renderBookingsTable() {
 }
 
 function startEdit(id) {
-    if (!id) {
-        console.warn('startEdit: invalid id', id);
-        return;
-    }
+    if (!id) return;
     editingBookingId = id;
     renderBookingsTable();
 }
@@ -243,17 +234,15 @@ async function saveEdit(id) {
         if (error) throw error;
         editingBookingId = null;
         await loadBookings();
+        showToast('Изменения сохранены', 'success');
     } catch (err) {
         console.error('Save edit error:', err);
-        alert('Ошибка сохранения: ' + (err.message || err));
+        showToast('Ошибка сохранения: ' + (err.message || err), 'error');
     }
 }
 
 async function updateStatus(id, status) {
-    if (!id) {
-        console.error('Invalid booking ID:', id);
-        return;
-    }
+    if (!id) return;
     const client = getClient();
     if (!client) return;
 
@@ -261,45 +250,28 @@ async function updateStatus(id, status) {
         const { error } = await client.from('bookings').update({ status: status || 'new' }).eq('id', id);
         if (error) throw error;
         await loadBookings();
+        showToast('Статус обновлен', 'success');
     } catch (err) {
         console.error('Status update error:', err);
-        alert('Ошибка обновления статуса: ' + (err.message || err));
+        showToast('Ошибка обновления статуса: ' + (err.message || err), 'error');
     }
 }
 
 async function deleteBooking(id) {
-    if (!id) {
-        console.error('Invalid booking ID for deletion:', id);
-        return;
-    }
+    if (!id) return;
     if (!confirm('Удалить бронь?')) return;
 
     const client = getClient();
-    if (!client) {
-        console.error('No Supabase client');
-        return;
-    }
+    if (!client) return;
 
     try {
-        console.log('Deleting booking:', id);
-        const { data, error } = await client
-            .from('bookings')
-            .delete()
-            .eq('id', id)
-            .select(); // Запрашиваем удалённую запись для проверки
-
-        if (error) {
-            console.error('Delete error details:', error);
-            alert('Ошибка удаления: ' + (error.message || JSON.stringify(error)));
-            return;
-        }
-
-        console.log('Delete result:', data);
-        alert('Бронь удалена');
+        const { error } = await client.from('bookings').delete().eq('id', id);
+        if (error) throw error;
+        showToast('Бронь удалена', 'success');
         await loadBookings();
     } catch (err) {
-        console.error('Unexpected delete error:', err);
-        alert('Ошибка: ' + (err.message || err));
+        console.error('Delete error:', err);
+        showToast('Ошибка удаления: ' + (err.message || err), 'error');
     }
 }
 
@@ -315,31 +287,7 @@ function populateTableSelect() {
         return `<option value="${id}">Стол ${number} (${seats} мест)${blocked}</option>`;
     }).join('');
 
-    select.innerHTML = '<option value="">Выберите</option>' + options;
-}
-
-function populateTimeSelect() {
-    const select = document.getElementById('manual-time');
-    if (!select) return;
-    
-    let times = '';
-    for (let h = 18; h <= 23; h++) {
-        times += `<option value="${h}:00">${h}:00</option>`;
-        times += `<option value="${h}:30">${h}:30</option>`;
-    }
-    select.innerHTML = '<option value="">Выберите</option>' + times;
-}
-
-function populateGuestsSelect() {
-    const select = document.getElementById('manual-guests');
-    if (!select) return;
-    
-    let opts = '<option value="">Выберите</option>';
-    for (let i = 1; i <= 12; i++) {
-        let label = i === 1 ? 'гость' : (i <= 4 ? 'гостя' : 'гостей');
-        opts += `<option value="${i}">${i} ${label}</option>`;
-    }
-    select.innerHTML = opts;
+    select.innerHTML = '<option value="">Выберите столик</option>' + options;
 }
 
 async function addManualBooking(event) {
@@ -351,7 +299,7 @@ async function addManualBooking(event) {
     const tableSelect = document.getElementById('manual-table');
     const tableId = parseInt(tableSelect.value, 10);
     if (!tableId || isNaN(tableId)) {
-        alert('Выберите столик');
+        showToast('Выберите столик', 'warning');
         return;
     }
 
@@ -362,7 +310,14 @@ async function addManualBooking(event) {
     const guests = parseInt(document.getElementById('manual-guests').value, 10);
 
     if (!name || !phone || !date || !time || !guests) {
-        alert('Заполните все обязательные поля');
+        showToast('Заполните все обязательные поля', 'warning');
+        return;
+    }
+
+    // Валидация даты
+    const today = new Date().toISOString().split('T')[0];
+    if (date < today) {
+        showToast('Нельзя бронировать на прошедшую дату', 'warning');
         return;
     }
 
@@ -380,14 +335,14 @@ async function addManualBooking(event) {
     try {
         const { error } = await client.from('bookings').insert(data);
         if (error) throw error;
-        alert('Добавлено!');
+        showToast('Бронь успешно добавлена!', 'success');
         document.getElementById('manual-booking-form').reset();
         const dateInput = document.getElementById('manual-date');
         if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
         await loadBookings();
     } catch (err) {
         console.error('Add booking error:', err);
-        alert('Ошибка добавления: ' + (err.message || err));
+        showToast('Ошибка добавления: ' + (err.message || err), 'error');
     }
 }
 
@@ -396,7 +351,7 @@ function renderTablesList() {
     if (!container) return;
 
     if (allTables.length === 0) {
-        container.innerHTML = '<p>Загрузка...</p>';
+        container.innerHTML = '<p class="no-data">Загрузка...</p>';
         return;
     }
 
@@ -406,11 +361,14 @@ function renderTablesList() {
         const seats = Number(t.seats) || 0;
         const zone = t.zone_name || '';
         const blocked = t.is_active === false ? ' blocked' : '';
-        const btnText = t.is_active === false ? 'Разблокировать' : 'Заблокировать (ремонт)';
+        const btnText = t.is_active === false ? 'Разблокировать' : 'Заблокировать';
         return `
         <div class="table-block${blocked}">
-            <div><strong>Стол ${number}</strong> - ${seats} мест - ${zone}</div>
-            <button onclick="toggleTable(${id}, ${t.is_active === false})">
+            <div class="table-info">
+                <strong>Стол ${number}</strong>
+                <span class="table-details">${seats} мест • ${zone}</span>
+            </div>
+            <button onclick="toggleTable(${id}, ${t.is_active === false})" class="btn-action ${t.is_active === false ? 'btn-unblock' : 'btn-block'}">
                 ${btnText}
             </button>
         </div>
@@ -427,20 +385,36 @@ async function toggleTable(id, unblock) {
         const { error } = await client.from('tables').update({ is_active: unblock }).eq('id', id);
         if (error) throw error;
         await loadTables();
+        showToast(unblock ? 'Стол разблокирован' : 'Стол заблокирован', 'success');
     } catch (err) {
         console.error('Toggle table error:', err);
-        alert('Ошибка: ' + (err.message || err));
+        showToast('Ошибка: ' + (err.message || err), 'error');
     }
 }
 
 function setupRealtime() {
     const client = getClient();
     if (!client) return;
-    
+
+    // Отписываемся от предыдущего канала, если был
+    try {
+        client.channel('admin-changes')?.unsubscribe();
+    } catch (e) {
+        console.log('No previous subscription');
+    }
+
     client.channel('admin-changes')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => loadBookings())
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'tables' }, () => loadTables())
-        .subscribe();
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => {
+            console.log('Realtime: bookings changed');
+            loadBookings();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'tables' }, () => {
+            console.log('Realtime: tables changed');
+            loadTables();
+        })
+        .subscribe(status => {
+            console.log('Realtime subscribed, status:', status);
+        });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -469,8 +443,10 @@ document.addEventListener('DOMContentLoaded', () => {
             addManualBooking(e);
         });
 
-        populateTimeSelect();
-        populateGuestsSelect();
+        // Используем общие утилиты из utils.js
+        populateTimeSelect('manual-time');
+        populateGuestsSelect('manual-guests');
+        setupDateValidation('manual-date');
 
         const dateInput = document.getElementById('manual-date');
         if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];

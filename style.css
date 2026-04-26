@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 * {
     margin: 0;
@@ -1018,7 +1018,10 @@ footer p {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('ratusha.webp');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 .login-container {
@@ -1330,3 +1333,319 @@ footer p {
     }
 }
 
+
+/* ========== Admin Panel UI Improvements ========== */
+
+/* Edit inputs in table */
+.edit-input {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border: 2px solid var(--primary);
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.edit-input:focus {
+    border-color: var(--primary-dark);
+    box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+}
+
+/* Action buttons */
+.btn-action {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    margin: 0 2px;
+}
+
+.btn-edit { background: var(--primary); color: white; }
+.btn-edit:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+.btn-delete { background: var(--danger); color: white; }
+.btn-delete:hover { background: #c0392b; transform: translateY(-1px); }
+
+.btn-save { background: var(--success); color: white; }
+.btn-save:hover { background: #219a52; transform: translateY(-1px); }
+
+.btn-cancel { background: #7f8c8d; color: white; }
+.btn-cancel:hover { background: #6c7b7d; transform: translateY(-1px); }
+
+.btn-block { background: var(--danger); color: white; }
+.btn-block:hover { background: #c0392b; }
+
+.btn-unblock { background: var(--success); color: white; }
+.btn-unblock:hover { background: #219a52; }
+
+/* Editing row highlight */
+.editing-row {
+    background: #fffde7 !important;
+    box-shadow: 0 0 0 2px var(--secondary) inset;
+}
+
+/* Table blocks (tables management) */
+.table-block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    margin-bottom: 0.8rem;
+    background: var(--light);
+    border-radius: 10px;
+    border-left: 4px solid var(--primary);
+    transition: all 0.3s;
+}
+
+.table-block:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateX(4px);
+}
+
+.table-block.blocked {
+    background: #ffebee;
+    border-left-color: var(--danger);
+    opacity: 0.8;
+}
+
+.table-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.table-details {
+    font-size: 0.85rem;
+    color: var(--gray);
+}
+
+/* Status select in table */
+.status-select {
+    padding: 0.3rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-family: 'Montserrat', sans-serif;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    background: white;
+    min-width: 120px;
+}
+
+.status-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.1);
+}
+
+/* Bookings table improvements */
+.bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.bookings-table th,
+.bookings-table td {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.bookings-table th {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.bookings-table tr:hover {
+    background: #f8f5f0;
+}
+
+.bookings-table tr.editing-row:hover {
+    background: #fffde7;
+}
+
+/* No data message */
+.no-data {
+    text-align: center;
+    color: var(--gray);
+    padding: 2rem;
+    font-style: italic;
+}
+
+/* Admin header */
+.admin-header {
+    background: var(--dark);
+    color: var(--white);
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.admin-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-header .logo {
+    color: var(--white);
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+#logout-btn {
+    padding: 0.5rem 1.5rem;
+    background: var(--danger);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+#logout-btn:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+/* Admin content */
+.admin-content {
+    padding: 2rem 0;
+    min-height: calc(100vh - 200px);
+}
+
+/* Bookings container */
+.bookings-table-container {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    overflow-x: auto;
+}
+
+.bookings-table-container h2 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+/* Manual booking form */
+.manual-booking-form {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    max-width: 600px;
+    margin-bottom: 2rem;
+}
+
+.manual-booking-form h3 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    border-bottom: 2px solid var(--secondary);
+    padding-bottom: 0.5rem;
+}
+
+.manual-booking-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.manual-booking-form .form-group {
+    margin-bottom: 1.2rem;
+}
+
+.manual-booking-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.manual-booking-form input,
+.manual-booking-form select,
+.manual-booking-form textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    transition: border-color 0.3s;
+    background: var(--white);
+}
+
+.manual-booking-form input:focus,
+.manual-booking-form select:focus,
+.manual-booking-form textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+}
+
+.manual-booking-form button[type="submit"] {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 0.5rem;
+}
+
+.manual-booking-form button[type="submit"]:hover {
+    background: var(--primary-dark);
+}
+
+/* Tables management */
+.tables-management {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.tables-management h3 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    border-bottom: 2px solid var(--secondary);
+    padding-bottom: 0.5rem;
+}
+
+/* Toast container (also defined in utils.js inline) */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

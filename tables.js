@@ -107,6 +107,8 @@ function renderFloorPlan() {
         floorPlan.style.background = `url('positions_photo/средний.jpg') center/cover no-repeat`;
     } else if (currentZone === 'танцпол') {
         floorPlan.style.background = `url('positions_photo/танцпол.jpg') center/cover no-repeat`;
+    } else if (currentZone === 'подвал') {
+        floorPlan.style.background = `url('positions_photo/подвал.jpg') center/cover no-repeat`;
     } else {
         floorPlan.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)';
     }
