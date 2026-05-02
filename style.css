@@ -42,10 +42,7 @@ header {
     top: 0;
     left: 0;
     z-index: 1000;
-    box-shadow: none;
-    border: none;
-    margin: 0;
-    transition: background 0.4s ease, box-shadow 0.4s ease;
+    transition: background 0.4s ease;
 }
 
 .header-inner {
@@ -76,12 +73,11 @@ nav a {
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 500;
-    transition: color 0.3s, text-shadow 0.3s;
+    transition: color 0.3s;
 }
 
 nav a:hover {
     color: var(--secondary);
-    text-shadow: 0 0 8px rgba(212,165,116,0.5);
 }
 
 nav ul {
@@ -96,6 +92,7 @@ nav ul {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
+    color: white;
 }
 
 .hero {
@@ -105,10 +102,6 @@ nav ul {
     justify-content: center;
     text-align: center;
     color: var(--white);
-    padding: 0;
-    margin: 0;
-    border: 0;
-    position: relative;
 }
 
 .hero-content h1 {
@@ -148,11 +141,6 @@ nav ul {
     background: var(--light);
 }
 
-/* Add top padding to sections after hero to account for fixed header */
-section {
-    position: relative;
-}
-
 .section-title {
     font-size: 2.2rem;
     margin-bottom: 2.5rem;
@@ -170,69 +158,43 @@ section {
     margin: 1rem auto 0;
 }
 
-.info-grid {
+/* ========== ГАЛЕРЕЯ В РАЗДЕЛЕ "О РЕСТОРАНЕ" ========== */
+.gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin: 2rem 0;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
 }
 
-.info-card {
-    background: var(--white);
-    padding: 2rem;
+.gallery img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    text-align: center;
     transition: transform 0.3s;
 }
 
-.info-card:hover {
-    transform: translateY(-5px);
+.gallery img:hover {
+    transform: scale(1.02);
 }
 
-.info-icon {
-    margin-bottom: 1rem;
-    color: var(--primary);
-}
-
-.info-card h3 {
-    color: var(--primary);
-    margin-bottom: 0.8rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-}
-
-.info-card p {
-    color: var(--gray);
-    font-size: 0.95rem;
-}
-
-.company-info {
-    text-align: center;
-    padding: 1.5rem;
-    background: var(--white);
+/* ========== КАРТА ========== */
+.map-wrapper {
     border-radius: var(--radius);
-    margin: 2rem 0;
-    font-size: 0.9rem;
-    color: var(--gray);
+    overflow: hidden;
 }
 
-.about-description {
-    padding: 2rem 0;
-    font-size: 1.05rem;
-    line-height: 1.9;
-    color: var(--dark);
-    text-align: left;
+
+.map-wrapper iframe {
+    width: 100%;
+    height: 500px;
+    
+    border: 0;
+    display: block;
+    border-radius: var(--radius);
 }
 
-.about-description p {
-    margin-bottom: 1rem;
-}
-
-.about-description p:last-child {
-    margin-bottom: 0;
-}
-
+/* ========== КОНТАКТЫ ========== */
 .contacts-layout {
     display: grid;
     grid-template-columns: 350px 1fr;
@@ -240,38 +202,11 @@ section {
     align-items: start;
 }
 
-.contacts-layout .contacts-list {
-    width: 100%;
-    padding: 2rem;
-    border-radius: var(--radius);
-    background: var(--white);
-    position: sticky;
-    top: 100px;
-}
-
-.contacts-layout .map-wrapper {
-    width: 95%;
-    height: 400px;
-    margin-top: 6%;
-    border-radius: var(--radius);
-}
-
-.map-wrapper iframe {
-    width: 100%;
-    height: 100%;
-    min-height: 450px;
-    border: 0;
-    border-radius: var(--radius);
-}
-
-
-
-
-
 .contacts-list {
     background: var(--white);
     padding: 2rem;
     border-radius: var(--radius);
+    
 }
 
 .contact-item {
@@ -316,107 +251,20 @@ section {
     margin-top: 0.3rem;
 }
 
-.map-wrapper {
-    border-radius: var(--radius);
-}
-
-
-.map-wrapper iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-    border-radius: var(--radius);
-}
-
-
-
-@media (max-width: 768px) {
-    .contacts-layout {
-        grid-template-columns: 1fr;
-    }
-    
-    .contacts-layout .contacts-list {
-        width: 100%;
-    }
-    
-    .map-wrapper {
-        height: 320px;
-    }
-
-    .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .footer-col {
-        padding: 0 0.5rem;
-    }
-}
-
-
-.footer-info {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem 3rem;
-    margin: 1rem 0;
+/* ========== О РЕСТОРАНЕ ========== */
+.about-description {
+    padding: 2rem 0;
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--dark);
     text-align: left;
 }
 
-.footer-info p {
-    color: #aaa;
-    font-size: 0.9rem;
-    margin: 0;
+.about-description p {
+    margin-bottom: 1rem;
 }
 
-.footer-info a {
-    color: var(--secondary);
-    text-decoration: none;
-}
-
-.footer-info a:hover {
-    text-decoration: underline;
-}
-
-.footer-info a:hover {
-    text-decoration: underline;
-}
-
-.copyright {
-    margin-top: 1.5rem;
-    font-size: 0.85rem;
-}
-
-.company-details {
-    font-size: 0.8rem;
-    margin-top: 0.3rem;
-}
-
-.social-link {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-}
-
-.gallery img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: var(--radius);
-    transition: transform 0.3s;
-}
-
-.gallery img:hover {
-    transform: scale(1.02);
-}
-
+/* ========== МЕНЮ ========== */
 .menu-section {
     background: var(--white);
 }
@@ -453,46 +301,71 @@ section {
 
 .menu-items {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
 }
-
+.menu-item:not(:has(.menu-item-photo)) {
+    padding-top: 1.2rem;
+}
 .menu-item {
-    background: var(--light);
-    padding: 1.5rem;
+    background: var(--white);
     border-radius: var(--radius);
     border-left: 4px solid var(--primary);
     transition: all 0.3s;
-    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-4px);
 }
 
 .menu-item .menu-item-photo {
     width: 100%;
     height: 180px;
     object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 0.8rem;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin: 0;
+    padding: 0;
     display: block;
+}
+
+/* Контент карточки с отступами */
+.menu-item h4,
+.menu-item p,
+.menu-item .price {
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
 }
 
 .menu-item h4 {
     font-size: 1.15rem;
     margin-bottom: 0.5rem;
+    margin-top: 1.2rem;
     font-weight: 600;
+    color: var(--dark);
 }
 
 .menu-item p {
     font-size: 0.9rem;
     color: var(--gray);
     margin-bottom: 0.8rem;
+    line-height: 1.5;
 }
 
 .menu-item .price {
     color: var(--primary);
     font-weight: 700;
     font-size: 1.2rem;
+    display: block;
+    margin-bottom: 1.2rem;
+    margin-top: 0;
 }
 
+/* ========== БРОНИРОВАНИЕ ========== */
 .booking-section {
     background: linear-gradient(135deg, #f5f0e8 0%, #ebe5db 100%);
 }
@@ -531,7 +404,6 @@ section {
     cursor: pointer;
     padding: 0.5rem;
     transition: all 0.3s;
-    line-height: 1;
 }
 
 .floor-plan-nav-btn:hover:not(:disabled) {
@@ -542,10 +414,6 @@ section {
 .floor-plan-nav-btn:disabled {
     color: #ccc;
     cursor: not-allowed;
-}
-
-.floor-plan-nav-btn:disabled:hover {
-    transform: none;
 }
 
 .zone-label {
@@ -587,7 +455,6 @@ section {
 }
 
 .table-marker.available:hover {
-    background: rgba(39, 174, 96, 0.8);
     transform: translate(-50%, -50%) scale(1.1);
 }
 
@@ -597,81 +464,50 @@ section {
     cursor: not-allowed;
 }
 
-.table-marker.booked:hover {
-    transform: translate(-50%, -50%) scale(1.05);
-}
-
 .table-marker.selected {
     background: rgba(249, 168, 37, 0.7);
     border: 3px solid rgba(249, 168, 37, 0.9);
-    box-shadow: 0 0 0 4px var(--secondary), 0 4px 15px rgba(249,168,37,0.5);
+    box-shadow: 0 0 0 4px var(--secondary);
     animation: pulse 1.5s infinite;
 }
 
-.table-marker.vip-table {
-    background: rgba(155, 89, 182, 0.6);
-    border: 3px solid #8e44ad;
-}
-
 @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 4px var(--secondary), 0 4px 15px rgba(249,168,37,0.5); }
-    50% { box-shadow: 0 0 0 8px rgba(249,168,37,0.3), 0 4px 20px rgba(249,168,37,0.7); }
-}
-
-.zone-nav {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: rgba(0,0,0,0.8);
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    z-index: 10;
-}
-
-.zone-title {
-    color: white;
-    font-weight: 600;
-    font-size: 1rem;
-    min-width: 150px;
-    text-align: center;
+    0%, 100% { box-shadow: 0 0 0 4px var(--secondary); }
+    50% { box-shadow: 0 0 0 8px rgba(249,168,37,0.3); }
 }
 
 .legend {
     position: absolute;
-    bottom: 50px;
+    bottom: 20px;
     right: 20px;
     background: rgba(0,0,0,0.7);
-    padding: 1rem;
+    padding: 0.8rem 1rem;
     border-radius: 8px;
     color: var(--white);
+    font-size: 0.8rem;
+    z-index: 10;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
 }
 
-.legend-item:last-child { margin-bottom: 0; }
-
 .legend-color {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
 }
 
-.legend-color.available { background: var(--success); border: 2px solid #2ecc71; }
-.legend-color.booked { background: var(--danger); border: 2px solid #c0392b; }
-.legend-color.selected { background: var(--secondary); border: 2px solid #f39c12; }
+.legend-color.available { background: var(--success); }
+.legend-color.booked { background: var(--danger); }
+.legend-color.selected { background: var(--secondary); }
 
 .mobile-tables-list { display: none; }
 
+/* ========== ФОРМА БРОНИРОВАНИЯ ========== */
 .booking-form {
     background: var(--white);
     padding: 2rem;
@@ -723,7 +559,6 @@ section {
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     font-size: 1rem;
-    font-family: 'Montserrat', sans-serif;
     background: var(--white);
     width: auto;
 }
@@ -739,14 +574,6 @@ section {
     border-color: var(--primary);
 }
 
-.form-group input::placeholder {
-    color: #aaa;
-}
-
-.booking-form button[type="submit"] {
-    width: 100%;
-}
-
 .filter-buttons {
     display: flex;
     gap: 0.5rem;
@@ -754,20 +581,6 @@ section {
     justify-content: center;
     margin-bottom: 1.5rem;
     flex-direction: column;
-}
-
-.filter-group {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-}
-
-.filter-group span {
-    font-weight: 500;
-    color: var(--gray);
-    margin-right: 0.5rem;
 }
 
 .filter-btn {
@@ -803,10 +616,6 @@ section {
 .mobile-table-card.booked {
     border-left-color: var(--danger);
     opacity: 0.8;
-}
-
-.mobile-table-card.selected {
-    border-left-color: var(--secondary);
 }
 
 .table-info { flex: 1; }
@@ -858,11 +667,7 @@ section {
     background: var(--primary-dark);
 }
 
-.book-btn.disabled {
-    background: #ccc;
-    cursor: not-allowed;
-}
-
+/* ========== ФУТЕР ========== */
 footer {
     background: var(--dark);
     color: var(--white);
@@ -874,68 +679,6 @@ footer {
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
     text-align: left;
-    align-items: start;
-}
-
-.footer-col {
-    padding: 0 1rem;
-    text-align: justify;
-}
-
-/* Modal styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-    background-color: var(--white);
-    padding: 2rem;
-    
-    border-radius: var(--radius);
-    width: 90%;
-    max-width: 600px;
-    position: absolute;
-    box-shadow: var(--shadow);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.booking-info-message {
-    background-color: rgba(255, 0, 0, 0.1);
-    border: 1px solid rgba(255, 0, 0, 0.3);
-    color: var(--danger);
-    padding: 0.3rem 0.8rem;
-    border-radius: var(--radius);
-    margin-bottom: 0.8rem;
-    text-align: center;
-    font-weight: 500;
-    font-size: 0.9rem;
-}
-
-.close-modal {
-    position: absolute;
-    top: 1rem;
-    right: 1.5rem;
-    font-size: 2rem;
-    font-weight: bold;
-    color: var(--gray);
-    cursor: pointer;
-}
-
-.close-modal:hover,
-.close-modal:focus {
-    color: var(--dark);
-    text-decoration: none;
-    cursor: pointer;
 }
 
 .footer-col h4 {
@@ -986,19 +729,47 @@ footer {
     font-size: 0.85rem;
 }
 
-.footer-logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--secondary);
+/* ========== МОДАЛЬНОЕ ОКНО ========== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
 }
 
-footer p {
-    color: #aaa;
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
+.modal-content {
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: var(--radius);
+    width: 90%;
+    max-width: 600px;
+    position: absolute;
+    box-shadow: var(--shadow);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
+.close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--gray);
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    color: var(--dark);
+}
+
+/* ========== АДМИН-ПАНЕЛЬ ========== */
 #admin-login-page {
     min-height: 100vh;
     display: flex;
@@ -1007,7 +778,6 @@ footer p {
     background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('ratusha.webp');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
 }
 
 .login-container {
@@ -1023,7 +793,6 @@ footer p {
     color: var(--primary);
     margin-bottom: 1.5rem;
     text-align: center;
-    font-size: 1.3rem;
 }
 
 .login-container button[type="submit"] {
@@ -1035,9 +804,7 @@ footer p {
     border-radius: 8px;
     font-size: 1.1rem;
     font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
     cursor: pointer;
-    transition: background 0.3s;
 }
 
 .login-container button[type="submit"]:hover {
@@ -1046,7 +813,6 @@ footer p {
 
 .admin-header {
     background: var(--dark);
-    color: var(--white);
     padding: 1rem 0;
 }
 
@@ -1058,6 +824,8 @@ footer p {
 
 .admin-header .logo {
     color: var(--white);
+    font-size: 1.3rem;
+    font-weight: 700;
 }
 
 #logout-btn {
@@ -1067,7 +835,6 @@ footer p {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
 }
 
 .admin-content {
@@ -1101,10 +868,6 @@ footer p {
     color: var(--primary);
 }
 
-.bookings-table tr:hover {
-    background: #fafafa;
-}
-
 .status-badge {
     display: inline-block;
     padding: 0.3rem 0.8rem;
@@ -1128,7 +891,6 @@ footer p {
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.8rem;
-    font-family: 'Montserrat', sans-serif;
 }
 
 .btn-confirm { background: var(--success); color: white; }
@@ -1155,8 +917,6 @@ footer p {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
 }
 
 .tables-management {
@@ -1193,7 +953,6 @@ footer p {
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
 }
 
 .no-data {
@@ -1202,6 +961,48 @@ footer p {
     padding: 2rem;
 }
 
+.edit-input {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    border: 2px solid var(--primary);
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.btn-action {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    margin: 0 2px;
+}
+
+.btn-edit { background: var(--primary); color: white; }
+.btn-delete { background: var(--danger); color: white; }
+.btn-save { background: var(--success); color: white; }
+.btn-cancel { background: #7f8c8d; color: white; }
+
+.editing-row {
+    background: #fffde7 !important;
+}
+
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ========== АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ========== */
 @media (max-width: 768px) {
     .header-inner {
         flex-wrap: wrap;
@@ -1245,410 +1046,57 @@ footer p {
         width: 100%;
     }
 
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
-
     .section-title {
         font-size: 1.8rem;
     }
 
     .gallery {
         grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .gallery img {
+        height: 200px;
     }
 
     .contacts-layout {
         grid-template-columns: 1fr;
-        align-items: stretch;
+        gap: 1.5rem;
     }
-
-    .contacts-list {
-        padding: 1.5rem;
-    }
-
-    .map-wrapper {
-        min-height: 350px;
-    }
-
-    .contacts-layout {
-        align-items: stretch;
-    }
-
-    .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .footer-col {
-        padding: 0 0.5rem;
-    }
-}
 
     .map-wrapper {
         height: 320px;
     }
 
-    .map-wrapper iframe {
-        height: 100%;
-    }
-
     .footer-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
     }
 
     .footer-col {
         padding: 0 0.5rem;
     }
-
-    .info-grid {
+    
+    .menu-items {
         grid-template-columns: 1fr;
     }
+}
 
-    .section-title {
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .section {
+        padding: 2rem 0;
+    }
+    
+    .hero-content h1 {
         font-size: 1.8rem;
     }
-
-    .gallery {
-        grid-template-columns: 1fr;
-    }
-
-    .contacts-layout {
-        grid-template-columns: 1fr;
-    }
-
-.contacts-list {
-        padding: 1.5rem;
-    }
-
-.map-wrapper {
-        min-height: 350px;
-    }
-
-    .contacts-layout {
-        align-items: stretch;
-    }
-
+    
     .footer-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
+        text-align: center;
     }
-
-    .footer-col {
-        padding: 0 0.5rem;
-    }
-
-
-
-/* ========== Admin Panel UI Improvements ========== */
-
-/* Edit inputs in table */
-.edit-input {
-    width: 100%;
-    padding: 0.4rem 0.6rem;
-    border: 2px solid var(--primary);
-    border-radius: 6px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-.edit-input:focus {
-    border-color: var(--primary-dark);
-    box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
-}
-
-/* Action buttons */
-.btn-action {
-    padding: 0.4rem 0.8rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 500;
-    transition: all 0.3s;
-    margin: 0 2px;
-}
-
-.btn-edit { background: var(--primary); color: white; }
-.btn-edit:hover { background: var(--primary-dark); transform: translateY(-1px); }
-
-.btn-delete { background: var(--danger); color: white; }
-.btn-delete:hover { background: #c0392b; transform: translateY(-1px); }
-
-.btn-save { background: var(--success); color: white; }
-.btn-save:hover { background: #219a52; transform: translateY(-1px); }
-
-.btn-cancel { background: #7f8c8d; color: white; }
-.btn-cancel:hover { background: #6c7b7d; transform: translateY(-1px); }
-
-.btn-block { background: var(--danger); color: white; }
-.btn-block:hover { background: #c0392b; }
-
-.btn-unblock { background: var(--success); color: white; }
-.btn-unblock:hover { background: #219a52; }
-
-/* Editing row highlight */
-.editing-row {
-    background: #fffde7 !important;
-    box-shadow: 0 0 0 2px var(--secondary) inset;
-}
-
-/* Table blocks (tables management) */
-.table-block {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    margin-bottom: 0.8rem;
-    background: var(--light);
-    border-radius: 10px;
-    border-left: 4px solid var(--primary);
-    transition: all 0.3s;
-}
-
-.table-block:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transform: translateX(4px);
-}
-
-.table-block.blocked {
-    background: #ffebee;
-    border-left-color: var(--danger);
-    opacity: 0.8;
-}
-
-.table-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-}
-
-.table-details {
-    font-size: 0.85rem;
-    color: var(--gray);
-}
-
-/* Status select in table */
-.status-select {
-    padding: 0.3rem 0.5rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-family: 'Montserrat', sans-serif;
-    border: 1px solid #ddd;
-    cursor: pointer;
-    background: white;
-    min-width: 120px;
-}
-
-.status-select:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.1);
-}
-
-/* Bookings table improvements */
-.bookings-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
-
-.bookings-table th,
-.bookings-table td {
-    padding: 0.8rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-    vertical-align: middle;
-}
-
-.bookings-table th {
-    background: var(--primary);
-    color: white;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
-}
-
-.bookings-table tr:hover {
-    background: #f8f5f0;
-}
-
-.bookings-table tr.editing-row:hover {
-    background: #fffde7;
-}
-
-/* No data message */
-.no-data {
-    text-align: center;
-    color: var(--gray);
-    padding: 2rem;
-    font-style: italic;
-}
-
-/* Admin header */
-.admin-header {
-    background: var(--dark);
-    color: var(--white);
-    padding: 1rem 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.admin-header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.admin-header .logo {
-    color: var(--white);
-    font-size: 1.3rem;
-    font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-#logout-btn {
-    padding: 0.5rem 1.5rem;
-    background: var(--danger);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    transition: all 0.3s;
-}
-
-#logout-btn:hover {
-    background: #c0392b;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-}
-
-/* Admin content */
-.admin-content {
-    padding: 2rem 0;
-    min-height: calc(100vh - 200px);
-}
-
-/* Bookings container */
-.bookings-table-container {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    box-shadow: var(--shadow);
-    margin-bottom: 2rem;
-    overflow-x: auto;
-}
-
-.bookings-table-container h2 {
-    color: var(--primary);
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-}
-
-/* Manual booking form */
-.manual-booking-form {
-    background: var(--white);
-    padding: 2rem;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    max-width: 600px;
-    margin-bottom: 2rem;
-}
-
-.manual-booking-form h3 {
-    color: var(--primary);
-    margin-bottom: 1.5rem;
-    font-size: 1.3rem;
-    border-bottom: 2px solid var(--secondary);
-    padding-bottom: 0.5rem;
-}
-
-.manual-booking-form .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-.manual-booking-form .form-group {
-    margin-bottom: 1.2rem;
-}
-
-.manual-booking-form label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    font-size: 0.9rem;
-    color: var(--gray);
-}
-
-.manual-booking-form input,
-.manual-booking-form select,
-.manual-booking-form textarea {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: 'Montserrat', sans-serif;
-    transition: border-color 0.3s;
-    background: var(--white);
-}
-
-.manual-booking-form input:focus,
-.manual-booking-form select:focus,
-.manual-booking-form textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
-}
-
-.manual-booking-form button[type="submit"] {
-    width: 100%;
-    padding: 1rem;
-    background: var(--primary);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
-    cursor: pointer;
-    transition: background 0.3s;
-    margin-top: 0.5rem;
-}
-
-.manual-booking-form button[type="submit"]:hover {
-    background: var(--primary-dark);
-}
-
-/* Tables management */
-.tables-management {
-    background: var(--white);
-    padding: 2rem;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-}
-
-.tables-management h3 {
-    color: var(--primary);
-    margin-bottom: 1.5rem;
-    font-size: 1.3rem;
-    border-bottom: 2px solid var(--secondary);
-    padding-bottom: 0.5rem;
-}
-
-/* Toast container (also defined in utils.js inline) */
-#toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10000;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
 }
