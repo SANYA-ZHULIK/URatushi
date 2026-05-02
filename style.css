@@ -378,26 +378,6 @@ section {
     text-decoration: underline;
 }
 
-.footer-info {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem 3rem;
-    margin: 1rem 0;
-    text-align: left;
-}
-
-.footer-info p {
-    color: #aaa;
-    font-size: 0.9rem;
-    margin: 0;
-}
-
-.footer-info a {
-    color: var(--secondary);
-    text-decoration: none;
-}
-
 .footer-info a:hover {
     text-decoration: underline;
 }
@@ -483,10 +463,16 @@ section {
     border-radius: var(--radius);
     border-left: 4px solid var(--primary);
     transition: all 0.3s;
+    position: relative;
 }
 
-.menu-item:hover {
-    box-shadow: var(--shadow);
+.menu-item .menu-item-photo {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    display: block;
 }
 
 .menu-item h4 {
@@ -1281,6 +1267,23 @@ footer p {
     }
 
     .map-wrapper {
+        min-height: 350px;
+    }
+
+    .contacts-layout {
+        align-items: stretch;
+    }
+
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-col {
+        padding: 0 0.5rem;
+    }
+}
+
+    .map-wrapper {
         height: 320px;
     }
 
@@ -1331,7 +1334,7 @@ footer p {
     .footer-col {
         padding: 0 0.5rem;
     }
-}
+
 
 
 /* ========== Admin Panel UI Improvements ========== */
