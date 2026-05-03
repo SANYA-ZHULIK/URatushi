@@ -1,4 +1,5 @@
 # Environment and secrets
+# Copy supabase-config.js from existing config or create new with URL and ANON_KEY
 supabase-config.js
 .env
 .env.local
