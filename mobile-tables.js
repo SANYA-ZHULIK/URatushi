@@ -70,15 +70,6 @@ function renderMobileZoneButtons() {
     });
 }
 
-function isMobileTableBooked(tableId, date, timeSlot) {
-    return mobileBookingsData.some(booking => 
-        booking.table_id === tableId && 
-        booking.date === date && 
-        booking.time_slot === timeSlot &&
-        (booking.status === 'new' || booking.status === 'confirmed')
-    );
-}
-
 function filterTables(tables) {
     let filtered = tables;
     
@@ -152,41 +143,25 @@ function selectMobileTable(tableNumber) {
     const selectedDate = dateInput?.value;
     const selectedTime = timeSelect?.value;
     
-    // Clear any existing booking info message
-    clearBookingInfoMessage();
+    window.clearBookingInfoMessage();
     
-    // Set form values but don't validate date/time here
     const tableNumberInput = document.getElementById('table-number');
     if (tableNumberInput) {
         tableNumberInput.value = tableNumber;
     }
     
-    // Check if table is booked for selected date/time (mobile version)
+    // Check availability
     if (selectedDate && selectedTime) {
-        // Find the booking to show details
-        const booking = mobileBookingsData.find(b => 
-            b.table_id === getTableIdByNumber(tableNumber) && 
-            b.date === selectedDate && 
-            b.time_slot === selectedTime &&
-            (b.status === 'new' || b.status === 'confirmed')
-        );
-        
-        if (booking) {
-            // Show booking info message inside the form
-            showBookingInfoInModal(`Этот столик уже забронирован на ${booking.time_slot} ${booking.date}`);
+        const table = mobileTablesData.find(t => t.number === tableNumber);
+        if (table) {
+            const result = window.checkTableAvailability(mobileBookingsData, table.id, selectedDate, selectedTime);
+            if (result.message) {
+                window.showBookingInfoInModal(result.message);
+            }
         }
     }
     
-    // Open modal instead of scrolling
-    openBookingModal();
-    
-    renderMobileTableList();
-}
-
-// Helper function to get table ID by number (local data)
-function getTableIdByNumber(tableNumber) {
-    const table = mobileTablesData.find(t => t.number === tableNumber);
-    return table ? table.id : null;
+    window.openBookingModal();
 }
 
 function setupMobileRealtime() {
@@ -230,12 +205,50 @@ function initMobileTables() {
     
     const dateInput = document.getElementById('booking-date');
     const timeSelect = document.getElementById('booking-time');
+    const tableInput = document.getElementById('table-number');
     
     if (dateInput) {
-        dateInput.addEventListener('change', () => renderMobileTableList());
+        dateInput.addEventListener('change', () => {
+            checkMobileBookingAvailability();
+        });
     }
     if (timeSelect) {
-        timeSelect.addEventListener('change', () => renderMobileTableList());
+        timeSelect.addEventListener('change', () => {
+            checkMobileBookingAvailability();
+        });
+    }
+    if (tableInput) {
+        tableInput.addEventListener('input', () => {
+            checkMobileBookingAvailability();
+        });
+    }
+}
+
+function checkMobileBookingAvailability() {
+    const dateInput = document.getElementById('booking-date');
+    const timeSelect = document.getElementById('booking-time');
+    const tableInput = document.getElementById('table-number');
+    
+    const selectedDate = dateInput?.value;
+    const selectedTime = timeSelect?.value;
+    const tableNumber = tableInput?.value;
+    
+    if (!selectedDate || !selectedTime || !tableNumber) {
+        window.clearBookingInfoMessage();
+        return;
+    }
+    
+    const table = mobileTablesData.find(t => t.number === tableNumber.toString());
+    if (!table) {
+        window.clearBookingInfoMessage();
+        return;
+    }
+    
+    const result = window.checkTableAvailability(mobileBookingsData, table.id, selectedDate, selectedTime);
+    if (result.message) {
+        window.showBookingInfoInModal(result.message);
+    } else {
+        window.clearBookingInfoMessage();
     }
 }
 

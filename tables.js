@@ -208,34 +208,24 @@ function selectTable(table) {
     const selectedTime = timeSelect?.value;
     
     // Clear any existing booking info message
-    clearBookingInfoMessage();
+    window.clearBookingInfoMessage();
     
-    // Set form values but don't validate date/time here
+    // Set form values
     const tableNumberInput = document.getElementById('table-number');
     if (tableNumberInput) {
         tableNumberInput.value = table.number;
     }
     
-    // Check if table is booked for selected date/time
-    if (selectedDate && selectedTime && isTableBooked(table.id, selectedDate, selectedTime)) {
-        // Find the booking to show details
-        const booking = bookingsData.find(b => 
-            b.table_id === table.id && 
-            b.date === selectedDate && 
-            b.time_slot === selectedTime &&
-            (b.status === 'new' || b.status === 'confirmed')
-        );
-        
-        if (booking) {
-            // Show booking info message inside the modal
-            showBookingInfoInModal(`Этот столик уже забронирован на ${booking.time_slot} ${booking.date}`);
+    // Check availability immediately
+    if (selectedDate && selectedTime) {
+        const result = window.checkTableAvailability(bookingsData, table.id, selectedDate, selectedTime);
+        if (result.message) {
+            window.showBookingInfoInModal(result.message);
         }
     }
     
-    // Open modal instead of scrolling
-    openBookingModal();
-    
-    renderFloorPlan();
+    // Open modal
+    window.openBookingModal();
 }
 
 function setupRealtime() {
@@ -262,19 +252,55 @@ function initFloorPlan() {
     
     const dateInput = document.getElementById('booking-date');
     const timeSelect = document.getElementById('booking-time');
+    const tableInput = document.getElementById('table-number');
     
     if (dateInput) {
         dateInput.addEventListener('change', () => {
-            selectedTableId = null;
-            renderFloorPlan();
+            checkBookingAvailability();
         });
     }
     
     if (timeSelect) {
         timeSelect.addEventListener('change', () => {
-            selectedTableId = null;
-            renderFloorPlan();
+            checkBookingAvailability();
         });
+    }
+    
+    if (tableInput) {
+        tableInput.addEventListener('input', () => {
+            checkBookingAvailability();
+        });
+    }
+}
+
+function checkBookingAvailability() {
+    const dateInput = document.getElementById('booking-date');
+    const timeSelect = document.getElementById('booking-time');
+    const tableInput = document.getElementById('table-number');
+    
+    const selectedDate = dateInput?.value;
+    const selectedTime = timeSelect?.value;
+    const tableNumber = tableInput?.value;
+    
+    if (!selectedDate || !selectedTime || !tableNumber) {
+        window.clearBookingInfoMessage();
+        return;
+    }
+    
+    // Find table ID
+    const table = tablesData.find(t => t.number === tableNumber.toString() || t.number.startsWith('B') && tableNumber.toString().startsWith('🍺'));
+    if (!table) {
+        window.clearBookingInfoMessage();
+        return;
+    }
+    
+    const result = window.checkTableAvailability(bookingsData, table.id, selectedDate, selectedTime);
+    if (result.warning && result.message) {
+        window.showBookingInfoInModal(result.message);
+    } else if (result.message) {
+        window.showBookingInfoInModal(result.message);
+    } else {
+        window.clearBookingInfoMessage();
     }
 }
 

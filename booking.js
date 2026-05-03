@@ -218,6 +218,22 @@ async function isTableAlreadyBooked(tableId, date, timeSlot) {
     return (data || []).length > 0;
 }
 
+async function checkTimeConflict(tableId, date, timeSlot) {
+    const client = getClient();
+    if (!client) return false;
+    const { data } = await client.from('bookings').select('time_slot').eq('table_id', tableId).eq('date', date).in('status', ['new', 'confirmed']);
+    if (!data || data.length === 0) return false;
+    
+    const selectedMinutes = window.timeToMinutes(timeSlot);
+    for (const booking of data) {
+        const bookingMinutes = window.timeToMinutes(booking.time_slot);
+        if (selectedMinutes >= bookingMinutes) {
+            return true;
+        }
+    }
+    return false;
+}
+
 async function submitBooking(event) {
     event.preventDefault();
     if (!await validateBooking()) return;
@@ -238,6 +254,12 @@ async function submitBooking(event) {
 
     if (await isTableAlreadyBooked(tableId, date.value, time.value)) {
         showToast('Столик уже забронирован на это время', 'warning');
+        return;
+    }
+    
+    // Check for time conflicts (new booking time must not be >= existing booking times)
+    if (await checkTimeConflict(tableId, date.value, time.value)) {
+        showToast('Нельзя забронировать столик на более позднее время, чем у существующей брони', 'warning');
         return;
     }
 

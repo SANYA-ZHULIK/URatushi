@@ -112,7 +112,7 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
-// Анимации для toasts
+// ========== МОДАЛЬНОЕ ОКНО ==========
 if (!document.getElementById('toast-styles')) {
     const style = document.createElement('style');
     style.id = 'toast-styles';
@@ -182,4 +182,56 @@ window.showBookingInfoInModal = function(message) {
     if (form) {
         form.insertBefore(messageDiv, form.firstChild);
     }
+};
+
+// ========== TIME UTILITIES ==========
+function timeToMinutes(timeStr) {
+    if (!timeStr) return 0;
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + (m || 0);
+}
+
+window.timeToMinutes = function(timeStr) {
+    if (!timeStr) return 0;
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + (m || 0);
+};
+
+// Check if table is booked on given date/time with 3-hour window
+// Guest can only book if time is <= (existing booking time - 3 hours)
+window.checkTableAvailability = function(bookingsData, tableId, date, timeSlot) {
+    if (!date || !timeSlot) return { available: true, message: '' };
+    
+    const selectedMinutes = timeToMinutes(timeSlot);
+    const bookingsOnDate = bookingsData.filter(b => 
+        b.table_id === tableId && 
+        b.date === date && 
+        (b.status === 'new' || b.status === 'confirmed')
+    );
+    
+    for (const booking of bookingsOnDate) {
+        const bookingMinutes = timeToMinutes(booking.time_slot);
+        const diff = selectedMinutes - bookingMinutes;
+        
+        // Exact match or later than existing booking - not allowed
+        if (diff >= 0) {
+            return {
+                available: false,
+                message: `Столик занят на ${booking.time_slot} (${booking.date}). Бронь на это время невозможна.`,
+                existingBooking: booking
+            };
+        }
+        
+        // Within 3 hours before existing booking - allow with warning
+        if (diff >= -180 && diff < 0) {
+            return {
+                available: true,
+                warning: true,
+                message: `Столик будет с ограничением по времени. Есть бронь на ${booking.time_slot}.`,
+                existingBooking: booking
+            };
+        }
+    }
+    
+    return { available: true, message: '' };
 };
