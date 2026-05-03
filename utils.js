@@ -122,3 +122,64 @@ if (!document.getElementById('toast-styles')) {
     `;
     document.head.appendChild(style);
 }
+
+// ========== МОДАЛЬНОЕ ОКНО ==========
+window.openBookingModal = function() {
+    const modal = document.getElementById('booking-modal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+window.closeBookingModal = function() {
+    const modal = document.getElementById('booking-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    window.clearBookingInfoMessage();
+};
+
+// Close modal on click outside or ESC
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('booking-modal');
+    if (modal && event.target === modal) {
+        window.closeBookingModal();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const closeBtn = document.querySelector('.close-modal');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', window.closeBookingModal);
+    }
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('booking-modal');
+            if (modal && modal.style.display === 'block') {
+                window.closeBookingModal();
+            }
+        }
+    });
+});
+
+// ========== BOOKING INFO MESSAGE ==========
+window.clearBookingInfoMessage = function() {
+    const existingMessage = document.querySelector('.booking-info-message');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+};
+
+window.showBookingInfoInModal = function(message) {
+    window.clearBookingInfoMessage();
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'booking-info-message';
+    messageDiv.style.cssText = 'background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 10px; margin-bottom: 1rem; color: #856404; font-size: 0.9rem;';
+    messageDiv.textContent = message;
+    const form = document.getElementById('booking-form');
+    if (form) {
+        form.insertBefore(messageDiv, form.firstChild);
+    }
+};

@@ -183,86 +183,11 @@ function selectMobileTable(tableNumber) {
     renderMobileTableList();
 }
 
-// Helper function to get table ID by number (mobile version)
+// Helper function to get table ID by number (local data)
 function getTableIdByNumber(tableNumber) {
     const table = mobileTablesData.find(t => t.number === tableNumber);
     return table ? table.id : null;
 }
-
-// Helper function to show booking info in modal
-function showBookingInfoInModal(message) {
-    // Remove any existing message
-    const existingMessage = document.querySelector('.booking-info-message');
-    if (existingMessage) {
-        existingMessage.remove();
-    }
-    
-    // Create message element
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'booking-info-message';
-    messageDiv.textContent = message;
-    
-    // Add message to the form (at the beginning)
-    const form = document.getElementById('booking-form');
-    if (form) {
-        form.insertBefore(messageDiv, form.firstChild);
-    }
-    
-    // Message remains visible until cleared by another selection or modal close
-}
-
-// Helper function to clear booking info message
-function clearBookingInfoMessage() {
-    const existingMessage = document.querySelector('.booking-info-message');
-    if (existingMessage) {
-        existingMessage.remove();
-    }
-}
-
-// Modal functions
-function openBookingModal() {
-    const modal = document.getElementById('booking-modal');
-    if (modal) {
-        modal.style.display = 'block';
-        // Prevent scrolling when modal is open
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function closeBookingModal() {
-    const modal = document.getElementById('booking-modal');
-    if (modal) {
-        modal.style.display = 'none';
-        // Re-enable scrolling when modal is closed
-        document.body.style.overflow = '';
-    }
-}
-
-// Close modal when clicking outside content or on close button
-window.onclick = function(event) {
-    const modal = document.getElementById('booking-modal');
-    if (modal && event.target === modal) {
-        closeBookingModal();
-    }
-}
-
-// Add close button event listener
-document.addEventListener('DOMContentLoaded', function() {
-    const closeBtn = document.querySelector('.close-modal');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeBookingModal);
-    }
-    
-    // Add ESC key listener
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            const modal = document.getElementById('booking-modal');
-            if (modal && modal.style.display === 'block') {
-                closeBookingModal();
-            }
-        }
-    });
-});
 
 function setupMobileRealtime() {
     const client = getClient();
