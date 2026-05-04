@@ -40,9 +40,30 @@
             <div class="container">
                 <div class="bookings-table-container">
                     <h2>Бронирования</h2>
+                    
+                    <div class="bookings-filters" style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                        <input type="text" id="search-input" placeholder="Поиск по имени, телефону..." style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                        <input type="date" id="filter-date" style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                        <select id="filter-status" style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                            <option value="">Все статусы</option>
+                            <option value="new">Новые</option>
+                            <option value="confirmed">Подтвержденные</option>
+                            <option value="completed">Завершенные</option>
+                            <option value="cancelled">Отмененные</option>
+                        </select>
+                        <button id="clear-filters" style="padding: 0.5rem 1rem; border-radius: 4px; border: 1px solid #8b4513; background: white; cursor: pointer;">Сбросить</button>
+                    </div>
+                    
+                    <div class="bulk-actions" style="margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center;">
+                        <button id="select-all-btn" style="padding: 0.5rem 1rem; border-radius: 4px; border: 1px solid #8b4513; background: white; cursor: pointer;">Все</button>
+                        <button id="bulk-confirm-btn" style="padding: 0.5rem 1rem; border-radius: 4px; border: none; background: #27ae60; color: white; cursor: pointer;">Подтвердить</button>
+                        <button id="bulk-cancel-btn" style="padding: 0.5rem 1rem; border-radius: 4px; border: none; background: #e74c3c; color: white; cursor: pointer;">Отменить</button>
+                    </div>
+                    
                     <table class="bookings-table">
                         <thead>
                             <tr>
+                                <th style="width: 40px;"><input type="checkbox" id="select-all-checkbox"></th>
                                 <th>ID</th>
                                 <th>Стол</th>
                                 <th>Имя</th>
@@ -50,6 +71,7 @@
                                 <th>Дата</th>
                                 <th>Время</th>
                                 <th>Гости</th>
+                                <th>Комментарий</th>
                                 <th>Статус</th>
                                 <th>Действия</th>
                             </tr>

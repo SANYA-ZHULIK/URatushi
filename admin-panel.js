@@ -1,6 +1,8 @@
 let allTables = [];
 let allBookings = [];
 let editingBookingId = null;
+let selectedBookingIds = new Set();
+let filters = { search: '', date: '', status: '' };
 
 function getClient() {
     return window.supabaseClient;
@@ -170,17 +172,34 @@ function getStatusText(status) {
 function renderBookingsTable() {
     const tbody = document.getElementById('bookings-tbody');
     if (!tbody) return;
-
-    if (allBookings.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="no-data">Нет бронирований</td></tr>';
+    
+    // Apply filters
+    let filteredBookings = allBookings.filter(b => {
+        if (filters.search) {
+            const search = filters.search.toLowerCase();
+            if (!(b.customer_name?.toLowerCase().includes(search) || 
+                  b.customer_phone?.toLowerCase().includes(search))) {
+                return false;
+            }
+        }
+        if (filters.date && b.date !== filters.date) return false;
+        if (filters.status && b.status !== filters.status) return false;
+        return true;
+    });
+    
+    if (filteredBookings.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="no-data">Нет бронирований</td></tr>';
         return;
     }
-
-    tbody.innerHTML = allBookings.map(b => {
+    
+    tbody.innerHTML = filteredBookings.map(b => {
         const safeId = b.id || '';
         const isEditing = editingBookingId === b.id;
+        const isSelected = selectedBookingIds.has(b.id);
+        const comment = b.comment ? b.comment.substring(0, 50) + (b.comment.length > 50 ? '...' : '') : '-';
         return `
         <tr${isEditing ? ' class="editing-row"' : ''}>
+            <td><input type="checkbox" class="booking-checkbox" data-id="${safeId}" ${isSelected ? 'checked' : ''}></td>
             <td>${safeId}</td>
             <td><strong>Стол ${getTableNumber(b.table_id)}</strong></td>
             <td>${isEditing ? '<input type="text" id="edit-name" value="' + (b.customer_name || '') + '" class="edit-input">' : (b.customer_name || '-')}</td>
@@ -188,6 +207,7 @@ function renderBookingsTable() {
             <td>${b.date || '-'}</td>
             <td>${b.time_slot || '-'}</td>
             <td>${b.guests_count || '-'}</td>
+            <td title="${b.comment || ''}">${comment}</td>
             <td>
                 <select onchange="updateStatus(${safeId}, this.value)" class="status-select ${getStatusClass(b.status)}" ${isEditing ? 'disabled' : ''}>
                     <option value="new" ${b.status === 'new' ? 'selected' : ''}>Новая</option>
@@ -204,6 +224,18 @@ function renderBookingsTable() {
         </tr>
     `;
     }).join('');
+    
+    // Add checkbox event listeners
+    document.querySelectorAll('.booking-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+            const id = parseInt(e.target.dataset.id);
+            if (e.target.checked) {
+                selectedBookingIds.add(id);
+            } else {
+                selectedBookingIds.delete(id);
+            }
+        });
+    });
 }
 
 function startEdit(id) {
@@ -417,6 +449,112 @@ function setupRealtime() {
         });
 }
 
+// Filter functions
+function applyFilters() {
+    const searchInput = document.getElementById('search-input');
+    const dateFilter = document.getElementById('filter-date');
+    const statusFilter = document.getElementById('filter-status');
+    
+    if (searchInput) filters.search = searchInput.value.trim();
+    if (dateFilter) filters.date = dateFilter.value;
+    if (statusFilter) filters.status = statusFilter.value;
+    
+    renderBookingsTable();
+}
+
+function clearFilters() {
+    filters = { search: '', date: '', status: '' };
+    const searchInput = document.getElementById('search-input');
+    const dateFilter = document.getElementById('filter-date');
+    const statusFilter = document.getElementById('filter-status');
+    
+    if (searchInput) searchInput.value = '';
+    if (dateFilter) dateFilter.value = '';
+    if (statusFilter) statusFilter.value = '';
+    
+    renderBookingsTable();
+}
+
+// Bulk actions
+async function bulkUpdateStatus(status) {
+    if (selectedBookingIds.size === 0) {
+        showToast('Выберите бронирования', 'warning');
+        return;
+    }
+    
+    const client = getClient();
+    if (!client) return;
+    
+    const ids = Array.from(selectedBookingIds);
+    
+    try {
+        const { error } = await client.from('bookings').update({ status }).in('id', ids);
+        if (error) throw error;
+        
+        selectedBookingIds.clear();
+        await loadBookings();
+        showToast(`${ids.length} бронирований обновлено`, 'success');
+    } catch (err) {
+        console.error('Bulk update error:', err);
+        showToast('Ошибка: ' + (err.message || err), 'error');
+    }
+}
+
+function setupFilterEvents() {
+    const searchInput = document.getElementById('search-input');
+    const dateFilter = document.getElementById('filter-date');
+    const statusFilter = document.getElementById('filter-status');
+    const clearFiltersBtn = document.getElementById('clear-filters');
+    const selectAllBtn = document.getElementById('select-all-btn');
+    const selectAllCheckbox = document.getElementById('select-all-checkbox');
+    const bulkConfirmBtn = document.getElementById('bulk-confirm-btn');
+    const bulkCancelBtn = document.getElementById('bulk-cancel-btn');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', () => setTimeout(applyFilters, 300));
+    }
+    if (dateFilter) {
+        dateFilter.addEventListener('change', applyFilters);
+    }
+    if (statusFilter) {
+        statusFilter.addEventListener('change', applyFilters);
+    }
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener('click', clearFilters);
+    }
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', () => {
+            const checkboxes = document.querySelectorAll('.booking-checkbox');
+            const allSelected = Array.from(checkboxes).every(cb => cb.checked);
+            checkboxes.forEach(cb => cb.checked = !allSelected);
+            selectedBookingIds.clear();
+            if (!allSelected) {
+                checkboxes.forEach(cb => selectedBookingIds.add(parseInt(cb.dataset.id)));
+            }
+        });
+    }
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', (e) => {
+            const checkboxes = document.querySelectorAll('.booking-checkbox');
+            checkboxes.forEach(cb => {
+                cb.checked = e.target.checked;
+                const id = parseInt(cb.dataset.id);
+                if (e.target.checked) {
+                    selectedBookingIds.add(id);
+                } else {
+                    selectedBookingIds.delete(id);
+                }
+            });
+        });
+    }
+    if (bulkConfirmBtn) {
+        bulkConfirmBtn.addEventListener('click', () => bulkUpdateStatus('confirmed'));
+    }
+    if (bulkCancelBtn) {
+        bulkCancelBtn.addEventListener('click', () => bulkUpdateStatus('cancelled'));
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initSupabase(function() {
         console.log('Admin panel ready');
@@ -450,7 +588,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const dateInput = document.getElementById('manual-date');
         if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-
+        
+        setupFilterEvents();
+        
         initAdmin();
     });
 });
