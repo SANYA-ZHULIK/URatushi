@@ -31,6 +31,18 @@ function populateGuestsSelect(selectId) {
     select.innerHTML = opts;
 }
 
+// Заполнение select с количеством гостей в диапазоне
+function populateGuestsSelectWithRange(selectId, minSeats, maxSeats) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    let opts = '<option value="">Выберите</option>';
+    for (let i = minSeats; i <= maxSeats; i++) {
+        let label = i === 1 ? 'гость' : (i <= 4 ? 'гостя' : 'гостей');
+        opts += `<option value="${i}">${i} ${label}</option>`;
+    }
+    select.innerHTML = opts;
+}
+
 // Установка минимальной даты (сегодня)
 function setupDateValidation(inputId) {
     const input = document.getElementById(inputId);

@@ -4,6 +4,8 @@ let selectedTableId = null;
 let currentZoneIndex = 0;
 let zones = [];
 
+window.allTablesData = [];
+
 const ZONE_COOKIE_KEY = 'booking_zone';
 
 function getClient() {
@@ -43,6 +45,7 @@ async function loadTables() {
     }
 
     tablesData = data || [];
+    window.allTablesData = [...tablesData];
     
     zones = [...new Set(tablesData.map(t => t.zone_name))];
     console.log('Tables loaded:', tablesData.length, 'Zones:', zones);
@@ -215,6 +218,9 @@ function selectTable(table) {
     if (tableNumberInput) {
         tableNumberInput.value = table.number;
     }
+    
+    // Update guests range based on table seats
+    updateGuestsRangeForTable(table.number);
     
     // Check availability immediately
     if (selectedDate && selectedTime) {

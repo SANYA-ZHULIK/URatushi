@@ -211,6 +211,45 @@ async function getTableIdByNumber(tableNumber) {
     return data?.id;
 }
 
+async function getTableSeatsInfo(tableNumber) {
+    const client = getClient();
+    if (!client) return null;
+    const { data } = await client.from('tables').select('seats, max_seats').eq('number', tableNumber.toString()).single();
+    return data;
+}
+
+function updateGuestsRangeForTable(tableNumber) {
+    if (!tableNumber) {
+        populateGuestsSelect('guests-count');
+        return;
+    }
+    
+    // Check global tables data (desktop)
+    if (window.allTablesData && window.allTablesData.length > 0) {
+        const table = window.allTablesData.find(t => t.number === tableNumber.toString() || t.number.startsWith('B') && tableNumber.toString().startsWith('🍺'));
+        if (table && table.seats != null) {
+            const minSeats = table.seats;
+            const maxSeats = table.max_seats || table.seats;
+            populateGuestsSelectWithRange('guests-count', minSeats, maxSeats);
+            return;
+        }
+    }
+    
+    // Check global tables data (mobile)
+    if (window.mobileTablesData && window.mobileTablesData.length > 0) {
+        const table = window.mobileTablesData.find(t => t.number === tableNumber.toString() || t.number.startsWith('B') && tableNumber.toString().startsWith('🍺'));
+        if (table && table.seats != null) {
+            const minSeats = table.seats;
+            const maxSeats = table.max_seats || table.seats;
+            populateGuestsSelectWithRange('guests-count', minSeats, maxSeats);
+            return;
+        }
+    }
+    
+    // Fallback to default range
+    populateGuestsSelect('guests-count');
+}
+
 async function isTableAlreadyBooked(tableId, date, timeSlot) {
     const client = getClient();
     if (!client) return false;
@@ -318,6 +357,17 @@ function initBookingForm() {
             el.addEventListener('input', saveBookingData);
         }
     });
+    
+    // Update guests range when table number changes
+    const tableInput = document.getElementById('table-number');
+    if (tableInput) {
+        tableInput.addEventListener('input', () => {
+            updateGuestsRangeForTable(tableInput.value);
+        });
+        tableInput.addEventListener('change', () => {
+            updateGuestsRangeForTable(tableInput.value);
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initBookingForm);

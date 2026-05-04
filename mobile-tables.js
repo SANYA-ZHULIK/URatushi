@@ -5,6 +5,8 @@ let currentSeatsFilter = 'all';
 let mobileZones = [];
 let currentZoneFilter = 'all';
 
+window.mobileTablesData = [];
+
 function getClient() {
     return window.supabaseClient;
 }
@@ -28,6 +30,7 @@ async function loadMobileTables() {
     }
 
     mobileTablesData = data || [];
+    window.mobileTablesData = [...mobileTablesData];
     mobileZones = [...new Set(mobileTablesData.map(t => t.zone_name))];
     renderMobileZoneButtons();
     renderMobileTableList();
@@ -149,6 +152,9 @@ function selectMobileTable(tableNumber) {
     if (tableNumberInput) {
         tableNumberInput.value = tableNumber;
     }
+    
+    // Update guests range for mobile table
+    updateGuestsRangeForTable(tableNumber);
     
     // Check availability
     if (selectedDate && selectedTime) {
