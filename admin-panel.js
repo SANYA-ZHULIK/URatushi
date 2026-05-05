@@ -308,7 +308,7 @@ async function deleteBooking(id) {
 }
 
 function populateTableSelect() {
-    const select = document.getElementById('manual-table');
+    const select = document.getElementById('add-table');
     if (!select) return;
 
     const options = allTables.map(t => {
@@ -320,62 +320,6 @@ function populateTableSelect() {
     }).join('');
 
     select.innerHTML = '<option value="">Выберите столик</option>' + options;
-}
-
-async function addManualBooking(event) {
-    event.preventDefault();
-
-    const client = getClient();
-    if (!client) return;
-
-    const tableSelect = document.getElementById('manual-table');
-    const tableId = parseInt(tableSelect.value, 10);
-    if (!tableId || isNaN(tableId)) {
-        showToast('Выберите столик', 'warning');
-        return;
-    }
-
-    const name = document.getElementById('manual-name').value.trim();
-    const phone = document.getElementById('manual-phone').value.trim();
-    const date = document.getElementById('manual-date').value;
-    const time = document.getElementById('manual-time').value;
-    const guests = parseInt(document.getElementById('manual-guests').value, 10);
-
-    if (!name || !phone || !date || !time || !guests) {
-        showToast('Заполните все обязательные поля', 'warning');
-        return;
-    }
-
-    // Валидация даты
-    const today = new Date().toISOString().split('T')[0];
-    if (date < today) {
-        showToast('Нельзя бронировать на прошедшую дату', 'warning');
-        return;
-    }
-
-    const data = {
-        table_id: tableId,
-        customer_name: name,
-        customer_phone: phone,
-        date: date,
-        time_slot: time,
-        guests_count: guests,
-        comment: document.getElementById('manual-comment').value.trim() || null,
-        status: 'confirmed'
-    };
-
-    try {
-        const { error } = await client.from('bookings').insert(data);
-        if (error) throw error;
-        showToast('Бронь успешно добавлена!', 'success');
-        document.getElementById('manual-booking-form').reset();
-        const dateInput = document.getElementById('manual-date');
-        if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-        await loadBookings();
-    } catch (err) {
-        console.error('Add booking error:', err);
-        showToast('Ошибка добавления: ' + (err.message || err), 'error');
-    }
 }
 
 function renderTablesList() {
@@ -574,23 +518,125 @@ document.addEventListener('DOMContentLoaded', () => {
             logoutAdmin();
         });
 
-        const form = document.getElementById('manual-booking-form');
-        if (form) form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            addManualBooking(e);
-        });
+        // Modal booking form
+        const addBookingForm = document.getElementById('add-booking-form');
+        if (addBookingForm) {
+            addBookingForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                addBookingViaModal(e);
+            });
+        }
+
+        const addBookingBtn = document.getElementById('add-booking-btn');
+        if (addBookingBtn) {
+            addBookingBtn.addEventListener('click', openAddBookingModal);
+        }
+
+        // Close modal handlers
+        const closeModal = document.querySelector('#add-booking-modal .close-modal');
+        if (closeModal) {
+            closeModal.addEventListener('click', closeAddBookingModal);
+        }
+
+        const addBookingModal = document.getElementById('add-booking-modal');
+        if (addBookingModal) {
+            addBookingModal.addEventListener('click', (e) => {
+                if (e.target === addBookingModal) {
+                    closeAddBookingModal();
+                }
+            });
+        }
 
         // Используем общие утилиты из utils.js
-        populateTimeSelect('manual-time');
-        populateGuestsSelect('manual-guests');
-        setupDateValidation('manual-date');
+        populateTimeSelect('add-time');
+        populateGuestsSelect('add-guests');
+        setupDateValidation('add-date');
 
-        const dateInput = document.getElementById('manual-date');
-        if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+        const addDateInput = document.getElementById('add-date');
+        if (addDateInput) addDateInput.value = new Date().toISOString().split('T')[0];
         
         setupFilterEvents();
         
         initAdmin();
     });
 });
+
+// Modal functions
+window.openAddBookingModal = function() {
+    populateTableSelect();
+    const modal = document.getElementById('add-booking-modal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+window.closeAddBookingModal = function() {
+    const modal = document.getElementById('add-booking-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+};
+
+async function addBookingViaModal(event) {
+    const client = getClient();
+    if (!client) return;
+
+    const tableSelect = document.getElementById('add-table');
+    const tableId = parseInt(tableSelect.value, 10);
+    if (!tableId || isNaN(tableId)) {
+        showToast('Выберите столик', 'warning');
+        return;
+    }
+
+    const name = document.getElementById('add-name').value.trim();
+    const phone = document.getElementById('add-phone').value.trim();
+    const date = document.getElementById('add-date').value;
+    const time = document.getElementById('add-time').value;
+    const guests = parseInt(document.getElementById('add-guests').value, 10);
+
+    if (!name || !phone || !date || !time || !guests) {
+        showToast('Заполните все обязательные поля', 'warning');
+        return;
+    }
+
+    // Валидация даты
+    const today = new Date().toISOString().split('T')[0];
+    if (date < today) {
+        showToast('Нельзя бронировать на прошедшую дату', 'warning');
+        return;
+    }
+
+    const data = {
+        table_id: tableId,
+        customer_name: name,
+        customer_phone: phone,
+        date: date,
+        time_slot: time,
+        guests_count: guests,
+        comment: document.getElementById('add-comment').value.trim() || null,
+        status: 'confirmed'
+    };
+
+    const btn = document.querySelector('#add-booking-form button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Добавление...';
+
+    try {
+        const { error } = await client.from('bookings').insert(data);
+        if (error) throw error;
+        showToast('Бронь успешно добавлена!', 'success');
+        document.getElementById('add-booking-form').reset();
+        const dateInput = document.getElementById('add-date');
+        if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+        await loadBookings();
+        closeAddBookingModal();
+    } catch (err) {
+        console.error('Add booking error:', err);
+        showToast('Ошибка добавления: ' + (err.message || err), 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Добавить бронь';
+    }
+}

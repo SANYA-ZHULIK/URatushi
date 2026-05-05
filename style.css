@@ -786,6 +786,12 @@ footer {
     background-position: center;
 }
 
+.admin-login-bg {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('ratusha.webp');
+    background-size: cover;
+    background-position: center;
+}
+
 .login-container {
     background: var(--white);
     padding: 2.5rem;
@@ -902,28 +908,6 @@ footer {
 .btn-confirm { background: var(--success); color: white; }
 .btn-complete { background: #3498db; color: white; }
 .btn-cancel { background: var(--danger); color: white; }
-
-.manual-booking-form {
-    background: var(--white);
-    padding: 2rem;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    max-width: 600px;
-}
-
-.manual-booking-form h3 {
-    margin-bottom: 1.5rem;
-    color: var(--primary);
-}
-
-.manual-booking-form button[type="submit"] {
-    padding: 0.8rem 2rem;
-    background: var(--primary);
-    color: var(--white);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
 
 .tables-management {
     margin-top: 2rem;
@@ -1104,5 +1088,158 @@ footer {
     .footer-grid {
         grid-template-columns: 1fr;
         text-align: center;
+    }
+}
+
+/* ========== АДМИН-ПАНЕЛЬ - УЛУЧШЕННЫЙ UI ========== */
+.bookings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.bookings-header h2 {
+    color: var(--primary);
+    margin: 0;
+}
+
+#add-booking-btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.95rem;
+}
+
+.bookings-filters {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.bookings-filters input[type="text"],
+.bookings-filters input[type="date"],
+.bookings-filters select {
+    padding: 0.6rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    background: var(--white);
+    transition: border-color 0.3s;
+}
+
+.bookings-filters input:focus,
+.bookings-filters select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.bookings-filters select {
+    cursor: pointer;
+    padding: 0.6rem 2.5rem 0.6rem 1rem;
+    appearance: none;
+    background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath fill='%23666' d='M0 0l6 6 6-6z'/%3E%3C/svg%3E") no-repeat right 12px center;
+}
+
+.bookings-filters button {
+    padding: 0.6rem 1.2rem;
+    background: var(--light);
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    color: var(--primary);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.bookings-filters button:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.bulk-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.bulk-actions button {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#select-all-btn {
+    background: var(--light);
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+#select-all-btn:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+#bulk-confirm-btn {
+    background: var(--success);
+    color: var(--white);
+}
+
+#bulk-confirm-btn:hover {
+    opacity: 0.9;
+}
+
+#bulk-cancel-btn {
+    background: var(--danger);
+    color: var(--white);
+}
+
+#bulk-cancel-btn:hover {
+    opacity: 0.9;
+}
+
+#add-booking-modal .modal-content {
+    max-width: 600px;
+}
+
+#add-booking-modal h3 {
+    margin-bottom: 1.5rem;
+    color: var(--primary);
+    font-size: 1.5rem;
+}
+
+#add-booking-modal .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .bookings-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .bookings-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .bookings-filters input,
+    .bookings-filters select,
+    .bookings-filters button {
+        width: 100%;
+    }
+    
+    #add-booking-modal .form-row {
+        grid-template-columns: 1fr;
     }
 }

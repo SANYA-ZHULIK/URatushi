@@ -22,7 +22,7 @@
                 <label for="admin-password">Пароль</label>
                 <input type="password" id="admin-password" autocomplete="off" required>
             </div>
-            <button type="submit">Войти</button>
+            <button type="submit" class="btn-primary">Войти</button>
         </form>
     </div>
 
@@ -30,34 +30,35 @@
         <div class="admin-header">
             <div class="container">
                 <div class="logo">Панель управления</div>
-                <div>
-                    <button id="logout-btn">Выйти</button>
-                </div>
+                <button id="logout-btn" class="btn-primary">Выйти</button>
             </div>
         </div>
 
         <div class="admin-content">
             <div class="container">
                 <div class="bookings-table-container">
-                    <h2>Бронирования</h2>
+                    <div class="bookings-header">
+                        <h2>Бронирования</h2>
+                        <button id="add-booking-btn" class="btn-primary">+ Добавить бронь</button>
+                    </div>
                     
-                    <div class="bookings-filters" style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-                        <input type="text" id="search-input" placeholder="Поиск по имени, телефону..." style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
-                        <input type="date" id="filter-date" style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
-                        <select id="filter-status" style="padding: 0.5rem; border-radius: 4px; border: 1px solid #ddd;">
+                    <div class="bookings-filters">
+                        <input type="text" id="search-input" placeholder="Поиск по имени, телефону...">
+                        <input type="date" id="filter-date">
+                        <select id="filter-status">
                             <option value="">Все статусы</option>
                             <option value="new">Новые</option>
                             <option value="confirmed">Подтвержденные</option>
                             <option value="completed">Завершенные</option>
                             <option value="cancelled">Отмененные</option>
                         </select>
-                        <button id="clear-filters" style="padding: 0.5rem 1rem; border-radius: 4px; border: 1px solid #8b4513; background: white; cursor: pointer;">Сбросить</button>
+                        <button id="clear-filters">Сбросить</button>
                     </div>
                     
-                    <div class="bulk-actions" style="margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center;">
-                        <button id="select-all-btn" style="padding: 0.5rem 1rem; border-radius: 4px; border: 1px solid #8b4513; background: white; cursor: pointer;">Все</button>
-                        <button id="bulk-confirm-btn" style="padding: 0.5rem 1rem; border-radius: 4px; border: none; background: #27ae60; color: white; cursor: pointer;">Подтвердить</button>
-                        <button id="bulk-cancel-btn" style="padding: 0.5rem 1rem; border-radius: 4px; border: none; background: #e74c3c; color: white; cursor: pointer;">Отменить</button>
+                    <div class="bulk-actions">
+                        <button id="select-all-btn">Все</button>
+                        <button id="bulk-confirm-btn">Подтвердить</button>
+                        <button id="bulk-cancel-btn">Отменить</button>
                     </div>
                     
                     <table class="bookings-table">
@@ -80,50 +81,54 @@
                     </table>
                 </div>
 
-                <div class="manual-booking-form">
-                    <h3>Добавить бронь</h3>
-                    <form id="manual-booking-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="manual-table">Сталик</label>
-                                <select id="manual-table" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="manual-date">Дата</label>
-                                <input type="date" id="manual-date" required>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="manual-time">Время</label>
-                                <select id="manual-time" required></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="manual-guests">Гости</label>
-                                <select id="manual-guests" required></select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="manual-name">Имя клиента</label>
-                            <input type="text" id="manual-name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="manual-phone">Телефон</label>
-                            <input type="tel" id="manual-phone" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="manual-comment">Комментарий</label>
-                            <textarea id="manual-comment" rows="2"></textarea>
-                        </div>
-                        <button type="submit">Добавить бронь</button>
-                    </form>
-                </div>
-
                 <div class="tables-management">
                     <h3>Управление столиками</h3>
                     <div id="tables-list"></div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal for add booking -->
+    <div id="add-booking-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Добавить бронь</h3>
+            <form id="add-booking-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="add-table">Столик</label>
+                        <select id="add-table" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-date">Дата</label>
+                        <input type="date" id="add-date" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="add-time">Время</label>
+                        <select id="add-time" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="add-guests">Гости</label>
+                        <select id="add-guests" required></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="add-name">Имя клиента</label>
+                    <input type="text" id="add-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="add-phone">Телефон</label>
+                    <input type="tel" id="add-phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="add-comment">Комментарий</label>
+                    <textarea id="add-comment" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Добавить бронь</button>
+            </form>
         </div>
     </div>
 
