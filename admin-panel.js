@@ -193,7 +193,7 @@ function renderBookingsTable() {
         const isSelected = selectedBookingIds.has(b.id);
         const comment = b.comment ? b.comment.substring(0, 50) + (b.comment.length > 50 ? '...' : '') : '-';
         return `
-        <tr${isEditing ? ' class="editing-row"' : ''}>
+        <tr class="${isEditing ? 'editing-row' : ''} ${isSelected ? 'selected-row' : ''}">
             <td><input type="checkbox" class="booking-checkbox" data-id="${safeId}" ${isSelected ? 'checked' : ''}></td>
             <td>${safeId}</td>
             <td><strong>Стол ${getTableNumber(b.table_id)}</strong></td>
@@ -204,7 +204,7 @@ function renderBookingsTable() {
             <td>${b.guests_count || '-'}</td>
             <td title="${b.comment || ''}">${comment}</td>
             <td>
-                <select onchange="updateStatus(${safeId}, this.value)" class="status-select" ${isEditing ? 'disabled' : ''}>
+                <select onchange="updateStatus(${safeId}, this.value)" class="status-select ${getStatusClass(b.status)}" ${isEditing ? 'disabled' : ''}>
                     <option value="new" ${b.status === 'new' ? 'selected' : ''}>Новая</option>
                     <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Подтверждена</option>
                     <option value="completed" ${b.status === 'completed' ? 'selected' : ''}>Завершена</option>
@@ -224,10 +224,14 @@ function renderBookingsTable() {
     document.querySelectorAll('.booking-checkbox').forEach(cb => {
         cb.addEventListener('change', (e) => {
             const id = parseInt(e.target.dataset.id);
+            const row = e.target.closest('tr');
+            
             if (e.target.checked) {
                 selectedBookingIds.add(id);
+                row.classList.add('selected-row');
             } else {
                 selectedBookingIds.delete(id);
+                row.classList.remove('selected-row');
             }
         });
     });
@@ -465,11 +469,17 @@ function setupFilterEvents() {
         selectAllBtn.addEventListener('click', () => {
             const checkboxes = document.querySelectorAll('.booking-checkbox');
             const allSelected = Array.from(checkboxes).every(cb => cb.checked);
-            checkboxes.forEach(cb => cb.checked = !allSelected);
-            selectedBookingIds.clear();
-            if (!allSelected) {
-                checkboxes.forEach(cb => selectedBookingIds.add(parseInt(cb.dataset.id)));
-            }
+            checkboxes.forEach(cb => {
+                cb.checked = !allSelected;
+                const row = cb.closest('tr');
+                if (!allSelected) {
+                    selectedBookingIds.add(parseInt(cb.dataset.id));
+                    row.classList.add('selected-row');
+                } else {
+                    selectedBookingIds.delete(parseInt(cb.dataset.id));
+                    row.classList.remove('selected-row');
+                }
+            });
         });
     }
     if (selectAllCheckbox) {
@@ -478,10 +488,13 @@ function setupFilterEvents() {
             checkboxes.forEach(cb => {
                 cb.checked = e.target.checked;
                 const id = parseInt(cb.dataset.id);
+                const row = cb.closest('tr');
                 if (e.target.checked) {
                     selectedBookingIds.add(id);
+                    row.classList.add('selected-row');
                 } else {
                     selectedBookingIds.delete(id);
+                    row.classList.remove('selected-row');
                 }
             });
         });
