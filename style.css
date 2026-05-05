@@ -818,10 +818,11 @@ footer {
     background: var(--primary-dark);
 }
 
-.admin-header {
-    background: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-    padding: 1.2rem 0;
-}
+ .admin-header {
+     background: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+     padding: 1.2rem 0;
+     transition: background 0.4s ease;
+ }
 
 .admin-header .header-inner {
     display: flex;

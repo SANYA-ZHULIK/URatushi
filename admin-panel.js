@@ -8,6 +8,38 @@ function getClient() {
     return window.supabaseClient;
 }
 
+// Header scroll effect (identical to main site)
+function initHeaderScroll() {
+    const header = document.querySelector('header');
+    if (!header) return;
+
+    let ticking = false, isScrolled = false;
+
+    function updateHeaderOnScroll() {
+        const scrollY = window.scrollY;
+        if (scrollY < 100) {
+            if (isScrolled) {
+                isScrolled = false;
+                header.style.background = 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)';
+                header.style.boxShadow = 'none';
+            }
+        } else if (!isScrolled) {
+            isScrolled = true;
+            header.style.background = 'linear-gradient(to bottom, rgba(212, 165, 116, 0.9))';
+            header.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
+        }
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(updateHeaderOnScroll);
+            ticking = true;
+        }
+    }, { passive: true });
+    updateHeaderOnScroll();
+}
+
 async function initAdmin() {
     const client = getClient();
     if (!client) {
@@ -574,6 +606,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setupFilterEvents();
         
         initAdmin();
+        
+        // Header scroll effect (matching main site)
+        initHeaderScroll();
     });
 });
 
