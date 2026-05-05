@@ -164,11 +164,6 @@ function getStatusClass(status) {
     return { 'new': 'status-new', 'confirmed': 'status-confirmed', 'completed': 'status-completed', 'cancelled': 'status-cancelled' }[s] || '';
 }
 
-function getStatusText(status) {
-    const s = String(status || 'new').toLowerCase();
-    return { 'new': 'Новая', 'confirmed': 'Подтверждена', 'completed': 'Завершена', 'cancelled': 'Отменена' }[s] || (status || '');
-}
-
 function renderBookingsTable() {
     const tbody = document.getElementById('bookings-tbody');
     if (!tbody) return;
@@ -209,7 +204,7 @@ function renderBookingsTable() {
             <td>${b.guests_count || '-'}</td>
             <td title="${b.comment || ''}">${comment}</td>
             <td>
-                <select onchange="updateStatus(${safeId}, this.value)" class="status-select ${getStatusClass(b.status)}" ${isEditing ? 'disabled' : ''}>
+                <select onchange="updateStatus(${safeId}, this.value)" class="status-select" ${isEditing ? 'disabled' : ''}>
                     <option value="new" ${b.status === 'new' ? 'selected' : ''}>Новая</option>
                     <option value="confirmed" ${b.status === 'confirmed' ? 'selected' : ''}>Подтверждена</option>
                     <option value="completed" ${b.status === 'completed' ? 'selected' : ''}>Завершена</option>
