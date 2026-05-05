@@ -1004,6 +1004,16 @@ footer {
      cursor: pointer;
      accent-color: var(--primary);
      border-radius: 4px;
+     transition: all 0.2s;
+ }
+
+ .booking-checkbox:hover {
+     transform: scale(1.1);
+ }
+
+ .booking-checkbox:checked {
+     background-color: var(--primary);
+     border-color: var(--primary);
  }
 
 #toast-container {

@@ -402,6 +402,14 @@ function applyFilters() {
     if (dateFilter) filters.date = dateFilter.value;
     if (statusFilter) filters.status = statusFilter.value;
     
+    // Update status filter color class
+    if (statusFilter) {
+        statusFilter.classList.remove('status-new', 'status-confirmed', 'status-completed', 'status-cancelled');
+        if (statusFilter.value) {
+            statusFilter.classList.add('status-' + statusFilter.value);
+        }
+    }
+    
     renderBookingsTable();
 }
 
