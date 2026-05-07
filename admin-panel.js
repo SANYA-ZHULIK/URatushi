@@ -223,7 +223,7 @@ function renderBookingsTable() {
         const safeId = b.id || '';
         const isEditing = editingBookingId === b.id;
         const isSelected = selectedBookingIds.has(b.id);
-        const comment = b.comment ? b.comment.substring(0, 50) + (b.comment.length > 50 ? '...' : '') : '-';
+        const hasComment = b.comment && b.comment.trim();
         return `
         <tr class="${isEditing ? 'editing-row' : ''} ${isSelected ? 'selected-row' : ''}">
             <td><input type="checkbox" class="booking-checkbox" data-id="${safeId}" ${isSelected ? 'checked' : ''}></td>
@@ -234,7 +234,7 @@ function renderBookingsTable() {
             <td>${b.date || '-'}</td>
             <td>${b.time_slot || '-'}</td>
             <td>${b.guests_count || '-'}</td>
-            <td title="${b.comment || ''}">${comment}</td>
+            <td>${hasComment ? '<button onclick="showCommentModal(\'' + b.comment.replace(/'/g, '\\\'') + '\')" class="btn-action btn-comment" title="Посмотреть комментарий">💬</button>' : '-'}</td>
             <td>
                 <select onchange="updateStatus(${safeId}, this.value)" class="status-select ${getStatusClass(b.status)}" ${isEditing ? 'disabled' : ''}>
                     <option value="new" ${b.status === 'new' ? 'selected' : ''}>Новая</option>
@@ -686,8 +686,45 @@ async function addBookingViaModal(event) {
     } catch (err) {
         console.error('Add booking error:', err);
         showToast('Ошибка добавления: ' + (err.message || err), 'error');
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Добавить бронь';
+} finally {
+         btn.disabled = false;
+         btn.textContent = 'Добавить бронь';
+     }
+ }
+
+// ========== COMMENT MODAL ==========
+window.showCommentModal = function(comment) {
+    let modal = document.getElementById('comment-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'comment-modal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 500px;">
+                <span class="close-modal" onclick="closeCommentModal()">&times;</span>
+                <h3 style="margin-bottom: 1rem; color: var(--primary);">Комментарий</h3>
+                <p id="comment-text" style="white-space: pre-wrap; line-height: 1.6;"></p>
+            </div>
+        `;
+        document.body.appendChild(modal);
     }
-}
+    document.getElementById('comment-text').textContent = comment;
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+};
+
+window.closeCommentModal = function() {
+    const modal = document.getElementById('comment-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+};
+
+// Close on outside click
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('comment-modal');
+    if (modal && event.target === modal) {
+        closeCommentModal();
+    }
+});
