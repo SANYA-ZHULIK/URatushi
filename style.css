@@ -1032,11 +1032,22 @@ footer {
      box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
  }
 
- .btn-delete:active {
-     transform: scale(0.95);
- }
+.btn-delete:active {
+      transform: scale(0.95);
+  }
 
- .btn-save {
+  .btn-comment {
+      background: var(--secondary);
+      color: var(--dark);
+      box-shadow: 0 2px 4px rgba(212, 165, 116, 0.2);
+  }
+
+  .btn-comment:hover {
+      background: #c18a5a;
+      box-shadow: 0 4px 8px rgba(212, 165, 116, 0.3);
+  }
+
+  .btn-save {
      background: var(--success);
      color: white;
      box-shadow: 0 2px 4px rgba(39, 174, 96, 0.2);
