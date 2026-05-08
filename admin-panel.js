@@ -1,8 +1,10 @@
-let allTables = [];
-let allBookings = [];
-let editingBookingId = null;
-let selectedBookingIds = new Set();
-let filters = { search: '', date: '', status: '' };
+// Wrap in IIFE to avoid global conflicts when script loads twice
+(() => {
+    let allTables = [];
+    let allBookings = [];
+    let editingBookingId = null;
+    let selectedBookingIds = new Set();
+    let filters = { search: '', date: '', status: '' };
 
 function getClient() {
     return window.supabaseClient;
@@ -602,15 +604,116 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const addDateInput = document.getElementById('add-date');
         if (addDateInput) addDateInput.value = new Date().toISOString().split('T')[0];
-        
+
         setupFilterEvents();
-        
+
+        // Admin tab switching
+        setupAdminTabs();
+
+        // Add dish modal handlers (defined in admin-menu.js)
+        const addDishBtn = document.getElementById('add-dish-btn');
+        if (addDishBtn) {
+            addDishBtn.addEventListener('click', window.showAddDishForm);
+        }
+
+        const addDishModal = document.getElementById('add-dish-modal');
+        if (addDishModal) {
+            // Close on X click
+            const closeBtn = addDishModal.querySelector('.close-modal');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', window.cancelDishForm);
+            }
+            // Close on outside click
+            addDishModal.addEventListener('click', (e) => {
+                if (e.target === addDishModal) {
+                    window.cancelDishForm();
+                }
+            });
+        }
+
+        const addDishForm = document.getElementById('add-dish-form');
+        if (addDishForm) {
+            addDishForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                saveDish(e);
+            });
+        }
+
+        // Search and filter handlers
+        const searchInput = document.getElementById('menu-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                filterMenuList();
+            });
+        }
+
+        const categoryFilter = document.getElementById('category-filter');
+        if (categoryFilter) {
+            categoryFilter.addEventListener('change', () => {
+                filterMenuList();
+            });
+        }
+
         initAdmin();
-        
+
         // Header scroll effect (matching main site)
         initHeaderScroll();
     });
 });
+
+// ========== ADMIN TABS ==========
+function setupAdminTabs() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabName = btn.dataset.tab;
+
+            // Update buttons
+            tabButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Update content
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === tabName) {
+                    content.classList.add('active');
+                }
+            });
+
+            // Load data for specific tabs
+            if (tabName === 'menu-tab') {
+                loadMenuItems();
+            }
+        });
+    });
+}
+
+function showTab(tabName) {
+    const btn = document.querySelector(`[data-tab="${tabName}"]`);
+    if (btn) btn.click();
+}
+
+// Filter menu list
+function filterMenuList() {
+    const searchInput = document.getElementById('menu-search');
+    const categoryFilter = document.getElementById('category-filter');
+    if (!searchInput || !categoryFilter) return;
+
+    const search = (searchInput.value || '').toLowerCase();
+    const category = categoryFilter.value || '';
+
+    const items = (window.allMenuItems || []).filter(item => {
+        const itemName = (item.name || '').toLowerCase();
+        const itemDesc = (item.description || '').toLowerCase();
+        const matchesSearch = itemName.includes(search) || itemDesc.includes(search);
+        const matchesCategory = !category || (item.category || '') === category;
+        return matchesSearch && matchesCategory;
+    });
+
+    renderMenuList(items);
+}
 
 // Modal functions
 window.openAddBookingModal = function() {
@@ -728,3 +831,24 @@ window.addEventListener('click', function(event) {
         closeCommentModal();
     }
 });
+
+// Expose functions to window for HTML event handlers
+window.startEdit = startEdit;
+window.cancelEdit = cancelEdit;
+window.saveEdit = saveEdit;
+window.deleteBooking = deleteBooking;
+window.updateStatus = updateStatus;
+window.toggleTable = toggleTable;
+window.showCommentModal = showCommentModal;
+window.closeCommentModal = closeCommentModal;
+window.prevZone = prevZone;
+window.nextZone = nextZone;
+window.populateTimeSelect = populateTimeSelect;
+window.populateGuestsSelect = populateGuestsSelect;
+window.setupDateValidation = setupDateValidation;
+window.timeToMinutes = timeToMinutes;
+window.checkTableAvailability = checkTableAvailability;
+window.filterMenuList = filterMenuList;
+window.showTab = showTab;
+
+})(); // End IIFE
