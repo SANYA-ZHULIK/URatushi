@@ -95,15 +95,26 @@ function renderMenuList(items) {
         return;
     }
 
-    container.innerHTML = items.map(dish => {
-        const photoUrl = getPhotoUrl(dish.photo_url);
-        const isEditing = editingDishId === dish.id;
+    // Group items by category
+    const grouped = {};
+    items.forEach(item => {
+        const cat = item.category || 'Без категории';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(item);
+    });
+
+    let html = '';
+    for (const [category, catItems] of Object.entries(grouped)) {
+        html += `<h3 class="category-heading">${category}</h3>`;
+        html += catItems.map(dish => {
+            const photoUrl = getPhotoUrl(dish.photo_url);
+            const isEditing = editingDishId === dish.id;
 
         return `
         <div class="menu-item-card ${isEditing ? 'editing' : ''}" data-id="${dish.id}">
             <div class="dish-photo">
                 ${photoUrl 
-                    ? `<img src="${photoUrl}" alt="${dish.name}" onerror="this.parentElement.innerHTML='<span class=\"no-photo\">📷</span>';">`
+                    ? `<img src="${photoUrl}" alt="${dish.name}" class="dish-image">`
                     : '<span class="no-photo">📷</span>'
                 }
             </div>
@@ -127,7 +138,9 @@ function renderMenuList(items) {
             </div>
         </div>
         `;
-    }).join('');
+        }).join('');
+    }
+    container.innerHTML = html;
 
     // Add event listeners for file inputs if they exist
     document.querySelectorAll('.dish-photo-input').forEach(input => {
@@ -281,6 +294,27 @@ async function deleteDish(id) {
     if (!client) return;
 
     try {
+        // First get the dish to get photo_url for storage deletion
+        const { data: dish, error: fetchError } = await client
+            .from('menu_items')
+            .select('photo_url')
+            .eq('id', id)
+            .single();
+        
+        if (fetchError) throw fetchError;
+
+        // Delete from storage if photo exists
+        if (dish.photo_url) {
+            try {
+                await client.storage.from('menu-images').remove([dish.photo_url]);
+            } catch (storageError) {
+                console.warn('Failed to delete photo from storage:', storageError);
+                // Continue with DB deletion even if storage deletion fails
+                showToast('Блюдо удалено, но фото не удалено из хранилища', 'warning');
+            }
+        }
+
+        // Delete from database
         const { error } = await client
             .from('menu_items')
             .delete()
