@@ -9,12 +9,15 @@
     window.allMenuItems = allMenuItems;
 
     // Transform relative path to full URL (encode for safety)
-    function getPhotoUrl(relativePath) {
-        if (!relativePath) return null;
-        const baseUrl = 'https://wftycbttpwxzizqgwatu.supabase.co';
-        const encodedPath = encodeURIComponent(relativePath).replace(/%2F/g, '/');
-        return `${baseUrl}/storage/v1/object/public/menu-images/${encodedPath}`;
+function getPhotoUrl(relativePath) {
+    if (!relativePath) {
+        // Return default photo path when no photo is available
+        return 'photo_/no_photo.jpg'; // Relative path to local file
     }
+    const baseUrl = 'https://wftycbttpwxzizqgwatu.supabase.co';
+    const encodedPath = encodeURIComponent(relativePath).replace(/%2F/g, '/');
+    return `${baseUrl}/storage/v1/object/public/menu-images/${encodedPath}`;
+}
 
     // Generate safe filename (ASCII only) for storage
     function generateSafeFileName(dishName, category, ext) {
@@ -115,39 +118,39 @@ function renderMenuList(items) {
     let html = '';
     for (const [category, catItems] of Object.entries(grouped)) {
         html += `<h3 class="category-heading">${category}</h3>`;
-        html += catItems.map(dish => {
-            const photoUrl = getPhotoUrl(dish.photo_url);
-            const isEditing = editingDishId === dish.id;
+         html += catItems.map(dish => {
+             const photoUrl = getPhotoUrl(dish.photo_url);
+             const isEditing = editingDishId === dish.id;
 
-        return `
-        <div class="menu-item-card ${isEditing ? 'editing' : ''}" data-id="${dish.id}">
-            <div class="dish-photo">
-                ${photoUrl 
-                    ? `<img src="${photoUrl}" alt="${dish.name}" class="dish-image">`
-                    : '<span class="no-photo">📷</span>'
-                }
-            </div>
-            <div class="dish-info">
-                <h4>${dish.name}</h4>
-                <p class="dish-category">${dish.category}</p>
-                <p class="dish-description">${dish.description || ''}</p>
-                <p class="dish-price">${dish.price} руб.</p>
-                <p class="dish-status">${dish.is_active ? '✅ Активно' : '❌ Скрыто'}</p>
-            </div>
-            <div class="dish-actions">
-                <button onclick="editDish(${dish.id})" class="btn-action btn-edit" title="Редактировать">
-                    ✏️
-                </button>
-                <button onclick="deleteDish(${dish.id})" class="btn-action btn-delete" title="Удалить">
-                    🗑️
-                </button>
-                <button onclick="toggleDishStatus(${dish.id}, ${dish.is_active})" class="btn-action ${dish.is_active ? 'btn-hide' : 'btn-show'}" title="${dish.is_active ? 'Скрыть' : 'Показать'}">
-                    ${dish.is_active ? '👁️‍🗨️' : '👁️'}
-                </button>
-            </div>
-        </div>
-        `;
-        }).join('');
+         return `
+         <div class="menu-item-card ${isEditing ? 'editing' : ''}" data-id="${dish.id}">
+             <div class="dish-photo">
+                 ${photoUrl 
+                     ? `<img src="${photoUrl}" alt="${dish.name}" class="dish-image">`
+                     : `<img src="photo_/no_photo.jpg" alt="${dish.name}" class="dish-image">`
+                 }
+             </div>
+             <div class="dish-info">
+                 <h4>${dish.name}</h4>
+                 <p class="dish-category">${dish.category}</p>
+                 <p class="dish-description">${dish.description || ''}</p>
+                 <p class="dish-price">${dish.price} руб.</p>
+                 <p class="dish-status">${dish.is_active ? '✅ Активно' : '❌ Скрыто'}</p>
+             </div>
+             <div class="dish-actions">
+                 <button onclick="editDish(${dish.id})" class="btn-action btn-edit" title="Редактировать">
+                     ✏️
+                 </button>
+                 <button onclick="deleteDish(${dish.id})" class="btn-action btn-delete" title="Удалить">
+                     🗑️
+                 </button>
+                 <button onclick="toggleDishStatus(${dish.id}, ${dish.is_active})" class="btn-action ${dish.is_active ? 'btn-hide' : 'btn-show'}" title="${dish.is_active ? 'Скрыть' : 'Показать'}">
+                     ${dish.is_active ? '👁️‍🗨️' : '👁️'}
+                 </button>
+             </div>
+         </div>
+         `;
+         }).join('');
     }
     container.innerHTML = html;
 
@@ -172,7 +175,7 @@ window.showAddDishForm = function() {
         // Reset photo preview
         const photoPreview = document.getElementById('photo-preview');
         if (photoPreview) {
-            photoPreview.innerHTML = '<span class="no-photo">📷</span>';
+            photoPreview.innerHTML = '<img src="photo_/no_photo.jpg" alt="Preview">';
         }
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
@@ -199,7 +202,7 @@ window.editDish = function(id) {
         photoPreview.innerHTML = `<img src="${getPhotoUrl(dish.photo_url)}" alt="Preview">`;
         photoPreview.dataset.existingPhoto = dish.photo_url;
     } else {
-        photoPreview.innerHTML = '<span class="no-photo">📷</span>';
+        photoPreview.innerHTML = `<img src="photo_/no_photo.jpg" alt="Preview">`;
         delete photoPreview.dataset.existingPhoto;
     }
 
@@ -393,7 +396,7 @@ async function toggleDishStatus(id, currentStatus) {
             reader.readAsDataURL(file);
             if (fileNameDisplay) fileNameDisplay.textContent = file.name;
         } else {
-            preview.innerHTML = '<span class="no-photo">📷</span>';
+            preview.innerHTML = `<img src="photo_/no_photo.jpg" alt="Preview">`;
             if (fileNameDisplay) fileNameDisplay.textContent = '';
         }
     });
@@ -423,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 reader.readAsDataURL(file);
                 if (fileNameDisplay) fileNameDisplay.textContent = file.name;
             } else {
-                preview.innerHTML = '<span class="no-photo">📷</span>';
+                preview.innerHTML = `<img src="photo_/no_photo.jpg" alt="Preview">`;
                 if (fileNameDisplay) fileNameDisplay.textContent = '';
             }
         });
