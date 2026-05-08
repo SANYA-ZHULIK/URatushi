@@ -682,10 +682,21 @@ function setupAdminTabs() {
                 }
             });
 
-            // Load data for specific tabs
-            if (tabName === 'menu-tab') {
-                loadMenuItems();
+        // Load data for specific tabs
+        if (tabName === 'menu-tab') {
+            const categoryFilter = document.getElementById('category-filter');
+            const searchInput = document.getElementById('menu-search');
+            if (categoryFilter) {
+                // Set UI to "Салаты"
+                categoryFilter.value = 'Салаты';
             }
+            if (searchInput) {
+                // Clear any previous search to show all salads
+                searchInput.value = '';
+            }
+            // Load menu items filtered to "Салаты" (Russian category name)
+            window.loadMenuItems('Салаты');
+        }
         });
     });
 }
@@ -712,7 +723,7 @@ function filterMenuList() {
         return matchesSearch && matchesCategory;
     });
 
-    renderMenuList(items);
+    window.renderMenuList(items);
 }
 
 // Modal functions

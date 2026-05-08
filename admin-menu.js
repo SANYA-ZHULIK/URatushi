@@ -54,8 +54,8 @@
         return fileName; // relative path stored in DB (ASCII-safe)
     }
 
-// Load all menu items from DB
-async function loadMenuItems() {
+// Load all menu items from DB (optional filter by category key)
+async function loadMenuItems(filterCategory = null, onComplete) {
     const client = window.supabaseClient;
     if (!client) return;
 
@@ -78,7 +78,16 @@ async function loadMenuItems() {
         // Sync to window for cross-script access
         window.allMenuItems = allMenuItems;
 
-        renderMenuList(allMenuItems);
+        // Apply filter if provided (direct routing, suppress expansion of other sections)
+        const itemsToRender = filterCategory
+            ? allMenuItems.filter(item => (item.category || '') === filterCategory)
+            : allMenuItems;
+
+        renderMenuList(itemsToRender);
+
+        if (typeof onComplete === 'function') {
+            onComplete();
+        }
     } catch (err) {
         console.error('Error loading menu:', err);
         showToast('Ошибка загрузки меню', 'error');
@@ -271,7 +280,12 @@ window.cancelDishForm = function() {
         }
 
         cancelDishForm();
-        await loadMenuItems();
+        // Preserve current filter state and reload
+        const categoryFilter = document.getElementById('category-filter');
+        const currentCategory = categoryFilter ? categoryFilter.value : '';
+        await window.loadMenuItems(currentCategory || null);
+        // Reapply filters (search + category) to ensure consistency
+        window.filterMenuList();
     } catch (err) {
         console.error('Save dish error:', err);
         showToast('Ошибка: ' + (err.message || err), 'error');
@@ -322,7 +336,11 @@ async function deleteDish(id) {
         if (error) throw error;
 
         showToast('Блюдо удалено', 'success');
-        await loadMenuItems();
+        // Preserve filter state
+        const categoryFilter = document.getElementById('category-filter');
+        const currentCategory = categoryFilter ? categoryFilter.value : '';
+        await window.loadMenuItems(currentCategory || null);
+        window.filterMenuList();
     } catch (err) {
         console.error('Delete dish error:', err);
         showToast('Ошибка удаления: ' + (err.message || err), 'error');
@@ -342,7 +360,11 @@ async function toggleDishStatus(id, currentStatus) {
         if (error) throw error;
 
         showToast(currentStatus ? 'Блюдо скрыто' : 'Блюдо показано', 'success');
-        await loadMenuItems();
+        // Preserve filter state
+        const categoryFilter = document.getElementById('category-filter');
+        const currentCategory = categoryFilter ? categoryFilter.value : '';
+        await window.loadMenuItems(currentCategory || null);
+        window.filterMenuList();
     } catch (err) {
         console.error('Toggle status error:', err);
         showToast('Ошибка: ' + (err.message || err), 'error');
