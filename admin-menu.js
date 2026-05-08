@@ -284,8 +284,10 @@ window.cancelDishForm = function() {
         const categoryFilter = document.getElementById('category-filter');
         const currentCategory = categoryFilter ? categoryFilter.value : '';
         await window.loadMenuItems(currentCategory || null);
-        // Reapply filters (search + category) to ensure consistency
-        window.filterMenuList();
+        // Trigger filter via change event to reapply search if any
+        if (categoryFilter) {
+            categoryFilter.dispatchEvent(new Event('change', { bubbles: true }));
+        }
     } catch (err) {
         console.error('Save dish error:', err);
         showToast('Ошибка: ' + (err.message || err), 'error');
@@ -340,7 +342,9 @@ async function deleteDish(id) {
         const categoryFilter = document.getElementById('category-filter');
         const currentCategory = categoryFilter ? categoryFilter.value : '';
         await window.loadMenuItems(currentCategory || null);
-        window.filterMenuList();
+        if (categoryFilter) {
+            categoryFilter.dispatchEvent(new Event('change', { bubbles: true }));
+        }
     } catch (err) {
         console.error('Delete dish error:', err);
         showToast('Ошибка удаления: ' + (err.message || err), 'error');
@@ -364,7 +368,9 @@ async function toggleDishStatus(id, currentStatus) {
         const categoryFilter = document.getElementById('category-filter');
         const currentCategory = categoryFilter ? categoryFilter.value : '';
         await window.loadMenuItems(currentCategory || null);
-        window.filterMenuList();
+        if (categoryFilter) {
+            categoryFilter.dispatchEvent(new Event('change', { bubbles: true }));
+        }
     } catch (err) {
         console.error('Toggle status error:', err);
         showToast('Ошибка: ' + (err.message || err), 'error');
