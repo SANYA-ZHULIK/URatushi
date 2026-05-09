@@ -1089,6 +1089,10 @@ footer {
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     margin: 0;
 }
+/* Выпадающий селект разделов (скрыт на десктопе) */
+.admin-nav-mobile {
+    display: none;
+}
 
 @media (max-width: 768px) {
     .admin-middle {
@@ -1178,6 +1182,49 @@ footer {
         flex: 1;
         font-size: 0.85rem;
         padding: 0.6rem 0.5rem;
+    }
+        /* Шапка на мобилке — скрываем кнопку Выйти и навигацию */
+    #logout-btn {
+        display: none;
+    }
+
+    .admin-nav {
+        display: none;
+    }
+
+    /* Выпадающий селект разделов */
+    .admin-nav-mobile {
+        display: block !important;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .admin-nav-mobile select {
+        width: 100%;
+        padding: 0.5rem 0.8rem;
+        border-radius: 8px;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--white);
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='white' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+    }
+
+    .admin-nav-mobile select option {
+        background: var(--dark);
+        color: var(--white);
+    }
+
+    /* Кнопка Выйти в выпадающем списке */
+    .admin-nav-mobile .logout-option {
+        color: #ff6b6b;
+        font-weight: 600;
     }
 }
 

@@ -346,9 +346,17 @@ function openBookingDetail(id) {
             <span class="booking-detail-label">Гости:</span>
             <span class="booking-detail-value">${booking.guests_count || '—'}</span>
         </div>
-        <div class="booking-detail-row">
+                <div class="booking-detail-row">
             <span class="booking-detail-label">Статус:</span>
-            <span class="booking-detail-value"><span class="booking-detail-status ${statusClass}">${statusLabel}</span></span>
+            <span class="booking-detail-value" id="detail-status-text">
+                <span class="booking-detail-status ${statusClass}">${statusLabel}</span>
+            </span>
+            <select id="detail-status-select" class="status-select" style="display:none; flex:1;">
+                <option value="new" ${booking.status === 'new' ? 'selected' : ''}>Новая</option>
+                <option value="confirmed" ${booking.status === 'confirmed' ? 'selected' : ''}>Подтверждена</option>
+                <option value="completed" ${booking.status === 'completed' ? 'selected' : ''}>Завершена</option>
+                <option value="cancelled" ${booking.status === 'cancelled' ? 'selected' : ''}>Отменена</option>
+            </select>
         </div>
         ${hasComment ? `
         <div class="booking-detail-row">
@@ -372,6 +380,7 @@ function openBookingDetail(id) {
     // Сохраняем исходные данные для отмены
     document.getElementById('booking-detail-content').dataset.originalName = booking.customer_name || '';
     document.getElementById('booking-detail-content').dataset.originalPhone = booking.customer_phone || '';
+    document.getElementById('booking-detail-content').dataset.originalStatus = booking.status || 'new';
 
     const modal = document.getElementById('booking-detail-modal');
     if (modal) {
@@ -393,6 +402,8 @@ function startDetailEdit(id) {
     const nameInput = document.getElementById('detail-name-input');
     const phoneText = document.getElementById('detail-phone-text');
     const phoneInput = document.getElementById('detail-phone-input');
+    const statusText = document.getElementById('detail-status-text');
+    const statusSelect = document.getElementById('detail-status-select');
     const viewActions = document.getElementById('detail-actions-view');
     const editActions = document.getElementById('detail-actions-edit');
 
@@ -400,6 +411,8 @@ function startDetailEdit(id) {
     if (nameInput) nameInput.style.display = 'block';
     if (phoneText) phoneText.style.display = 'none';
     if (phoneInput) phoneInput.style.display = 'block';
+    if (statusText) statusText.style.display = 'none';
+    if (statusSelect) statusSelect.style.display = 'block';
     if (viewActions) viewActions.style.display = 'none';
     if (editActions) editActions.style.display = 'flex';
 }
@@ -413,6 +426,8 @@ function cancelDetailEdit(id) {
     const nameInput = document.getElementById('detail-name-input');
     const phoneText = document.getElementById('detail-phone-text');
     const phoneInput = document.getElementById('detail-phone-input');
+    const statusText = document.getElementById('detail-status-text');
+    const statusSelect = document.getElementById('detail-status-select');
     const viewActions = document.getElementById('detail-actions-view');
     const editActions = document.getElementById('detail-actions-edit');
 
@@ -420,16 +435,28 @@ function cancelDetailEdit(id) {
     if (nameInput) nameInput.style.display = 'none';
     if (phoneText) phoneText.style.display = '';
     if (phoneInput) phoneInput.style.display = 'none';
+    if (statusText) statusText.style.display = '';
+    if (statusSelect) statusSelect.style.display = 'none';
     if (viewActions) viewActions.style.display = 'flex';
     if (editActions) editActions.style.display = 'none';
 
     // Восстанавливаем исходные значения
     const originalName = document.getElementById('booking-detail-content').dataset.originalName;
     const originalPhone = document.getElementById('booking-detail-content').dataset.originalPhone;
+    const originalStatus = document.getElementById('booking-detail-content').dataset.originalStatus;
+    
     if (nameInput) nameInput.value = originalName;
     if (phoneInput) phoneInput.value = originalPhone;
+    if (statusSelect) statusSelect.value = originalStatus;
     if (nameText) nameText.textContent = originalName || '—';
     if (phoneText) phoneText.textContent = originalPhone || '—';
+    
+    // Возвращаем статус
+    if (statusText && originalStatus) {
+        const statusLabel = getStatusLabel(originalStatus);
+        const statusClass = getStatusClass(originalStatus);
+        statusText.innerHTML = `<span class="booking-detail-status ${statusClass}">${statusLabel}</span>`;
+    }
 }
 
 async function saveDetailEdit(id) {
@@ -438,35 +465,50 @@ async function saveDetailEdit(id) {
 
     const nameInput = document.getElementById('detail-name-input');
     const phoneInput = document.getElementById('detail-phone-input');
+    const statusSelect = document.getElementById('detail-status-select');
     const name = nameInput ? nameInput.value.trim() : '';
     const phone = phoneInput ? phoneInput.value.trim() : '';
+    const status = statusSelect ? statusSelect.value : 'new';
 
     try {
         const { error } = await client.from('bookings')
-            .update({ customer_name: name, customer_phone: phone })
+            .update({ customer_name: name, customer_phone: phone, status: status })
             .eq('id', id);
         if (error) throw error;
 
         // Обновляем текст
         const nameText = document.getElementById('detail-name-text');
         const phoneText = document.getElementById('detail-phone-text');
+        const statusText = document.getElementById('detail-status-text');
+        
         if (nameText) nameText.textContent = name || '—';
         if (phoneText) phoneText.textContent = phone || '—';
+        
+        // Обновляем статус
+        if (statusText) {
+            const statusLabel = getStatusLabel(status);
+            const statusClass = getStatusClass(status);
+            statusText.innerHTML = `<span class="booking-detail-status ${statusClass}">${statusLabel}</span>`;
+        }
 
         // Обновляем исходные данные
         const content = document.getElementById('booking-detail-content');
         if (content) {
             content.dataset.originalName = name;
             content.dataset.originalPhone = phone;
+            content.dataset.originalStatus = status;
         }
 
         // Переключаемся обратно в режим просмотра
         const viewActions = document.getElementById('detail-actions-view');
         const editActions = document.getElementById('detail-actions-edit');
+        
         if (nameInput) nameInput.style.display = 'none';
         if (phoneInput) phoneInput.style.display = 'none';
+        if (statusSelect) statusSelect.style.display = 'none';
         if (nameText) nameText.style.display = '';
         if (phoneText) phoneText.style.display = '';
+        if (statusText) statusText.style.display = '';
         if (viewActions) viewActions.style.display = 'flex';
         if (editActions) editActions.style.display = 'none';
 
@@ -970,6 +1012,12 @@ function setupAdminTabs() {
                 }
             });
 
+            // Синхронизация мобильного селекта
+            const mobileSelect = document.getElementById('mobile-nav-select');
+            if (mobileSelect) {
+                mobileSelect.value = tabName;
+            }
+
             if (tabName === 'menu-tab') {
                 const categoryFilter = document.getElementById('category-filter');
                 const searchInput = document.getElementById('menu-search');
@@ -984,7 +1032,21 @@ function setupAdminTabs() {
         });
     });
 }
-
+// Обработчик мобильной навигации
+window.handleMobileNav = function(value) {
+    if (value === 'logout') {
+        logoutAdmin();
+        // Сбросить селект на текущую вкладку
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab) {
+            document.getElementById('mobile-nav-select').value = activeTab.id;
+        }
+        return;
+    }
+    // Переключить таб
+    const tabLink = document.querySelector(`[data-tab="${value}"]`);
+    if (tabLink) tabLink.click();
+};
 function showTab(tabName) {
     const btn = document.querySelector(`[data-tab="${tabName}"]`);
     if (btn) btn.click();

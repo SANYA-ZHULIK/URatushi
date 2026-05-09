@@ -33,15 +33,25 @@
             <div class="container header-inner">
                 <a href="/" class="logo"><img src="logo.png" alt="У Ратуши">У Ратуши</a>
                 <div class="admin-middle">
-                    <nav class="admin-nav">
-                        <ul>
-                            <li><a href="#" class="admin-nav-link active" data-tab="bookings-tab">Бронирования</a></li>
-                            <li><a href="#" class="admin-nav-link" data-tab="tables-tab">Столики</a></li>
-                            <li><a href="#" class="admin-nav-link" data-tab="menu-tab">Управление меню</a></li>
-                        </ul>
-                    </nav>
+    <!-- Десктопная навигация -->
+    <nav class="admin-nav">
+        <ul>
+            <li><a href="#" class="admin-nav-link active" data-tab="bookings-tab">Бронирования</a></li>
+            <li><a href="#" class="admin-nav-link" data-tab="tables-tab">Столики</a></li>
+            <li><a href="#" class="admin-nav-link" data-tab="menu-tab">Управление меню</a></li>
+        </ul>
+    </nav>
 
-                </div>
+    <!-- Мобильная навигация (выпадающий список) -->
+    <div class="admin-nav-mobile" id="admin-nav-mobile">
+        <select id="mobile-nav-select" onchange="handleMobileNav(this.value)">
+            <option value="bookings-tab">Бронирования</option>
+            <option value="tables-tab">Столики</option>
+            <option value="menu-tab">Управление меню</option>
+            <option value="logout" class="logout-option">🚪 Выйти</option>
+        </select>
+    </div>
+</div>
                 <button id="logout-btn" class="btn-primary">Выйти</button>
             </div>
         </header>
@@ -98,7 +108,7 @@
                     <!-- ========== МОБИЛЬНЫЙ СПИСОК БРОНИРОВАНИЙ ========== -->
 <div class="mobile-bookings-list" id="mobile-bookings-list">
     <div class="mobile-bookings-header">
-        <h2>Бронирования</h2>
+       
         <div class="mobile-bookings-header-actions">
             <span class="mobile-bookings-count" id="mobile-bookings-count">0 бронирований</span>
             <button id="mobile-add-booking-btn" class="btn-primary" onclick="openAddBookingModal()">+</button>
