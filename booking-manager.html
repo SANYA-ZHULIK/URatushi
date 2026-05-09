@@ -32,20 +32,22 @@
         <header class="admin-header">
             <div class="container header-inner">
                 <a href="/" class="logo"><img src="logo.png" alt="У Ратуши">У Ратуши</a>
-                <div class="admin-title">Панель управления</div>
+                <div class="admin-middle">
+                    <nav class="admin-nav">
+                        <ul>
+                            <li><a href="#" class="admin-nav-link active" data-tab="bookings-tab">Бронирования</a></li>
+                            <li><a href="#" class="admin-nav-link" data-tab="tables-tab">Столики</a></li>
+                            <li><a href="#" class="admin-nav-link" data-tab="menu-tab">Управление меню</a></li>
+                        </ul>
+                    </nav>
+                    
+                </div>
                 <button id="logout-btn" class="btn-primary">Выйти</button>
             </div>
         </header>
 
-        <div class="admin-content" style="padding-top: 100px;">
+        <div class="admin-content">
             <div class="container">
-
-                <!-- Admin Tabs -->
-                <div class="admin-tabs">
-                    <button class="tab-btn active" data-tab="bookings-tab">Бронирования</button>
-                    <button class="tab-btn" data-tab="tables-tab">Столики</button>
-                    <button class="tab-btn" data-tab="menu-tab">Управление меню</button>
-                </div>
 
                 <!-- Tab: Бронирования -->
                 <div id="bookings-tab" class="tab-content active">
@@ -128,6 +130,7 @@
 
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Modal: Add Booking -->

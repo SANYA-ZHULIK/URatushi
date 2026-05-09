@@ -663,16 +663,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ========== ADMIN TABS ==========
 function setupAdminTabs() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
+    const navLinks = document.querySelectorAll('.admin-nav-link');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    tabButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tabName = btn.dataset.tab;
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const tabName = this.dataset.tab;
 
-            // Update buttons
-            tabButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            // Update nav links
+            navLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
 
             // Update content
             tabContents.forEach(content => {
@@ -682,21 +683,18 @@ function setupAdminTabs() {
                 }
             });
 
-        // Load data for specific tabs
-        if (tabName === 'menu-tab') {
-            const categoryFilter = document.getElementById('category-filter');
-            const searchInput = document.getElementById('menu-search');
-            if (categoryFilter) {
-                // Set UI to "Салаты"
-                categoryFilter.value = 'Салаты';
+            // Load data for specific tabs
+            if (tabName === 'menu-tab') {
+                const categoryFilter = document.getElementById('category-filter');
+                const searchInput = document.getElementById('menu-search');
+                if (categoryFilter) {
+                    categoryFilter.value = 'Салаты';
+                }
+                if (searchInput) {
+                    searchInput.value = '';
+                }
+                window.loadMenuItems('Салаты');
             }
-            if (searchInput) {
-                // Clear any previous search to show all salads
-                searchInput.value = '';
-            }
-            // Load menu items filtered to "Салаты" (Russian category name)
-            window.loadMenuItems('Салаты');
-        }
         });
     });
 }
