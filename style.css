@@ -2248,7 +2248,48 @@ footer {
 
  .btn-show { background: var(--success); color: white; }
  .btn-hide { background: #7f8c8d; color: white; }
+/* Адаптация формы добавления брони на мобилке */
+@media (max-width: 768px) {
+    #add-booking-modal .modal-content {
+        max-width: 95vw;
+        padding: 1.5rem 1rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
 
+    #add-booking-modal h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+
+    #add-booking-modal .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    #add-booking-modal .form-group {
+        margin-bottom: 0.8rem;
+    }
+
+    #add-booking-modal .form-group label {
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+    }
+
+    #add-booking-modal .form-group input,
+    #add-booking-modal .form-group select,
+    #add-booking-modal .form-group textarea {
+        padding: 0.7rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    #add-booking-modal button[type="submit"] {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+}
 @media (max-width: 768px) {
     .admin-tabs {
         overflow-x: auto;

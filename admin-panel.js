@@ -301,8 +301,8 @@ function renderMobileBookingsList(bookings) {
             <div class="mobile-booking-summary">
                 <div class="mobile-booking-name">${escapeHtml(b.customer_name || '—')}</div>
                 <div class="mobile-booking-meta">
-                    <span><span class="meta-icon">📅</span> ${formatDate(b.date)}</span>
-                    <span><span class="meta-icon">🕐</span> ${b.time_slot || '—'}</span>
+                    <span>${formatDate(b.date)}</span>
+                    <span>${b.time_slot || '—'}</span>
                 </div>
             </div>
             <button class="mobile-booking-expand-btn" onclick="openBookingDetail(${b.id})" title="Подробнее">›</button>
@@ -365,12 +365,12 @@ function openBookingDetail(id) {
         </div>
         ` : ''}
         <div class="booking-detail-actions" id="detail-actions-view">
-            <button onclick="startDetailEdit(${booking.id})" class="btn-action btn-edit">✏️ Редактировать</button>
-            <button onclick="closeBookingDetail(); deleteBooking(${booking.id});" class="btn-action btn-delete">🗑️ Удалить</button>
+            <button onclick="startDetailEdit(${booking.id})" class="btn-action btn-edit">Редактировать</button>
+            <button onclick="closeBookingDetail(); deleteBooking(${booking.id});" class="btn-action btn-delete">Удалить</button>
         </div>
         <div class="booking-detail-actions" id="detail-actions-edit" style="display:none;">
-            <button onclick="saveDetailEdit(${booking.id})" class="btn-action btn-save">💾 Сохранить</button>
-            <button onclick="cancelDetailEdit(${booking.id})" class="btn-action btn-cancel">✖️ Отмена</button>
+            <button onclick="saveDetailEdit(${booking.id})" class="btn-action btn-save">Сохранить</button>
+            <button onclick="cancelDetailEdit(${booking.id})" class="btn-action btn-cancel">Отмена</button>
         </div>
     `;
 
