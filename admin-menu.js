@@ -135,7 +135,7 @@ function renderMenuList(items) {
                  <p class="dish-category">${dish.category}</p>
                  <p class="dish-description">${dish.description || ''}</p>
                  <p class="dish-price">${dish.price} руб.</p>
-                 <p class="dish-status">${dish.is_active ? '✅ Активно' : '❌ Скрыто'}</p>
+                 <p class="dish-status">${dish.is_active ? 'Активно' : 'Скрыто'}</p>
              </div>
              <div class="dish-actions">
                  <button onclick="editDish(${dish.id})" class="btn-action btn-edit" title="Редактировать">

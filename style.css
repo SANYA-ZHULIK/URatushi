@@ -2008,40 +2008,57 @@ footer {
      background: var(--light);
  }
 
- .menu-controls {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     margin-bottom: 1.5rem;
- }
+.menu-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
 
- .search-wrapper {
-     position: relative;
-     width: 300px;
- }
+.menu-controls .btn-menu {
+    padding: 0.5rem 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
 
- .search-wrapper input {
-     padding-left: 2.5rem;
- }
+.menu-controls .btn-menu:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: var(--white);
+}
 
- .search-icon {
-     position: absolute;
-     left: 0.8rem;
-     top: 50%;
-     transform: translateY(-50%);
-     color: var(--gray);
-     font-size: 1rem;
- }
+.menu-search-input {
+    padding: 0.6rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    height: 40px;
+    width: 450px;
+    box-sizing: border-box;
+}
 
- .category-filter {
-     padding: 0.6rem 1rem;
-     border: 2px solid #e0e0e0;
-     border-radius: 8px;
-     font-family: 'Montserrat', sans-serif;
-     font-size: 0.9rem;
-     background: var(--white);
-     min-width: 200px;
- }
+.category-filter {
+    padding: 0.6rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    background: var(--white);
+    min-width: 180px;
+    height: 40px;
+    box-sizing: border-box;
+}
 
  /* Add/Edit Dish Modal */
  #add-dish-modal .modal-content {
@@ -2117,41 +2134,41 @@ footer {
  .btn-show { background: var(--success); color: white; }
  .btn-hide { background: #7f8c8d; color: white; }
 
- @media (max-width: 768px) {
-     .admin-tabs {
-         overflow-x: auto;
-         flex-wrap: nowrap;
-         padding-bottom: 0.5rem;
-     }
+@media (max-width: 768px) {
+    .admin-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.5rem;
+    }
 
-     .tab-btn {
-         white-space: nowrap;
-         font-size: 0.9rem;
-         padding: 0.6rem 1rem;
-     }
+    .tab-btn {
+        white-space: nowrap;
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
 
-     .menu-item-card {
-         flex-direction: column;
-     }
+    .menu-item-card {
+        flex-direction: column;
+    }
 
-     .dish-photo {
-         width: 100%;
-         height: 150px;
-     }
+    .dish-photo {
+        width: 100%;
+        height: 150px;
+    }
 
-     .dish-actions {
-         flex-direction: row;
-         justify-content: flex-end;
-         padding: 0.5rem 1rem;
-     }
+    .menu-controls {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
 
-     .menu-controls {
-         flex-direction: column;
-         gap: 1rem;
-         align-items: stretch;
-     }
+    .menu-controls .btn-menu {
+        width: 100%;
+        justify-content: center;
+    }
 
-     .search-wrapper {
-         width: 100%;
-     }
- }
+    .menu-search-input,
+    .category-filter {
+        width: 100%;
+        min-width: auto;
+    }
+}
