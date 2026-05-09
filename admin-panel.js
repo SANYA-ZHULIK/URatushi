@@ -231,12 +231,12 @@ function renderBookingsTable() {
             <td><input type="checkbox" class="booking-checkbox" data-id="${safeId}" ${isSelected ? 'checked' : ''}></td>
             <td>${safeId}</td>
             <td><strong>Стол ${getTableNumber(b.table_id)}</strong></td>
-            <td>${isEditing ? '<input type="text" id="edit-name" value="' + (b.customer_name || '') + '" class="edit-input">' : (b.customer_name || '-')}</td>
+            <td>${isEditing ? '<input type="text" id="edit-name" value="' + (b.customer_name || '') + '" class="edit-input">' : '<span title="' + (b.customer_name || '') + '">' + (b.customer_name || '-') + '</span>'}</td>
             <td>${isEditing ? '<input type="tel" id="edit-phone" value="' + (b.customer_phone || '') + '" class="edit-input">' : (b.customer_phone || '-')}</td>
             <td>${b.date || '-'}</td>
             <td>${b.time_slot || '-'}</td>
             <td>${b.guests_count || '-'}</td>
-            <td>${hasComment ? '<button onclick="showCommentModal(\'' + b.comment.replace(/'/g, '\\\'') + '\')" class="btn-action btn-comment" title="Посмотреть комментарий">💬</button>' : '-'}</td>
+            <td>${hasComment ? '<button onclick="showCommentModal(\'' + b.comment.replace(/'/g, '\\\'') + '\')" class="btn-action btn-comment" title="' + b.comment.replace(/"/g, '&quot;') + '">💬</button>' : '-'}</td>
             <td>
                 <select onchange="updateStatus(${safeId}, this.value)" class="status-select ${getStatusClass(b.status)}" ${isEditing ? 'disabled' : ''}>
                     <option value="new" ${b.status === 'new' ? 'selected' : ''}>Новая</option>
@@ -815,7 +815,7 @@ window.showCommentModal = function(comment) {
             <div class="modal-content" style="max-width: 500px;">
                 <span class="close-modal" onclick="closeCommentModal()">&times;</span>
                 <h3 style="margin-bottom: 1rem; color: var(--primary);">Комментарий</h3>
-                <p id="comment-text" style="white-space: pre-wrap; line-height: 1.6;"></p>
+                <p id="comment-text" style="white-space: pre-wrap; line-height: 1.6; word-break: break-word;"></p>
             </div>
         `;
         document.body.appendChild(modal);

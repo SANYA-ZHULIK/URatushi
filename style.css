@@ -925,12 +925,12 @@ footer {
       padding-top: 120px; /* Increased to account for header height */
   }
 
-  .admin-content .container {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-  }
+.admin-content .container {
+       width: 100%;
+       max-width: 1400px;
+       margin: 0 auto;
+       padding: 0 20px;
+   }
 
 .admin-header .header-inner {
     display: flex;
@@ -1040,7 +1040,7 @@ footer {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
 }
@@ -1147,24 +1147,95 @@ footer {
     box-shadow: var(--shadow);
     margin-bottom: 2rem;
     overflow-x: auto;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .bookings-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
+}
+.bookings-table th,
+.bookings-table td {
+    padding: 0.75rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-word;
+}
+/* Checkbox column */
+.bookings-table td:nth-child(1) {
+    width: 40px;
+    min-width: 40px;
+}
+/* ID column */
+.bookings-table td:nth-child(2) {
+    width: 50px;
+    min-width: 50px;
+}
+/* Table column */
+.bookings-table td:nth-child(3) {
+    width: 70px;
+    min-width: 70px;
+}
+/* Name column */
+.bookings-table td:nth-child(4) {
+    width: 110px;
+    min-width: 110px;
+    max-width: 110px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Phone column */
+.bookings-table td:nth-child(5) {
+    width: 90px;
+    min-width: 90px;
+}
+/* Date column */
+.bookings-table td:nth-child(6) {
+    width: 80px;
+    min-width: 80px;
+}
+/* Time column */
+.bookings-table td:nth-child(7) {
+    width: 60px;
+    min-width: 60px;
+}
+/* Guests column */
+.bookings-table td:nth-child(8) {
+    width: 50px;
+    min-width: 50px;
+}
+/* Comment column */
+.bookings-table td:nth-child(9) {
+    width: 160px;
+    min-width: 160px;
+    max-width: 160px;
+    white-space: normal;
+    overflow: hidden;
+}
+/* Status column - wider for select dropdown */
+.bookings-table td:nth-child(10) {
+    width: 180px;
+    min-width: 180px;
+}
+/* Actions column - fixed width to prevent hiding */
+.bookings-table td:nth-child(11) {
+    width: 130px;
+    min-width: 130px;
+    max-width: 130px;
+    text-align: center;
+    white-space: nowrap;
 }
 
- .bookings-table th,
- .bookings-table td {
-     padding: 1rem;
-     text-align: left;
-     border-bottom: 1px solid #eee;
-     transition: background-color 0.2s;
- }
-
- .bookings-table tbody tr:hover {
-     background-color: #f9f9f9;
- }
+.bookings-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
 
 .bookings-table th {
     background: var(--light);
@@ -1601,43 +1672,46 @@ footer {
      background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath fill='%23666' d='M0 0l6 6 6-6z'/%3E%3C/svg%3E") no-repeat right 12px center;
  }
 
-  /* Status select in table - matches filter style */
-  .status-select {
-      padding: 0.4rem 2rem 0.4rem 0.6rem;
-      border: 2px solid #e0e0e0;
-      border-radius: 6px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.85rem;
-      background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath fill='%23666' d='M0 0l6 6 6-6z'/%3E%3C/svg%3E") no-repeat right 8px center;
-      appearance: none;
-      cursor: pointer;
-      transition: border-color 0.3s;
-  }
+/* Status select in table - matches filter style */
+   .status-select {
+       padding: 0.4rem 2rem 0.4rem 0.6rem;
+       border: 2px solid #e0e0e0;
+       border-left: 3px solid #e0e0e0;
+       border-radius: 6px;
+       font-family: 'Montserrat', sans-serif;
+       font-size: 0.85rem;
+       background: var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6'%3E%3Cpath fill='%23666' d='M0 0l6 6 6-6z'/%3E%3C/svg%3E") no-repeat right 8px center;
+       appearance: none;
+       cursor: pointer;
+       transition: border-color 0.3s;
+       box-sizing: border-box;
+       min-width: 100px;
+   }
 
  .status-select:focus {
      outline: none;
      box-shadow: 0 0 0 3px rgba(139, 92, 19, 0.2);
  }
 
- .status-select.status-new {
-     border-left: 3px solid #1976d2;
-     color: #1976d2;
- }
-
- .status-select.status-confirmed {
-     border-left: 3px solid #388e3c;
-     color: #388e3c;
- }
-
- .status-select.status-completed {
-     border-left: 3px solid #757575;
-     color: #757575;
- }
-
- .status-select.status-cancelled {
-     border-left: 3px solid #d32f2f;
-     color: #d32f2f;
- }
+.status-select.status-new {
+      border-left-color: #1976d2;
+      color: #1976d2;
+  }
+  
+  .status-select.status-confirmed {
+      border-left-color: #388e3c;
+      color: #388e3c;
+  }
+  
+  .status-select.status-completed {
+      border-left-color: #757575;
+      color: #757575;
+  }
+  
+  .status-select.status-cancelled {
+      border-left-color: #d32f2f;
+      color: #d32f2f;
+  }
 
   /* Status option colors in dropdown */
   .status-select option[value="new"] {
@@ -1757,10 +1831,28 @@ footer {
         width: 100%;
     }
     
-     #add-booking-modal .form-row {
-         grid-template-columns: 1fr;
-     }
- }
+#add-booking-modal .form-row {
+           grid-template-columns: 1fr;
+       }
+       
+/* Mobile bookings table adjustments */
+        .bookings-table td:nth-child(4) {
+            width: 80px !important;
+            min-width: 80px !important;
+        }
+        .bookings-table td:nth-child(9) {
+            width: 80px !important;
+            min-width: 80px !important;
+        }
+        .bookings-table td:nth-child(10) {
+            width: 100px !important;
+            min-width: 100px !important;
+        }
+        .bookings-table td:nth-child(11) {
+            width: 100px !important;
+            min-width: 100px !important;
+        }
+   }
 
  /* ========== АДМИН-ПАНЕЛЬ - УПРАВЛЕНИЕ МЕНЮ ========== */
  .admin-tabs {
