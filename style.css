@@ -1258,7 +1258,7 @@ footer {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: left;
+    text-align: center;
 }
 /* Phone column */
 .bookings-table td:nth-child(5) {
