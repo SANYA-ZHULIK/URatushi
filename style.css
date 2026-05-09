@@ -1160,7 +1160,7 @@ footer {
 .bookings-table th,
 .bookings-table td {
     padding: 0.75rem 0.5rem;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #eee;
     transition: background-color 0.2s;
     overflow: hidden;
@@ -1184,17 +1184,19 @@ footer {
 }
 /* Name column */
 .bookings-table td:nth-child(4) {
-    width: 110px;
-    min-width: 110px;
-    max-width: 110px;
+    width: 130px;
+    min-width: 130px;
+    max-width: 130px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
 }
 /* Phone column */
 .bookings-table td:nth-child(5) {
-    width: 90px;
-    min-width: 90px;
+    width: 110px;
+    min-width: 110px;
+    text-align: left;
 }
 /* Date column */
 .bookings-table td:nth-child(6) {
@@ -1213,11 +1215,12 @@ footer {
 }
 /* Comment column */
 .bookings-table td:nth-child(9) {
-    width: 160px;
-    min-width: 160px;
-    max-width: 160px;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
     white-space: normal;
     overflow: hidden;
+    text-align: center;
 }
 /* Status column - wider for select dropdown */
 .bookings-table td:nth-child(10) {
@@ -1231,6 +1234,10 @@ footer {
     max-width: 130px;
     text-align: center;
     white-space: nowrap;
+}
+
+.bookings-table td:nth-child(11) button {
+    vertical-align: middle;
 }
 
 .bookings-table tbody tr:hover {
@@ -1837,20 +1844,20 @@ footer {
        
 /* Mobile bookings table adjustments */
         .bookings-table td:nth-child(4) {
-            width: 80px !important;
-            min-width: 80px !important;
+            width: 100px !important;
+            min-width: 100px !important;
         }
         .bookings-table td:nth-child(9) {
-            width: 80px !important;
-            min-width: 80px !important;
+            width: 70px !important;
+            min-width: 70px !important;
         }
         .bookings-table td:nth-child(10) {
-            width: 100px !important;
-            min-width: 100px !important;
+            width: 110px !important;
+            min-width: 110px !important;
         }
         .bookings-table td:nth-child(11) {
-            width: 100px !important;
-            min-width: 100px !important;
+            width: 90px !important;
+            min-width: 90px !important;
         }
    }
 
