@@ -245,13 +245,16 @@
     <script src="mobile-tables.js"></script>
     <script src="booking.js"></script>
     <script>
-        // Helper to construct photo URL (with encoding for Cyrillic)
-        function getPhotoUrl(relativePath) {
-            if (!relativePath) return null;
-            const base = 'https://wftycbttpwxzizqgwatu.supabase.co';
-            const enc = encodeURIComponent(relativePath).replace(/%2F/g, '/');
-            return base + '/storage/v1/object/public/menu-images/' + enc;
-        }
+// Helper to construct photo URL (with encoding for Cyrillic)
+function getPhotoUrl(relativePath) {
+    const base = 'https://wftycbttpwxzizqgwatu.supabase.co';
+    if (!relativePath) {
+        // Return default photo path when no photo is available
+        return 'photo_/no_photo.jpg'; // Relative path to local file
+    }
+    const enc = encodeURIComponent(relativePath).replace(/%2F/g, '/');
+    return base + '/storage/v1/object/public/menu-images/' + enc;
+}
 
         // Load menu items from Supabase
         let menuItems = [];
@@ -283,36 +286,33 @@
             }
         }
 
-        function renderDynamicMenu(items) {
-            const container = document.getElementById('dynamic-menu');
-            if (!container) return;
+function renderDynamicMenu(items) {
+    const container = document.getElementById('dynamic-menu');
+    if (!container) return;
 
-            if (items.length === 0) {
-                container.innerHTML = '<div class="no-data" style="grid-column:1/-1;text-align:center;padding:3rem;">Нет блюд в меню</div>';
-                return;
-            }
+    if (items.length === 0) {
+        container.innerHTML = '<div class="no-data" style="grid-column:1/-1;text-align:center;padding:3rem;">Нет блюд в меню</div>';
+        return;
+    }
 
-            container.innerHTML = items.map(item => {
-                const photoUrl = getPhotoUrl(item.photo_url);
-                return `
-                <div class="menu-item" data-category="${item.category}">
-                    ${photoUrl
-                        ? `<img src="${photoUrl}" alt="${item.name}" class="menu-item-photo" onerror="this.style.display='none'" loading="lazy">`
-                        : ''
-                    }
-                    <h4>${item.name}</h4>
-                    <p>${item.description || ''}</p>
-                    <span class="price">${item.price} руб.</span>
-                </div>
-                `;
-            }).join('');
+    container.innerHTML = items.map(item => {
+        const photoUrl = getPhotoUrl(item.photo_url);
+        return `
+        <div class="menu-item" data-category="${item.category}">
+            <img src="${photoUrl}" alt="${item.name}" class="menu-item-photo" loading="lazy">
+            <h4>${item.name}</h4>
+            <p>${item.description || ''}</p>
+            <span class="price">${item.price} руб.</span>
+        </div>
+        `;
+    }).join('');
 
-            // Apply current filter
-            const activeCategory = document.querySelector('.menu-category.active');
-            if (activeCategory) {
-                filterMenu(activeCategory.dataset.category);
-            }
-        }
+    // Apply current filter
+    const activeCategory = document.querySelector('.menu-category.active');
+    if (activeCategory) {
+        filterMenu(activeCategory.dataset.category);
+    }
+}
 
         function setupMenuFilters() {
             const categories = document.querySelectorAll('.menu-category');
