@@ -1,4 +1,5 @@
 // Wrap in IIFE to avoid global conflicts when script loads twice
+
 (() => {
     let allTables = [];
     let allBookings = [];
@@ -200,7 +201,6 @@ function getStatusClass(status) {
 
 function renderBookingsTable() {
     const tbody = document.getElementById('bookings-tbody');
-    if (!tbody) return;
     
     // Apply filters
     let filteredBookings = allBookings.filter(b => {
@@ -215,7 +215,12 @@ function renderBookingsTable() {
         if (filters.status && b.status !== filters.status) return false;
         return true;
     });
+
+    // ✅ ВЫЗОВ МОБИЛЬНОГО РЕНДЕРА — добавлен здесь
+    renderMobileBookingsList(filteredBookings);
     
+    if (!tbody) return;
+
     if (filteredBookings.length === 0) {
         tbody.innerHTML = '<tr><td colspan="11" class="no-data">Нет бронирований</td></tr>';
         return;
@@ -269,6 +274,241 @@ function renderBookingsTable() {
             }
         });
     });
+}
+
+// ========== МОБИЛЬНЫЙ РЕНДЕР ==========
+function renderMobileBookingsList(bookings) {
+    const container = document.getElementById('mobile-bookings-cards');
+    const countEl = document.getElementById('mobile-bookings-count');
+    if (!container) return;
+
+    if (!bookings || bookings.length === 0) {
+        container.innerHTML = '<div class="mobile-no-data">Нет бронирований</div>';
+        if (countEl) countEl.textContent = '0 бронирований';
+        return;
+    }
+
+    if (countEl) {
+        const n = bookings.length;
+        const ending = getWordEnding(n);
+        countEl.textContent = `${n} бронировани${ending}`;
+    }
+
+    container.innerHTML = bookings.map(b => {
+        const statusClass = b.status || 'new';
+        return `
+        <div class="mobile-booking-card ${statusClass}">
+            <div class="mobile-booking-summary">
+                <div class="mobile-booking-name">${escapeHtml(b.customer_name || '—')}</div>
+                <div class="mobile-booking-meta">
+                    <span><span class="meta-icon">📅</span> ${formatDate(b.date)}</span>
+                    <span><span class="meta-icon">🕐</span> ${b.time_slot || '—'}</span>
+                </div>
+            </div>
+            <button class="mobile-booking-expand-btn" onclick="openBookingDetail(${b.id})" title="Подробнее">›</button>
+        </div>
+        `;
+    }).join('');
+}
+
+function openBookingDetail(id) {
+    const booking = allBookings.find(b => b.id === id);
+    if (!booking) return;
+
+    const statusLabel = getStatusLabel(booking.status);
+    const statusClass = getStatusClass(booking.status);
+    const hasComment = booking.comment && booking.comment.trim();
+
+    const detailHtml = `
+        <div class="booking-detail-row">
+            <span class="booking-detail-label">Стол:</span>
+            <span class="booking-detail-value"><strong>Стол ${getTableNumber(booking.table_id)}</strong></span>
+        </div>
+        <div class="booking-detail-row">
+            <span class="booking-detail-label">Имя:</span>
+            <span class="booking-detail-value" id="detail-name-text">${escapeHtml(booking.customer_name || '—')}</span>
+            <input type="text" id="detail-name-input" class="edit-input" value="${escapeHtml(booking.customer_name || '')}" style="display:none; flex:1;">
+        </div>
+        <div class="booking-detail-row">
+            <span class="booking-detail-label">Телефон:</span>
+            <span class="booking-detail-value" id="detail-phone-text">${escapeHtml(booking.customer_phone || '—')}</span>
+            <input type="tel" id="detail-phone-input" class="edit-input" value="${escapeHtml(booking.customer_phone || '')}" style="display:none; flex:1;">
+        </div>
+        <div class="booking-detail-row">
+            <span class="booking-detail-label">Дата:</span>
+            <span class="booking-detail-value">${formatDate(booking.date)}</span>
+        </div>
+        <div class="booking-detail-row">
+            <span class="booking-detail-label">Время:</span>
+            <span class="booking-detail-value">${booking.time_slot || '—'}</span>
+        </div>
+        <div class="booking-detail-row">
+            <span class="booking-detail-label">Гости:</span>
+            <span class="booking-detail-value">${booking.guests_count || '—'}</span>
+        </div>
+        <div class="booking-detail-row">
+            <span class="booking-detail-label">Статус:</span>
+            <span class="booking-detail-value"><span class="booking-detail-status ${statusClass}">${statusLabel}</span></span>
+        </div>
+        ${hasComment ? `
+        <div class="booking-detail-row">
+            <span class="booking-detail-label">Комментарий:</span>
+            <span class="booking-detail-value">${escapeHtml(booking.comment)}</span>
+        </div>
+        ` : ''}
+        <div class="booking-detail-actions" id="detail-actions-view">
+            <button onclick="startDetailEdit(${booking.id})" class="btn-action btn-edit">✏️ Редактировать</button>
+            <button onclick="closeBookingDetail(); deleteBooking(${booking.id});" class="btn-action btn-delete">🗑️ Удалить</button>
+        </div>
+        <div class="booking-detail-actions" id="detail-actions-edit" style="display:none;">
+            <button onclick="saveDetailEdit(${booking.id})" class="btn-action btn-save">💾 Сохранить</button>
+            <button onclick="cancelDetailEdit(${booking.id})" class="btn-action btn-cancel">✖️ Отмена</button>
+        </div>
+    `;
+
+    document.getElementById('detail-id').textContent = booking.id;
+    document.getElementById('booking-detail-content').innerHTML = detailHtml;
+
+    // Сохраняем исходные данные для отмены
+    document.getElementById('booking-detail-content').dataset.originalName = booking.customer_name || '';
+    document.getElementById('booking-detail-content').dataset.originalPhone = booking.customer_phone || '';
+
+    const modal = document.getElementById('booking-detail-modal');
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeBookingDetail() {
+    const modal = document.getElementById('booking-detail-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+}
+function startDetailEdit(id) {
+    // Показываем поля ввода, скрываем текст
+    const nameText = document.getElementById('detail-name-text');
+    const nameInput = document.getElementById('detail-name-input');
+    const phoneText = document.getElementById('detail-phone-text');
+    const phoneInput = document.getElementById('detail-phone-input');
+    const viewActions = document.getElementById('detail-actions-view');
+    const editActions = document.getElementById('detail-actions-edit');
+
+    if (nameText) nameText.style.display = 'none';
+    if (nameInput) nameInput.style.display = 'block';
+    if (phoneText) phoneText.style.display = 'none';
+    if (phoneInput) phoneInput.style.display = 'block';
+    if (viewActions) viewActions.style.display = 'none';
+    if (editActions) editActions.style.display = 'flex';
+}
+
+function cancelDetailEdit(id) {
+    const booking = allBookings.find(b => b.id === id);
+    if (!booking) return;
+
+    // Возвращаем исходные значения
+    const nameText = document.getElementById('detail-name-text');
+    const nameInput = document.getElementById('detail-name-input');
+    const phoneText = document.getElementById('detail-phone-text');
+    const phoneInput = document.getElementById('detail-phone-input');
+    const viewActions = document.getElementById('detail-actions-view');
+    const editActions = document.getElementById('detail-actions-edit');
+
+    if (nameText) nameText.style.display = '';
+    if (nameInput) nameInput.style.display = 'none';
+    if (phoneText) phoneText.style.display = '';
+    if (phoneInput) phoneInput.style.display = 'none';
+    if (viewActions) viewActions.style.display = 'flex';
+    if (editActions) editActions.style.display = 'none';
+
+    // Восстанавливаем исходные значения
+    const originalName = document.getElementById('booking-detail-content').dataset.originalName;
+    const originalPhone = document.getElementById('booking-detail-content').dataset.originalPhone;
+    if (nameInput) nameInput.value = originalName;
+    if (phoneInput) phoneInput.value = originalPhone;
+    if (nameText) nameText.textContent = originalName || '—';
+    if (phoneText) phoneText.textContent = originalPhone || '—';
+}
+
+async function saveDetailEdit(id) {
+    const client = getClient();
+    if (!client) return;
+
+    const nameInput = document.getElementById('detail-name-input');
+    const phoneInput = document.getElementById('detail-phone-input');
+    const name = nameInput ? nameInput.value.trim() : '';
+    const phone = phoneInput ? phoneInput.value.trim() : '';
+
+    try {
+        const { error } = await client.from('bookings')
+            .update({ customer_name: name, customer_phone: phone })
+            .eq('id', id);
+        if (error) throw error;
+
+        // Обновляем текст
+        const nameText = document.getElementById('detail-name-text');
+        const phoneText = document.getElementById('detail-phone-text');
+        if (nameText) nameText.textContent = name || '—';
+        if (phoneText) phoneText.textContent = phone || '—';
+
+        // Обновляем исходные данные
+        const content = document.getElementById('booking-detail-content');
+        if (content) {
+            content.dataset.originalName = name;
+            content.dataset.originalPhone = phone;
+        }
+
+        // Переключаемся обратно в режим просмотра
+        const viewActions = document.getElementById('detail-actions-view');
+        const editActions = document.getElementById('detail-actions-edit');
+        if (nameInput) nameInput.style.display = 'none';
+        if (phoneInput) phoneInput.style.display = 'none';
+        if (nameText) nameText.style.display = '';
+        if (phoneText) phoneText.style.display = '';
+        if (viewActions) viewActions.style.display = 'flex';
+        if (editActions) editActions.style.display = 'none';
+
+        // Обновляем данные в фоне
+        await loadBookings();
+        showToast('Изменения сохранены', 'success');
+    } catch (err) {
+        console.error('Save detail edit error:', err);
+        showToast('Ошибка сохранения: ' + (err.message || err), 'error');
+    }
+}
+
+function getStatusLabel(status) {
+    const labels = {
+        'new': 'Новая',
+        'confirmed': 'Подтверждена',
+        'completed': 'Завершена',
+        'cancelled': 'Отменена'
+    };
+    return labels[status] || 'Новая';
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) return parts[2] + '.' + parts[1] + '.' + parts[0];
+    return dateStr;
+}
+
+function getWordEnding(n) {
+    const mod10 = n % 10;
+    const mod100 = n % 100;
+    if (mod100 >= 11 && mod100 <= 19) return 'й';
+    if (mod10 === 1) return 'е';
+    if (mod10 >= 2 && mod10 <= 4) return 'я';
+    return 'й';
 }
 
 function startEdit(id) {
@@ -405,7 +645,6 @@ function setupRealtime() {
     const client = getClient();
     if (!client) return;
 
-    // Отписываемся от предыдущего канала, если был
     try {
         client.channel('admin-changes')?.unsubscribe();
     } catch (e) {
@@ -421,12 +660,18 @@ function setupRealtime() {
             console.log('Realtime: tables changed');
             loadTables();
         })
-        .subscribe(status => {
-            console.log('Realtime subscribed, status:', status);
+        .subscribe((status) => {
+            // Логируем только важные статусы
+            if (status === 'SUBSCRIBED') {
+                console.log('Realtime connected');
+            } else if (status === 'CHANNEL_ERROR') {
+                console.warn('Realtime connection error, retrying...');
+            } else if (status === 'CLOSED' || status === 'TIMED_OUT') {
+                console.warn('Realtime disconnected');
+            }
         });
 }
 
-// Filter functions
 function applyFilters() {
     const searchInput = document.getElementById('search-input');
     const dateFilter = document.getElementById('filter-date');
@@ -436,7 +681,6 @@ function applyFilters() {
     if (dateFilter) filters.date = dateFilter.value;
     if (statusFilter) filters.status = statusFilter.value;
     
-    // Update status filter color class
     if (statusFilter) {
         statusFilter.classList.remove('status-new', 'status-confirmed', 'status-completed', 'status-cancelled');
         if (statusFilter.value) {
@@ -460,7 +704,6 @@ function clearFilters() {
     renderBookingsTable();
 }
 
-// Bulk actions
 async function bulkUpdateStatus(status) {
     if (selectedBookingIds.size === 0) {
         showToast('Выберите бронирования', 'warning');
@@ -547,6 +790,63 @@ function setupFilterEvents() {
     if (bulkCancelBtn) {
         bulkCancelBtn.addEventListener('click', () => bulkUpdateStatus('cancelled'));
     }
+
+    // ========== МОБИЛЬНЫЕ ФИЛЬТРЫ ==========
+    const mobileFilterToggle = document.getElementById('mobile-filter-toggle');
+    const mobileFiltersPanel = document.getElementById('mobile-bookings-filters');
+    const mobileSearchInput = document.getElementById('mobile-search-input');
+    const mobileFilterDate = document.getElementById('mobile-filter-date');
+    const mobileFilterStatus = document.getElementById('mobile-filter-status');
+    const mobileClearFilters = document.getElementById('mobile-clear-filters');
+
+    if (mobileFilterToggle && mobileFiltersPanel) {
+        mobileFilterToggle.addEventListener('click', () => {
+            const isHidden = mobileFiltersPanel.style.display === 'none';
+            mobileFiltersPanel.style.display = isHidden ? 'flex' : 'none';
+        });
+    }
+
+    if (mobileSearchInput) {
+        mobileSearchInput.addEventListener('input', () => {
+            filters.search = mobileSearchInput.value.trim();
+            if (searchInput) searchInput.value = mobileSearchInput.value;
+            renderBookingsTable();
+        });
+    }
+
+    if (mobileFilterDate) {
+        mobileFilterDate.addEventListener('change', () => {
+            filters.date = mobileFilterDate.value;
+            if (dateFilter) dateFilter.value = mobileFilterDate.value;
+            renderBookingsTable();
+        });
+    }
+
+    if (mobileFilterStatus) {
+        mobileFilterStatus.addEventListener('change', () => {
+            filters.status = mobileFilterStatus.value;
+            if (statusFilter) statusFilter.value = mobileFilterStatus.value;
+            renderBookingsTable();
+        });
+    }
+
+    if (mobileClearFilters) {
+        mobileClearFilters.addEventListener('click', () => {
+            clearFilters();
+            if (mobileSearchInput) mobileSearchInput.value = '';
+            if (mobileFilterDate) mobileFilterDate.value = '';
+            if (mobileFilterStatus) mobileFilterStatus.value = '';
+            renderBookingsTable();
+        });
+    }
+
+    // Закрытие модалки деталей по клику вне
+    const detailModal = document.getElementById('booking-detail-modal');
+    if (detailModal) {
+        detailModal.addEventListener('click', (e) => {
+            if (e.target === detailModal) closeBookingDetail();
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -568,7 +868,6 @@ document.addEventListener('DOMContentLoaded', () => {
             logoutAdmin();
         });
 
-        // Modal booking form
         const addBookingForm = document.getElementById('add-booking-form');
         if (addBookingForm) {
             addBookingForm.addEventListener('submit', (e) => {
@@ -582,7 +881,6 @@ document.addEventListener('DOMContentLoaded', () => {
             addBookingBtn.addEventListener('click', openAddBookingModal);
         }
 
-        // Close modal handlers
         const closeModal = document.querySelector('#add-booking-modal .close-modal');
         if (closeModal) {
             closeModal.addEventListener('click', closeAddBookingModal);
@@ -597,7 +895,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Используем общие утилиты из utils.js
         populateTimeSelect('add-time');
         populateGuestsSelect('add-guests');
         setupDateValidation('add-date');
@@ -607,10 +904,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setupFilterEvents();
 
-        // Admin tab switching
         setupAdminTabs();
 
-        // Add dish modal handlers (defined in admin-menu.js)
         const addDishBtn = document.getElementById('add-dish-btn');
         if (addDishBtn) {
             addDishBtn.addEventListener('click', window.showAddDishForm);
@@ -618,12 +913,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const addDishModal = document.getElementById('add-dish-modal');
         if (addDishModal) {
-            // Close on X click
             const closeBtn = addDishModal.querySelector('.close-modal');
             if (closeBtn) {
                 closeBtn.addEventListener('click', window.cancelDishForm);
             }
-            // Close on outside click
             addDishModal.addEventListener('click', (e) => {
                 if (e.target === addDishModal) {
                     window.cancelDishForm();
@@ -639,7 +932,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Search and filter handlers
         const searchInput = document.getElementById('menu-search');
         if (searchInput) {
             searchInput.addEventListener('input', () => {
@@ -655,13 +947,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         initAdmin();
-
-        // Header scroll effect (matching main site)
         initHeaderScroll();
     });
 });
 
-// ========== ADMIN TABS ==========
 function setupAdminTabs() {
     const navLinks = document.querySelectorAll('.admin-nav-link');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -671,11 +960,9 @@ function setupAdminTabs() {
             e.preventDefault();
             const tabName = this.dataset.tab;
 
-            // Update nav links
             navLinks.forEach(l => l.classList.remove('active'));
             this.classList.add('active');
 
-            // Update content
             tabContents.forEach(content => {
                 content.classList.remove('active');
                 if (content.id === tabName) {
@@ -683,7 +970,6 @@ function setupAdminTabs() {
                 }
             });
 
-            // Load data for specific tabs
             if (tabName === 'menu-tab') {
                 const categoryFilter = document.getElementById('category-filter');
                 const searchInput = document.getElementById('menu-search');
@@ -704,7 +990,6 @@ function showTab(tabName) {
     if (btn) btn.click();
 }
 
-// Filter menu list
 function filterMenuList() {
     const searchInput = document.getElementById('menu-search');
     const categoryFilter = document.getElementById('category-filter');
@@ -724,7 +1009,6 @@ function filterMenuList() {
     window.renderMenuList(items);
 }
 
-// Modal functions
 window.openAddBookingModal = function() {
     populateTableSelect();
     const modal = document.getElementById('add-booking-modal');
@@ -764,7 +1048,6 @@ async function addBookingViaModal(event) {
         return;
     }
 
-    // Валидация даты
     const today = new Date().toISOString().split('T')[0];
     if (date < today) {
         showToast('Нельзя бронировать на прошедшую дату', 'warning');
@@ -798,13 +1081,12 @@ async function addBookingViaModal(event) {
     } catch (err) {
         console.error('Add booking error:', err);
         showToast('Ошибка добавления: ' + (err.message || err), 'error');
-} finally {
-         btn.disabled = false;
-         btn.textContent = 'Добавить бронь';
-     }
- }
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Добавить бронь';
+    }
+}
 
-// ========== COMMENT MODAL ==========
 window.showCommentModal = function(comment) {
     let modal = document.getElementById('comment-modal');
     if (!modal) {
@@ -833,15 +1115,13 @@ window.closeCommentModal = function() {
     }
 };
 
-// Close on outside click
 window.addEventListener('click', function(event) {
     const modal = document.getElementById('comment-modal');
     if (modal && event.target === modal) {
         closeCommentModal();
     }
 });
-
-// Expose functions to window for HTML event handlers
+// Expose functions to window
 window.startEdit = startEdit;
 window.cancelEdit = cancelEdit;
 window.saveEdit = saveEdit;
@@ -850,6 +1130,11 @@ window.updateStatus = updateStatus;
 window.toggleTable = toggleTable;
 window.showCommentModal = showCommentModal;
 window.closeCommentModal = closeCommentModal;
+window.openBookingDetail = openBookingDetail;
+window.closeBookingDetail = closeBookingDetail;
+window.startDetailEdit = startDetailEdit;   // ✅ Теперь внутри IIFE
+window.cancelDetailEdit = cancelDetailEdit; // ✅
+window.saveDetailEdit = saveDetailEdit;     // ✅
 window.prevZone = prevZone;
 window.nextZone = nextZone;
 window.populateTimeSelect = populateTimeSelect;
@@ -861,3 +1146,4 @@ window.filterMenuList = filterMenuList;
 window.showTab = showTab;
 
 })(); // End IIFE
+

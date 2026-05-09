@@ -95,6 +95,34 @@
                             <tbody id="bookings-tbody"></tbody>
                         </table>
                     </div>
+                    <!-- ========== МОБИЛЬНЫЙ СПИСОК БРОНИРОВАНИЙ ========== -->
+<div class="mobile-bookings-list" id="mobile-bookings-list">
+    <div class="mobile-bookings-header">
+        <h2>Бронирования</h2>
+        <div class="mobile-bookings-header-actions">
+            <span class="mobile-bookings-count" id="mobile-bookings-count">0 бронирований</span>
+            <button id="mobile-add-booking-btn" class="btn-primary" onclick="openAddBookingModal()">+</button>
+            <button id="mobile-filter-toggle" class="mobile-filter-btn">🔍</button>
+        </div>
+    </div>
+
+    <!-- Мобильные фильтры (скрыты по умолчанию) -->
+    <div class="mobile-bookings-filters" id="mobile-bookings-filters" style="display: none;">
+        <input type="text" id="mobile-search-input" placeholder="Поиск по имени, телефону...">
+        <input type="date" id="mobile-filter-date">
+        <select id="mobile-filter-status">
+            <option value="">Все статусы</option>
+            <option value="new">Новые</option>
+            <option value="confirmed">Подтверждённые</option>
+            <option value="completed">Завершённые</option>
+            <option value="cancelled">Отменённые</option>
+        </select>
+        <button id="mobile-clear-filters">Сбросить</button>
+    </div>
+
+    <!-- Карточки бронирований -->
+    <div id="mobile-bookings-cards" class="mobile-bookings-cards"></div>
+</div>
                 </div>
 
                 <!-- Tab: Столики -->
@@ -236,6 +264,14 @@
             </form>
         </div>
     </div>
+    <!-- Modal: Детали бронирования (мобильный) -->
+<div id="booking-detail-modal" class="modal">
+    <div class="modal-content" style="max-width: 480px;">
+        <span class="close-modal" onclick="closeBookingDetail()">&times;</span>
+        <h3 style="margin-bottom: 1.2rem; color: var(--primary);">Бронь №<span id="detail-id">—</span></h3>
+        <div id="booking-detail-content"></div>
+    </div>
+</div>
 
 </body>
 </html>
