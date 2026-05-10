@@ -14,9 +14,15 @@ function getTimeSlots() {
 function populateTimeSelect(selectId) {
     const select = document.getElementById(selectId);
     if (!select) return;
-    const slots = getTimeSlots();
-    const options = slots.map(time => `<option value="${time}">${time}</option>`).join('');
-    select.innerHTML = '<option value="">Выберите время</option>' + options;
+    
+    const slots = [];
+    for (let h = 13; h <= 23; h++) {
+        slots.push(`${String(h).padStart(2, '0')}:00`);
+        if (h < 23) slots.push(`${String(h).padStart(2, '0')}:30`);
+    }
+    
+    select.innerHTML = '<option value="">Выберите время</option>' + 
+        slots.map(time => `<option value="${time}">${time}</option>`).join('');
 }
 
 // Заполнение select с количеством гостей (1-12)
@@ -225,21 +231,22 @@ window.checkTableAvailability = function(bookingsData, tableId, date, timeSlot) 
         const bookingMinutes = timeToMinutes(booking.time_slot);
         const diff = selectedMinutes - bookingMinutes;
         
-        // Exact match or later than existing booking - not allowed
+        // Выбранное время совпадает или позже брони — нельзя
         if (diff >= 0) {
             return {
                 available: false,
-                message: `Столик занят на ${booking.time_slot} (${booking.date}). Бронь на это время невозможна.`,
+                message: `Столик занят с ${booking.time_slot}. Выберите время раньше.`,
                 existingBooking: booking
             };
         }
         
-        // Within 3 hours before existing booking - allow with warning
-        if (diff >= -180 && diff < 0) {
+        // Менее чем за 3 часа до брони — предупреждение
+        if (diff > -180 && diff < 0) {
+            const latestTime = formatTime(bookingMinutes - 180);
             return {
                 available: true,
                 warning: true,
-                message: `Столик будет с ограничением по времени. Есть бронь на ${booking.time_slot}.`,
+                message: `Столик занят с ${booking.time_slot}. Выберите время не позже ${latestTime} (минимум за 3 часа до брони).`,
                 existingBooking: booking
             };
         }
@@ -247,3 +254,8 @@ window.checkTableAvailability = function(bookingsData, tableId, date, timeSlot) 
     
     return { available: true, message: '' };
 };
+function formatTime(minutes) {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+}   
