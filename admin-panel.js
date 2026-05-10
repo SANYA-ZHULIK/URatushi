@@ -648,25 +648,40 @@ function renderTablesList() {
         return;
     }
 
-    container.innerHTML = allTables.map(t => {
-        const id = Number(t.id) || '';
-        const number = t.number || '?';
-        const seats = Number(t.seats) || 0;
-        const zone = t.zone_name || '';
-        const blocked = t.is_active === false ? ' blocked' : '';
-        const btnText = t.is_active === false ? 'Разблокировать' : 'Заблокировать';
-        return `
-        <div class="table-block${blocked}">
-            <div class="table-info">
-                <strong>Стол ${number}</strong>
-                <span class="table-details">${seats} мест • ${zone}</span>
-            </div>
-            <button onclick="toggleTable(${id}, ${t.is_active === false})" class="btn-action ${t.is_active === false ? 'btn-unblock' : 'btn-block'}">
-                ${btnText}
-            </button>
+    const zones = {};
+    allTables.forEach(t => {
+        const zone = t.zone_name || 'Без зоны';
+        if (!zones[zone]) zones[zone] = [];
+        zones[zone].push(t);
+    });
+
+    container.innerHTML = `
+        <div class="tables-grid">
+            ${Object.entries(zones).map(([zone, tables]) => `
+                <div class="table-zone-group">
+                    <h4 class="table-zone-title">${zone}</h4>
+                    <div class="table-zone-tables">
+                        ${tables.map(t => {
+                            const id = Number(t.id) || '';
+                            const number = t.number || '?';
+                            const seats = Number(t.seats) || 0;
+                            const blocked = t.is_active === false;
+                            const btnText = blocked ? 'Разблокировать' : 'Заблокировать';
+                            return `
+                            <div class="table-block ${blocked ? 'blocked' : ''}">
+                                <div class="table-info">
+                                    <strong>Стол ${number}</strong>
+                                    <span class="table-details">${seats} мест</span>
+                                </div>
+                                <button onclick="toggleTable(${id}, ${blocked})" class="btn-action ${blocked ? 'btn-unblock' : 'btn-block'}">${btnText}</button>
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('')}
         </div>
-        `;
-    }).join('');
+    `;
 }
 
 async function toggleTable(id, unblock) {
@@ -677,7 +692,10 @@ async function toggleTable(id, unblock) {
     try {
         const { error } = await client.from('tables').update({ is_active: unblock }).eq('id', id);
         if (error) throw error;
+        
+        // Обновляем данные и перерисовываем
         await loadTables();
+        renderTablesList();
         showToast(unblock ? 'Стол разблокирован' : 'Стол заблокирован', 'success');
     } catch (err) {
         console.error('Toggle table error:', err);
