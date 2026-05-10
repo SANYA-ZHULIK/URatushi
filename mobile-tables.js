@@ -3,7 +3,7 @@ let mobileBookingsData = [];
 let selectedMobileTableId = null;
 let currentSeatsFilter = 'all';
 let mobileZones = [];
-let currentZoneFilter = 'all';
+let currentZoneFilter = '';
 
 window.mobileTablesData = [];
 
@@ -28,7 +28,10 @@ async function loadMobileTables() {
         console.error('Error loading tables:', error);
         return;
     }
-
+    mobileTablesData = (data || []).map(t => ({
+        ...t,
+        max_seats: t.max_seats || t.seats
+    }));
     mobileTablesData = data || [];
     window.mobileTablesData = [...mobileTablesData];
     mobileZones = [...new Set(mobileTablesData.map(t => t.zone_name))];
@@ -36,66 +39,73 @@ async function loadMobileTables() {
     renderMobileTableList();
 }
 
-function renderMobileZoneButtons() {
+
+    
+    function renderMobileZoneButtons() {
     const container = document.querySelector('.filter-buttons');
     if (!container) return;
     
-    const allZones = ['all', ...mobileZones];
-    const seatsFilters = ['all', '2', '4', '6+'];
+    const allZones = [...mobileZones];
+    const seatsFilters = ['all', '2', '3', '4', '5', '6+'];
     
-    container.innerHTML = '<div class="filter-group"><span>Зона:</span>' + 
-        allZones.map(z => {
-            const label = z === 'all' ? 'Все' : z;
-            return `<button class="filter-btn ${currentZoneFilter === z ? 'active' : ''}" data-zone="${z}">${label}</button>`;
-        }).join('') + 
-        '</div><div class="filter-group"><span>Места:</span>' +
-        seatsFilters.map(s => {
-            const label = s === 'all' ? 'Все' : (s === '6+' ? '6+' : s);
-            return `<button class="filter-btn seats-filter ${currentSeatsFilter === s ? 'active' : ''}" data-seats="${s}">${label}</button>`;
-        }).join('') + '</div>';
+    container.innerHTML = 
+        '<div class="filter-group">' +
+            '<span>Зона:</span>' +
+            '<select id="zone-select" class="mobile-filter-select">' +
+                allZones.map(z => `<option value="${z}" ${currentZoneFilter === z ? 'selected' : ''}>${z}</option>`).join('') +
+            '</select>' +
+        '</div>' +
+        '<div class="filter-group">' +
+            '<span>Места:</span>' +
+            '<select id="seats-select" class="mobile-filter-select">' +
+                    seatsFilters.map(s => {
+        const label = s === 'all' ? 'Все' : (s === '6+' ? '6+' : s);
+        return `<option value="${s}" ${currentSeatsFilter === s ? 'selected' : ''}>${label}</option>`;
+    }).join('') +
+            '</select>' +
+        '</div>';
     
-    container.querySelectorAll('.filter-btn[data-zone]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentZoneFilter = btn.dataset.zone;
-            renderMobileTableList();
-        });
+    // Авто-выбор первой зоны при загрузке
+    if (!currentZoneFilter && allZones.length > 0) {
+        currentZoneFilter = allZones[0];
+        document.getElementById('zone-select').value = currentZoneFilter;
+    }
+    
+    document.getElementById('zone-select').addEventListener('change', function() {
+        currentZoneFilter = this.value;
+        renderMobileTableList();
     });
     
-    container.querySelectorAll('.filter-btn[data-seats]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            container.querySelectorAll('.seats-filter').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentSeatsFilter = btn.dataset.seats;
-            renderMobileTableList();
-        });
+    document.getElementById('seats-select').addEventListener('change', function() {
+        currentSeatsFilter = this.value;
+        renderMobileTableList();
     });
 }
 
 function filterTables(tables) {
     let filtered = tables;
     
-    if (currentZoneFilter !== 'all') {
+    if (currentZoneFilter && currentZoneFilter !== 'all') {
         filtered = filtered.filter(t => t.zone_name === currentZoneFilter);
     }
     
-    if (currentSeatsFilter === 'all') return filtered;
-    if (currentSeatsFilter === '2') return filtered.filter(t => t.seats === 2);
-    if (currentSeatsFilter === '4') return filtered.filter(t => t.seats === 4);
-    if (currentSeatsFilter === '6+') return filtered.filter(t => t.seats >= 6);
+    if (currentSeatsFilter === 'all' || !currentSeatsFilter) return filtered;
+    
+    const seatsVal = parseInt(currentSeatsFilter);
+    if (currentSeatsFilter === '6+') {
+        // Стол подходит, если его максимальная вместимость >= 6
+        filtered = filtered.filter(t => (t.max_seats || t.seats) >= 6);
+    } else if (!isNaN(seatsVal)) {
+        filtered = filtered.filter(t => {
+            const maxSeats = t.max_seats || t.seats;
+            return t.seats <= seatsVal && maxSeats >= seatsVal;
+        });
+    }
     return filtered;
 }
 
 function getZoneIcon(zoneName) {
-    const icons = {
-        'первая позиция': '1️⃣',
-        'вторая позиция': '2️⃣',
-        'средний зал': '🍽️',
-        'танцпол': '💃',
-        'подвал': '🔻'
-    };
-    return icons[zoneName] || '🍽️';
+    return '';
 }
 
 function renderMobileTableList() {
@@ -124,10 +134,10 @@ function renderMobileTableList() {
                 <div class="table-info">
                     <div class="table-header">
                         <span class="table-number">Стол ${table.number}</span>
-                        <span class="table-zone">${zoneIcon} ${table.zone_name}</span>
+                        <span class="table-zone">${table.zone_name}</span>
                     </div>
                     <div class="table-details">
-                        <span class="table-seats">${table.seats} мест</span>
+                        <span class="table-seats">${table.seats}${table.max_seats && table.max_seats > table.seats ? '-' + table.max_seats : ''} мест</span>
                         <span class="table-status">Свободен</span>
                     </div>
                 </div>
