@@ -150,7 +150,7 @@ function renderFloorPlan() {
         floorPlan.appendChild(tableEl);
     });
 
-    addLegend();
+    
     updateNavButtons();
 }
 
