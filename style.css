@@ -1,4 +1,6 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+﻿
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 * {
     margin: 0;
@@ -1093,6 +1095,78 @@ footer {
 .admin-nav-mobile {
     display: none;
 }
+/* Детали бронирования в модалке */
+.booking-detail-row {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    gap: 0.5rem;
+}
+
+.booking-detail-row:last-of-type {
+    border-bottom: none;
+}
+
+.booking-detail-label {
+    font-weight: 600;
+    color: var(--gray);
+    font-size: 0.85rem;
+    min-width: 90px;
+    flex-shrink: 0;
+}
+
+.booking-detail-value {
+    color: var(--dark);
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.booking-detail-status {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.booking-detail-status.status-new {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.booking-detail-status.status-confirmed {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
+.booking-detail-status.status-completed {
+    background: #f5f5f5;
+    color: #757575;
+}
+
+.booking-detail-status.status-cancelled {
+    background: #ffebee;
+    color: #d32f2f;
+}
+
+/* Кнопки действий в модалке */
+.booking-detail-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.booking-detail-actions .btn-action {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    text-align: center;
+    justify-content: center;
+}
 
 @media (max-width: 768px) {
     .admin-middle {
@@ -1146,10 +1220,12 @@ footer {
         width: 100%;
     }
         /* Модалка деталей — компактнее на мобилке */
-    #booking-detail-modal .modal-content {
+        #booking-detail-modal .modal-content {
         max-width: 92vw;
         padding: 1.5rem 1rem;
         width: 90%;
+        max-height: 85vh;
+        overflow-y: auto;
     }
 
     #booking-detail-modal h3 {
@@ -1169,9 +1245,11 @@ footer {
     }
 
     .booking-detail-value {
-        font-size: 0.9rem;
-        flex: 1;
-    }
+    color: var(--dark);
+    font-size: 0.95rem;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
 
     .booking-detail-actions {
         flex-direction: row;
@@ -1934,7 +2012,48 @@ footer {
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
 }
+/* Адаптация формы добавления брони на мобилке */
+@media (max-width: 768px) {
+    #add-booking-modal .modal-content {
+        max-width: 95vw;
+        padding: 1.5rem 1rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
 
+    #add-booking-modal h3 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+
+    #add-booking-modal .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    #add-booking-modal .form-group {
+        margin-bottom: 0.8rem;
+    }
+
+    #add-booking-modal .form-group label {
+        font-size: 0.85rem;
+        margin-bottom: 0.3rem;
+    }
+
+    #add-booking-modal .form-group input,
+    #add-booking-modal .form-group select,
+    #add-booking-modal .form-group textarea {
+        padding: 0.7rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    #add-booking-modal button[type="submit"] {
+        width: 100%;
+        padding: 0.8rem;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+}
 @media (max-width: 768px) {
     .bookings-header {
         flex-direction: column;
@@ -2176,15 +2295,60 @@ footer {
 }
 
  /* Add/Edit Dish Modal */
- #add-dish-modal .modal-content {
-     max-width: 600px;
- }
+      /* Add/Edit Dish Modal */
+ /* Add/Edit Dish Modal — ДЕСКТОП */
+#add-dish-modal .modal-content {
+    max-width: 520px;
+}
 
- #add-dish-modal h3 {
-     margin-bottom: 1.5rem;
-     color: var(--primary);
-     font-size: 1.5rem;
- }
+#add-dish-modal h3 {
+    margin-bottom: 1.2rem;
+    color: var(--primary);
+    font-size: 1.4rem;
+}
+
+#add-dish-modal .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+#add-dish-modal .form-group {
+    margin-bottom: 0.8rem;
+}
+
+#add-dish-modal .form-group label {
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+}
+
+#add-dish-modal .form-group input,
+#add-dish-modal .form-group select,
+#add-dish-modal .form-group textarea {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+}
+
+#add-dish-modal button[type="submit"] {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+}
+
+/* Чекбокс — компактный */
+#add-dish-modal .form-group label[style] {
+    font-size: 0.85rem;
+    gap: 0.4rem;
+    margin-bottom: 0;
+}
+
+#add-dish-modal .form-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
 
  .form-group label {
      font-size: 0.9rem;
@@ -2245,11 +2409,51 @@ footer {
  #dish-photo {
      display: none;
  }
+ .mobile-bookings-list { display: none; }
 
  .btn-show { background: var(--success); color: white; }
  .btn-hide { background: #7f8c8d; color: white; }
 
 @media (max-width: 768px) {
+        /* Модалка блюда на мобилке */
+    #add-dish-modal .modal-content {
+        max-width: 95vw;
+        padding: 1.5rem 1rem;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    #add-dish-modal h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    #add-dish-modal .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+    }
+
+    #add-dish-modal .photo-upload-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+        .mobile-bookings-list {
+        display: block !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .mobile-bookings-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        width: 100% !important;
+    }
+
+    .mobile-booking-card {
+        width: 100% !important;
+    }
     .admin-tabs {
         overflow-x: auto;
         flex-wrap: nowrap;
@@ -2286,285 +2490,205 @@ footer {
         width: 100%;
         min-width: auto;
     }
-    /* ========== МОБИЛЬНЫЙ СПИСОК БРОНИРОВАНИЙ ========== */
-.mobile-bookings-list {
-    display: none;
-}
+        /* ========== МОБИЛЬНЫЙ СПИСОК БРОНИРОВАНИЙ ========== */
+    .mobile-bookings-list {
+        display: block !important;
+    }
 
-.mobile-bookings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
+    .mobile-bookings-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
 
-.mobile-bookings-header h2 {
-    color: var(--primary);
-    margin: 0;
-    font-size: 1.3rem;
-}
+    .mobile-bookings-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
-.mobile-bookings-header-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
+    .mobile-bookings-count {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--gray);
+        white-space: nowrap;
+    }
 
-.mobile-bookings-count {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--gray);
-    white-space: nowrap;
-}
+    .mobile-filter-btn {
+        padding: 0.5rem 0.8rem;
+        background: var(--light);
+        border: 2px solid var(--primary);
+        border-radius: 8px;
+        color: var(--primary);
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.mobile-filter-btn {
-    padding: 0.5rem 0.8rem;
-    background: var(--light);
-    border: 2px solid var(--primary);
-    border-radius: 8px;
-    color: var(--primary);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s;
-}
+    .mobile-filter-btn:hover {
+        background: var(--primary);
+        color: var(--white);
+    }
 
-.mobile-filter-btn:hover {
-    background: var(--primary);
-    color: var(--white);
-}
+    #mobile-add-booking-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 500;
+        white-space: nowrap;
+    }
 
-.mobile-bookings-filters {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-}
+    .mobile-bookings-filters {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: var(--white);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+    }
 
-.mobile-bookings-filters input,
-.mobile-bookings-filters select {
-    padding: 0.6rem 1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.9rem;
-    background: var(--white);
-}
+    .mobile-bookings-filters input,
+    .mobile-bookings-filters select {
+        padding: 0.6rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem;
+        background: var(--white);
+    }
 
-.mobile-bookings-filters input:focus,
-.mobile-bookings-filters select:focus {
-    outline: none;
-    border-color: var(--primary);
-}
+    .mobile-bookings-filters input:focus,
+    .mobile-bookings-filters select:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
 
-.mobile-bookings-filters button {
-    padding: 0.6rem 1rem;
-    background: var(--light);
-    border: 2px solid var(--primary);
-    border-radius: 8px;
-    color: var(--primary);
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    cursor: pointer;
-}
+    .mobile-bookings-filters button {
+        padding: 0.6rem 1rem;
+        background: var(--light);
+        border: 2px solid var(--primary);
+        border-radius: 8px;
+        color: var(--primary);
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+    }
 
-.mobile-bookings-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-}
+    .mobile-bookings-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
 
-/* Карточка бронирования */
-.mobile-booking-card {
-    background: var(--white);
-    border-radius: var(--radius);
-    padding: 1rem 1.2rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border-left: 4px solid #1976d2;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: default;
-}
+    .mobile-booking-card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 1rem 1.2rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border-left: 4px solid #1976d2;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: default;
+       
+    }
 
-.mobile-booking-card:active {
-    transform: scale(0.98);
-}
+    .mobile-booking-card:active {
+        transform: scale(0.98);
+    }
 
-.mobile-booking-card.confirmed {
-    border-left-color: var(--success);
-}
+    .mobile-booking-card.confirmed {
+        border-left-color: var(--success);
+    }
 
-.mobile-booking-card.completed {
-    border-left-color: #757575;
-    opacity: 0.7;
-}
+    .mobile-booking-card.completed {
+        border-left-color: #757575;
+        opacity: 0.7;
+    }
 
-.mobile-booking-card.cancelled {
-    border-left-color: var(--danger);
-    opacity: 0.6;
-}
+    .mobile-booking-card.cancelled {
+        border-left-color: var(--danger);
+        opacity: 0.6;
+    }
 
-.mobile-booking-card.new {
-    border-left-color: #1976d2;
-}
+    .mobile-booking-card.new {
+        border-left-color: #1976d2;
+    }
 
-/* Базовая информация в карточке */
-.mobile-booking-summary {
-    flex: 1;
-    min-width: 0;
-}
+    .mobile-booking-summary {
+        flex: 1;
+        min-width: 0;
+    }
 
-.mobile-booking-name {
-    font-weight: 600;
-    font-size: 1.05rem;
-    color: var(--dark);
-    margin-bottom: 0.25rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+    .mobile-booking-name {
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: var(--dark);
+        margin-bottom: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-.mobile-booking-meta {
-    display: flex;
-    gap: 0.8rem;
-    font-size: 0.85rem;
-    color: var(--gray);
-    flex-wrap: wrap;
-}
+    .mobile-booking-meta {
+        display: flex;
+        gap: 0.8rem;
+        font-size: 0.85rem;
+        color: var(--gray);
+        flex-wrap: wrap;
+    }
 
-.mobile-booking-meta span {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    white-space: nowrap;
-}
+    .mobile-booking-meta span {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        white-space: nowrap;
+    }
 
-.mobile-booking-meta .meta-icon {
-    font-size: 0.9rem;
-}
+    .mobile-booking-expand-btn {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid var(--primary);
+        background: var(--white);
+        color: var(--primary);
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        padding: 0;
+        line-height: 1;
+    }
 
-/* Кнопка раскрытия */
-.mobile-booking-expand-btn {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid var(--primary);
-    background: var(--white);
-    color: var(--primary);
-    font-size: 1.2rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    padding: 0;
-    line-height: 1;
-}
+    .mobile-booking-expand-btn:hover {
+        background: var(--primary);
+        color: var(--white);
+    }
 
-.mobile-booking-expand-btn:hover {
-    background: var(--primary);
-    color: var(--white);
-}
-
-/* Детали бронирования в модалке */
-.booking-detail-row {
-    display: flex;
-    align-items: flex-start;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid #f0f0f0;
-    gap: 0.5rem;
-}
-
-.booking-detail-row:last-of-type {
-    border-bottom: none;
-}
-
-.booking-detail-label {
-    font-weight: 600;
-    color: var(--gray);
-    font-size: 0.85rem;
-    min-width: 90px;
-    flex-shrink: 0;
-}
-
-.booking-detail-value {
-    color: var(--dark);
-    font-size: 0.95rem;
-    word-break: break-word;
-}
-
-.booking-detail-status {
-    display: inline-block;
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.booking-detail-status.status-new {
-    background: #e3f2fd;
-    color: #1976d2;
-}
-
-.booking-detail-status.status-confirmed {
-    background: #e8f5e9;
-    color: #388e3c;
-}
-
-.booking-detail-status.status-completed {
-    background: #f5f5f5;
-    color: #757575;
-}
-
-.booking-detail-status.status-cancelled {
-    background: #ffebee;
-    color: #d32f2f;
-}
-
-/* Кнопки действий в модалке */
-.booking-detail-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.booking-detail-actions .btn-action {
-    flex: 1;
-    min-width: 120px;
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-    border-radius: 8px;
-    text-align: center;
-    justify-content: center;
-}
-
-.mobile-no-data {
-    text-align: center;
-    color: var(--gray);
-    padding: 3rem 1rem;
-    font-size: 1rem;
-}
-
-/* Кнопка "Добавить" в мобильном хедере */
-#mobile-add-booking-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 1rem;
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-}
+    .mobile-no-data {
+        text-align: center;
+        color: var(--gray);
+        padding: 3rem 1rem;
+        font-size: 1rem;
+    }
 }

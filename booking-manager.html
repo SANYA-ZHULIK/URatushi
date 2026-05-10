@@ -44,13 +44,13 @@
 
     <!-- Мобильная навигация (выпадающий список) -->
     <div class="admin-nav-mobile" id="admin-nav-mobile">
-        <select id="mobile-nav-select" onchange="handleMobileNav(this.value)">
-            <option value="bookings-tab">Бронирования</option>
-            <option value="tables-tab">Столики</option>
-            <option value="menu-tab">Управление меню</option>
-            <option value="logout" class="logout-option">🚪 Выйти</option>
-        </select>
-    </div>
+    <select id="mobile-nav-select" onchange="handleMobileNav(this.value)">
+        <option value="bookings-tab">Бронирования</option>
+        <option value="tables-tab">Столики</option>
+        <option value="menu-tab">Управление меню</option>
+        <option value="logout" class="logout-option">🚪 Выйти</option>
+    </select>
+</div>
 </div>
                 <button id="logout-btn" class="btn-primary">Выйти</button>
             </div>
@@ -108,13 +108,11 @@
                     <!-- ========== МОБИЛЬНЫЙ СПИСОК БРОНИРОВАНИЙ ========== -->
 <div class="mobile-bookings-list" id="mobile-bookings-list">
     <div class="mobile-bookings-header">
-       
-        <div class="mobile-bookings-header-actions">
-            
-            <button id="mobile-add-booking-btn" class="btn-primary" onclick="openAddBookingModal()">+</button>
-            <button id="mobile-filter-toggle" class="mobile-filter-btn">Поиск</button>
-        </div>
+    <div class="mobile-bookings-header-actions">
+        <button id="mobile-add-booking-btn" class="btn-primary" onclick="openAddBookingModal()">Добавить бронь</button>
+        <button id="mobile-filter-toggle" class="mobile-filter-btn">Поиск</button>
     </div>
+</div>
 
     <!-- Мобильные фильтры (скрыты по умолчанию) -->
     <div class="mobile-bookings-filters" id="mobile-bookings-filters" style="display: none;">
@@ -248,7 +246,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="dish-description">Описание</label>
+                    <label for="dish-description">Состав</label>
                     <textarea id="dish-description" rows="3"></textarea>
                 </div>
                 <div class="form-group">

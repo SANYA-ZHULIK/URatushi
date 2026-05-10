@@ -346,9 +346,9 @@ function openBookingDetail(id) {
             <span class="booking-detail-label">Гости:</span>
             <span class="booking-detail-value">${booking.guests_count || '—'}</span>
         </div>
-                <div class="booking-detail-row">
+                        <div class="booking-detail-row">
             <span class="booking-detail-label">Статус:</span>
-            <span class="booking-detail-value" id="detail-status-text">
+            <span class="booking-detail-value" id="detail-status-text" style="display: flex; align-items: center;">
                 <span class="booking-detail-status ${statusClass}">${statusLabel}</span>
             </span>
             <select id="detail-status-select" class="status-select" style="display:none; flex:1;">
@@ -380,7 +380,7 @@ function openBookingDetail(id) {
     // Сохраняем исходные данные для отмены
     document.getElementById('booking-detail-content').dataset.originalName = booking.customer_name || '';
     document.getElementById('booking-detail-content').dataset.originalPhone = booking.customer_phone || '';
-    document.getElementById('booking-detail-content').dataset.originalStatus = booking.status || 'new';
+        document.getElementById('booking-detail-content').dataset.originalStatus = booking.status || 'new';
 
     const modal = document.getElementById('booking-detail-modal');
     if (modal) {
@@ -488,6 +488,8 @@ async function saveDetailEdit(id) {
         if (statusText) {
             const statusLabel = getStatusLabel(status);
             const statusClass = getStatusClass(status);
+            statusText.style.display = 'flex';
+            statusText.style.alignItems = 'center';
             statusText.innerHTML = `<span class="booking-detail-status ${statusClass}">${statusLabel}</span>`;
         }
 
@@ -1206,6 +1208,7 @@ window.timeToMinutes = timeToMinutes;
 window.checkTableAvailability = checkTableAvailability;
 window.filterMenuList = filterMenuList;
 window.showTab = showTab;
+
 
 })(); // End IIFE
 
