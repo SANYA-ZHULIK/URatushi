@@ -676,7 +676,11 @@ footer { background: var(--dark); color: var(--white); padding: 3rem 0; }
 #add-booking-btn { font-weight: 400; padding: 0.6rem 1.5rem; font-size: 0.95rem; }
 
 .admin-content { padding: 120px 0 2rem; }
-.admin-content .container { width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+.admin-content .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 20px;
+}
 
 /* Таблица бронирований */
 .bookings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
@@ -759,7 +763,14 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
 .tables-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.table-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 .table-zone-group {
@@ -992,7 +1003,11 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
     #logout-btn { 
         display: none; 
     }
-    
+        .table-block button {
+        min-width: auto;
+        padding: 0.3rem 0.5rem;
+        font-size: 0.8rem;
+    }
     .admin-nav-mobile { 
         display: block !important; 
         flex: 1; 

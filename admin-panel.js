@@ -655,29 +655,43 @@ function renderTablesList() {
         zones[zone].push(t);
     });
 
+    // Объединяем зоны в пары для колонок
+    const zoneEntries = Object.entries(zones);
+    const columns = [[], [], [], []];
+    
+    // Распределяем зоны: 0-первая, 1-вторая, 2-третья, 3-четвёртая → потом 0-танцпол, 1-подвал
+    zoneEntries.forEach(([zone, tables], index) => {
+        const colIndex = index % 4;
+        columns[colIndex].push({ zone, tables });
+    });
+
     container.innerHTML = `
         <div class="tables-grid">
-            ${Object.entries(zones).map(([zone, tables]) => `
-                <div class="table-zone-group">
-                    <h4 class="table-zone-title">${zone}</h4>
-                    <div class="table-zone-tables">
-                        ${tables.map(t => {
-                            const id = Number(t.id) || '';
-                            const number = t.number || '?';
-                            const seats = Number(t.seats) || 0;
-                            const blocked = t.is_active === false;
-                            const btnText = blocked ? 'Разблокировать' : 'Заблокировать';
-                            return `
-                            <div class="table-block ${blocked ? 'blocked' : ''}">
-                                <div class="table-info">
-                                    <strong>Стол ${number}</strong>
-                                    <span class="table-details">${seats} мест</span>
-                                </div>
-                                <button onclick="toggleTable(${id}, ${blocked})" class="btn-action ${blocked ? 'btn-unblock' : 'btn-block'}">${btnText}</button>
+            ${columns.map(col => `
+                <div class="table-column">
+                    ${col.map(({ zone, tables }) => `
+                        <div class="table-zone-group">
+                            <h4 class="table-zone-title">${zone}</h4>
+                            <div class="table-zone-tables">
+                                ${tables.map(t => {
+                                    const id = Number(t.id) || '';
+                                    const number = t.number || '?';
+                                    const seats = Number(t.seats) || 0;
+                                    const blocked = t.is_active === false;
+                                    const btnText = blocked ? 'Разблокировать' : 'Заблокировать';
+                                    return `
+                                    <div class="table-block ${blocked ? 'blocked' : ''}">
+                                        <div class="table-info">
+                                            <strong>Стол ${number}</strong>
+                                            <span class="table-details">${seats} мест</span>
+                                        </div>
+                                        <button onclick="toggleTable(${id}, ${blocked})" class="btn-action ${blocked ? 'btn-unblock' : 'btn-block'}">${btnText}</button>
+                                    </div>
+                                    `;
+                                }).join('')}
                             </div>
-                            `;
-                        }).join('')}
-                    </div>
+                        </div>
+                    `).join('')}
                 </div>
             `).join('')}
         </div>
