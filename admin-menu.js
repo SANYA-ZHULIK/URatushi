@@ -139,13 +139,13 @@ function renderMenuList(items) {
              </div>
              <div class="dish-actions">
                  <button onclick="editDish(${dish.id})" class="btn-action btn-edit" title="Редактировать">
-                     ✏️
+                     Редактировать
                  </button>
                  <button onclick="deleteDish(${dish.id})" class="btn-action btn-delete" title="Удалить">
-                     🗑️
+                     Удалить
                  </button>
                  <button onclick="toggleDishStatus(${dish.id}, ${dish.is_active})" class="btn-action ${dish.is_active ? 'btn-hide' : 'btn-show'}" title="${dish.is_active ? 'Скрыть' : 'Показать'}">
-                     ${dish.is_active ? '👁️‍🗨️' : '👁️'}
+                     ${dish.is_active ? 'Скрыть' : 'Показать'}
                  </button>
              </div>
          </div>
