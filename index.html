@@ -295,7 +295,14 @@ function renderDynamicMenu(items) {
         return;
     }
 
-    container.innerHTML = items.map(item => {
+    // Сортировка: сначала с фото, потом без
+    const sorted = [...items].sort((a, b) => {
+        if (a.photo_url && !b.photo_url) return -1;
+        if (!a.photo_url && b.photo_url) return 1;
+        return 0;
+    });
+
+    container.innerHTML = sorted.map(item => {
         const photoUrl = getPhotoUrl(item.photo_url);
         return `
         <div class="menu-item" data-category="${item.category}">
@@ -307,7 +314,6 @@ function renderDynamicMenu(items) {
         `;
     }).join('');
 
-    // Apply current filter
     const activeCategory = document.querySelector('.menu-category.active');
     if (activeCategory) {
         filterMenu(activeCategory.dataset.category);
