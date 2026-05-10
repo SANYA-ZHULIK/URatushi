@@ -38,23 +38,47 @@ function getPhotoUrl(relativePath) {
     }
 
     // Upload image to Supabase Storage
-    async function uploadDishImage(file, dishName, category) {
+        async function uploadDishImage(file, dishName, category) {
         const client = window.supabaseClient;
         if (!client) throw new Error('Supabase not initialized');
 
-        const fileExt = file.name.split('.').pop();
+        // Сжатие перед загрузкой
+        const compressedFile = await compressImage(file, 800, 0.7);
+        const fileExt = 'jpg';
         const fileName = generateSafeFileName(dishName, category, fileExt);
 
         const { data, error } = await client.storage
             .from('menu-images')
-            .upload(fileName, file, { upsert: true });
+            .upload(fileName, compressedFile, { upsert: true });
 
         if (error) {
             console.error('Upload error:', error);
             throw error;
         }
 
-        return fileName; // relative path stored in DB (ASCII-safe)
+        return fileName;
+    }
+
+    function compressImage(file, maxWidth = 800, quality = 0.7) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ratio = Math.min(1, maxWidth / img.width);
+                    canvas.width = img.width * ratio;
+                    canvas.height = img.height * ratio;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob((blob) => {
+                        resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                    }, 'image/jpeg', quality);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
     }
 
 // Load all menu items from DB (optional filter by category key)
@@ -323,13 +347,17 @@ async function deleteDish(id) {
         if (fetchError) throw fetchError;
 
         // Delete from storage if photo exists
+                // Delete from storage if photo exists
         if (dish.photo_url) {
             try {
-                await client.storage.from('menu-images').remove([dish.photo_url]);
+                const { error: storageError } = await client.storage.from('menu-images').remove([dish.photo_url]);
+                if (storageError) {
+                    console.warn('Storage delete failed:', storageError);
+                } else {
+                    console.log('Photo deleted from storage:', dish.photo_url);
+                }
             } catch (storageError) {
                 console.warn('Failed to delete photo from storage:', storageError);
-                // Continue with DB deletion even if storage deletion fails
-                showToast('Блюдо удалено, но фото не удалено из хранилища', 'warning');
             }
         }
 
