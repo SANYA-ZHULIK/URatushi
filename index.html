@@ -76,7 +76,21 @@
     <section id="menu" class="section menu-section">
         <div class="container">
             <h2 class="section-title">Наше меню</h2>
-
+<div class="menu-categories-mobile" style="display: none;">
+    <select id="menu-category-select" class="mobile-filter-select" onchange="filterMenu(this.value)">
+        <option value="Салаты">Салаты</option>
+        <option value="Супы">Супы</option>
+        <option value="Холодные закуски">Холодные закуски</option>
+        <option value="Закуски к пиву">Закуски к пиву</option>
+        <option value="Мясо и птица">Мясо и птица</option>
+        <option value="Рыба и морепродукты">Рыба и морепродукты</option>
+        <option value="Белорусская кухня">Белорусская кухня</option>
+        <option value="Гарниры">Гарниры</option>
+        <option value="Соусы">Соусы</option>
+        <option value="Десерты">Десерты</option>
+        <option value="Напитки">Напитки</option>
+    </select>
+</div>
             <div class="menu-categories">
                 <button class="menu-category active" data-category="Салаты">Салаты</button>
                 <button class="menu-category" data-category="Супы">Супы</button>
@@ -341,11 +355,18 @@ function renderDynamicMenu(items) {
             if (active) filterMenu(active.dataset.category);
         }
 
-        function filterMenu(category) {
+                function filterMenu(category) {
             const items = document.querySelectorAll('#dynamic-menu .menu-item');
             items.forEach(item => {
                 item.style.display = (item.dataset.category === category) ? 'block' : 'none';
             });
+            
+            document.querySelectorAll('.menu-category').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.category === category);
+            });
+            
+            const mobileSelect = document.getElementById('menu-category-select');
+            if (mobileSelect) mobileSelect.value = category;
         }
 
         function toggleMenu() {

@@ -941,6 +941,23 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
     .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
     .footer-col { padding: 0 0.5rem; }
     .menu-items { grid-template-columns: 1fr; }
+
+        .menu-categories {
+        display: none;
+    }
+    .menu-categories-mobile {
+        display: block !important;
+        margin-bottom: 1.5rem;
+    }
+    .menu-categories-mobile select {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem;
+        background: var(--white);
+    }
     /* Форма бронирования */
     .booking-form {
         max-width: 100%;
