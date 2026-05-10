@@ -537,9 +537,16 @@ footer { background: var(--dark); color: var(--white); padding: 3rem 0; }
    4. АДМИН-ПАНЕЛЬ
    ================================================================ */
 #admin-login-page {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('ratusha.webp');
-    background-size: contain; background-color: #2c3e50; background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    background-color: #2c3e50;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .login-container { background: var(--white); padding: 2.5rem; border-radius: var(--radius); width: 100%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
@@ -777,31 +784,93 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
    ================================================================ */
 @media (max-width: 768px) {
     /* Шапка */
-    .admin-middle { flex-direction: column; gap: 0.5rem; width: 100%; }
-    .admin-nav { display: none; }
-    #logout-btn { display: none; }
-    .admin-nav-mobile { display: block !important; flex: 1; min-width: 0; }
-    .admin-nav-mobile select {
-        width: 100%; padding: 0.5rem 0.8rem; border-radius: 8px;
-        border: 2px solid rgba(255, 255, 255, 0.5); background: rgba(255, 255, 255, 0.1);
-        color: var(--white); font-family: 'Montserrat', sans-serif; font-size: 0.85rem;
-        font-weight: 500; cursor: pointer; appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='white' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat; background-position: right 10px center;
+    .admin-middle { 
+        flex-direction: column; 
+        gap: 0.5rem; 
+        width: 100%; 
     }
-    .admin-nav-mobile select option { background: var(--dark); color: var(--white); }
-    .admin-nav-mobile .logout-option { color: #ff6b6b; font-weight: 600; }
-
+                #admin-login-page {
+        background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('ratusha_mobile.webp');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .admin-nav { 
+        display: none; 
+    }
+    #logout-btn { 
+        display: none; 
+    }
+    
+    .admin-nav-mobile { 
+        display: block !important; 
+        flex: 1; 
+        min-width: 0; 
+    }
+    .admin-nav-mobile select {
+        width: 100%; 
+        padding: 0.5rem 0.8rem; 
+        border-radius: 8px;
+        border: 2px solid rgba(255, 255, 255, 0.5); 
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--white); 
+        font-family: 'Montserrat', sans-serif; 
+        font-size: 0.85rem;
+        font-weight: 500; 
+        cursor: pointer; appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='white' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; 
+        background-position: right 10px center;
+    }
+    .admin-nav-mobile select option { 
+        background: var(--dark); 
+        color: var(--white); 
+    }
+    .admin-nav-mobile .logout-option { 
+        color: #ff6b6b; 
+        font-weight: 600; 
+    }
+    /* Логотип и надпись */
+        .admin-header .logo {
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    .admin-header .logo img {
+        height: 30px;
+    }
     /* Таблица */
-    .bookings-table-container { display: none !important; }
-    .bookings-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-    .bookings-filters { flex-direction: column; align-items: stretch; }
-    .bookings-filters input, .bookings-filters select, .bookings-filters button { width: 100%; }
+    .bookings-table-container { 
+        display: none !important; 
+    }
+    .bookings-header { 
+        flex-direction: column; 
+        align-items: flex-start; 
+        gap: 1rem; 
+    }
+    .bookings-filters { 
+        flex-direction: column; 
+        align-items: stretch; 
+    }
+    .bookings-filters input, .bookings-filters select, .bookings-filters button { 
+        width: 100%; 
+    }
 
     /* Модалка брони */
-    #add-booking-modal .modal-content { max-width: 95vw; padding: 1.5rem 1rem; max-height: 90vh; overflow-y: auto; }
-    #add-booking-modal h3 { font-size: 1.3rem; margin-bottom: 1rem; }
-    #add-booking-modal .form-row { grid-template-columns: 1fr; gap: 0.5rem; }
+    #add-booking-modal .modal-content { 
+        max-width: 95vw; 
+        padding: 1.5rem 1rem; 
+        max-height: 90vh; 
+        overflow-y: auto; 
+    }
+    #add-booking-modal h3 { 
+        font-size: 1.3rem; 
+        margin-bottom: 1rem; 
+    }
+    #add-booking-modal .form-row { 
+        grid-template-columns: 1fr; 
+        gap: 0.5rem; 
+    }
     #add-booking-modal .form-group { margin-bottom: 0.8rem; }
     #add-booking-modal .form-group label { font-size: 0.85rem; margin-bottom: 0.3rem; }
     #add-booking-modal .form-group input,
@@ -836,19 +905,93 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
     /* Мобильный список бронирований */
     .mobile-bookings-list { display: block !important; }
     .mobile-bookings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
-    .mobile-bookings-header-actions { display: flex; align-items: center; gap: 0.5rem; }
+    .mobile-bookings-header-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
     .mobile-bookings-count { font-size: 0.9rem; font-weight: 600; color: var(--gray); white-space: nowrap; }
-    .mobile-filter-btn { padding: 0.5rem 0.8rem; background: var(--light); border: 2px solid var(--primary); border-radius: 8px; color: var(--primary); font-family: 'Montserrat', sans-serif; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.3s; height: 38px; display: flex; align-items: center; justify-content: center; }
+    .mobile-filter-btn {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        background: var(--light);
+        border: 2px solid var(--primary);
+        border-radius: 8px;
+        color: var(--primary);
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     .mobile-filter-btn:hover { background: var(--primary); color: var(--white); }
-    #mobile-add-booking-btn { padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 8px; height: 38px; display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif; font-weight: 500; white-space: nowrap; }
-    .mobile-bookings-filters { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; padding: 1rem; background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); }
+     #mobile-add-booking-btn {
+        width: 100%;
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        border-radius: 8px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 500;
+    }
+    .mobile-bookings-filters { 
+        display: flex; 
+        flex-direction: column; 
+        gap: 0.5rem; margin-bottom: 1rem; 
+        padding: 1rem; background: var(--white); 
+        border-radius: var(--radius); 
+        box-shadow: var(--shadow); 
+    }
     .mobile-bookings-filters input,
-    .mobile-bookings-filters select { padding: 0.6rem 1rem; border: 2px solid #e0e0e0; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; background: var(--white); }
+    .mobile-bookings-filters select { 
+        padding: 0.6rem 1rem; 
+        border: 2px solid #e0e0e0; 
+        border-radius: 8px; font-family: 'Montserrat', 
+        sans-serif; 
+        font-size: 0.9rem; 
+        background: var(--white); 
+    }
     .mobile-bookings-filters input:focus,
-    .mobile-bookings-filters select:focus { outline: none; border-color: var(--primary); }
-    .mobile-bookings-filters button { padding: 0.6rem 1rem; background: var(--light); border: 2px solid var(--primary); border-radius: 8px; color: var(--primary); font-family: 'Montserrat', sans-serif; font-weight: 500; cursor: pointer; }
-    .mobile-bookings-cards { display: flex; flex-direction: column; gap: 0.8rem; }
-    .mobile-booking-card { background: var(--white); border-radius: var(--radius); padding: 1rem 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-left: 4px solid #1976d2; display: flex; align-items: center; gap: 0.8rem; cursor: default; }
+    .mobile-bookings-filters select:focus { 
+        outline: none; 
+        border-color: var(--primary); 
+    }
+    .mobile-bookings-filters button {
+         padding: 0.6rem 1rem; 
+         background: var(--light); 
+         border: 2px solid var(--primary); 
+         border-radius: 8px; color: var(--primary); 
+         font-family: 'Montserrat', sans-serif; 
+         font-weight: 500; cursor: pointer; }
+
+        .mobile-bookings-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        width: 100%;
+    }
+        .mobile-booking-card {
+        background: var(--white);
+        border-radius: var(--radius);
+        padding: 1rem 1.2rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border-left: 4px solid #1976d2;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        cursor: default;
+        width: 100%;
+        min-width: 300px;
+        box-sizing: border-box;
+    }
     .mobile-booking-card:active { transform: scale(0.98); }
     .mobile-booking-card.confirmed { border-left-color: var(--success); }
     .mobile-booking-card.completed { border-left-color: #757575; opacity: 0.7; }
@@ -859,5 +1002,9 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
     .mobile-booking-meta { display: flex; gap: 0.8rem; font-size: 0.85rem; color: var(--gray); flex-wrap: wrap; }
     .mobile-booking-expand-btn { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--primary); background: var(--white); color: var(--primary); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; padding: 0; line-height: 1; }
     .mobile-booking-expand-btn:hover { background: var(--primary); color: var(--white); }
-    .mobile-no-data { text-align: center; color: var(--gray); padding: 3rem 1rem; font-size: 1rem; }
+    .mobile-no-data { 
+        text-align: center; 
+        color: var(--white); 
+        padding: 3rem 1rem; 
+        font-size: 1rem; }
 }
