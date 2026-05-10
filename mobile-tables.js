@@ -28,11 +28,10 @@ async function loadMobileTables() {
         console.error('Error loading tables:', error);
         return;
     }
-    mobileTablesData = (data || []).map(t => ({
+        mobileTablesData = (data || []).map(t => ({
         ...t,
         max_seats: t.max_seats || t.seats
     }));
-    mobileTablesData = data || [];
     window.mobileTablesData = [...mobileTablesData];
     mobileZones = [...new Set(mobileTablesData.map(t => t.zone_name))];
     renderMobileZoneButtons();

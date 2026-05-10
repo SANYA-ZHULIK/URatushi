@@ -259,18 +259,41 @@ async function isTableAlreadyBooked(tableId, date, timeSlot) {
 
 async function checkTimeConflict(tableId, date, timeSlot) {
     const client = getClient();
-    if (!client) return false;
-    const { data } = await client.from('bookings').select('time_slot').eq('table_id', tableId).eq('date', date).in('status', ['new', 'confirmed']);
-    if (!data || data.length === 0) return false;
+    if (!client) return { conflict: false, message: '' };
+    
+    const { data } = await client.from('bookings')
+        .select('time_slot')
+        .eq('table_id', tableId)
+        .eq('date', date)
+        .in('status', ['new', 'confirmed']);
+    
+    if (!data || data.length === 0) return { conflict: false, message: '' };
     
     const selectedMinutes = window.timeToMinutes(timeSlot);
+    
     for (const booking of data) {
         const bookingMinutes = window.timeToMinutes(booking.time_slot);
-        if (selectedMinutes >= bookingMinutes) {
-            return true;
+        const diff = selectedMinutes - bookingMinutes;
+        
+        // Выбранное время совпадает или позже брони — нельзя
+        if (diff >= 0) {
+            return { 
+                conflict: true, 
+                message: `Столик уже забронирован на ${booking.time_slot}. Выберите время раньше.` 
+            };
+        }
+        
+        // Менее чем за 3 часа до брони — предупреждение
+        if (diff > -180 && diff < 0) {
+            const latestTime = formatTime(bookingMinutes - 180);
+            return { 
+                conflict: true, 
+                message: `Столик занят с ${booking.time_slot}. Выберите время не позже ${latestTime} (минимум за 3 часа до брони).` 
+            };
         }
     }
-    return false;
+    
+    return { conflict: false, message: '' };
 }
 
 async function submitBooking(event) {
@@ -297,8 +320,9 @@ async function submitBooking(event) {
     }
     
     // Check for time conflicts (new booking time must not be >= existing booking times)
-    if (await checkTimeConflict(tableId, date.value, time.value)) {
-        showToast('Нельзя забронировать столик на более позднее время, чем у существующей брони', 'warning');
+        const timeCheck = await checkTimeConflict(tableId, date.value, time.value);
+    if (timeCheck.conflict) {
+        showToast(timeCheck.message, 'warning');
         return;
     }
 

@@ -5,6 +5,14 @@ window.supabaseClient = null;
 
 function initSupabase(callback) {
     console.log('🔄 Initializing Supabase...');
+    
+    // Если клиент уже создан — сразу вызываем callback
+    if (window.supabaseClient) {
+        console.log('✅ Supabase client already exists');
+        if (callback) callback(window.supabaseClient);
+        return;
+    }
+    
     function tryInit() {
         if (window.supabase) {
             console.log('✅ Supabase library loaded');
