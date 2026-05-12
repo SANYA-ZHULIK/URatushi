@@ -18,21 +18,25 @@ function initHeaderScroll() {
 
     let ticking = false, isScrolled = false;
 
-    function updateHeaderOnScroll() {
-        const scrollY = window.scrollY;
-        if (scrollY < 100) {
-            if (isScrolled) {
-                isScrolled = false;
-                header.style.background = 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)';
-                header.style.boxShadow = 'none';
-            }
-        } else if (!isScrolled) {
-            isScrolled = true;
-            header.style.background = 'linear-gradient(to bottom, rgba(212, 165, 116, 0.9))';
-            header.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
+   function updateHeaderOnScroll() {
+    const scrollY = window.scrollY;
+    if (scrollY < 100) {
+        if (isScrolled) {
+            isScrolled = false;
+            header.style.background = 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%)';
+            header.style.boxShadow = 'none';
         }
-        ticking = false;
+    } else if (!isScrolled) {
+        isScrolled = true;
+        header.style.background = 'linear-gradient(to bottom, rgba(212, 165, 116, 0.9) 0%, rgba(212, 165, 116, 0.85) 100%)';
+        header.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)';
     }
+    header.style.position = 'fixed';
+    header.style.top = '0';
+    header.style.left = '0';
+    header.style.width = '100%';
+    ticking = false;
+}
 
     window.addEventListener('scroll', () => {
         if (!ticking) {
@@ -204,6 +208,7 @@ function renderBookingsTable() {
     
     // Apply filters
     let filteredBookings = allBookings.filter(b => {
+        if (!b) return false;  
         if (filters.search) {
             const search = filters.search.toLowerCase();
             if (!(b.customer_name?.toLowerCase().includes(search) || 
@@ -1231,8 +1236,6 @@ window.closeBookingDetail = closeBookingDetail;
 window.startDetailEdit = startDetailEdit;   // ✅ Теперь внутри IIFE
 window.cancelDetailEdit = cancelDetailEdit; // ✅
 window.saveDetailEdit = saveDetailEdit;     // ✅
-window.prevZone = prevZone;
-window.nextZone = nextZone;
 window.populateTimeSelect = populateTimeSelect;
 window.populateGuestsSelect = populateGuestsSelect;
 window.setupDateValidation = setupDateValidation;

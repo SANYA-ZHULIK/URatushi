@@ -654,7 +654,12 @@ footer { background: var(--dark); color: var(--white); padding: 3rem 0; }
 .login-container button[type="submit"]:hover { background: var(--primary-dark); }
 
 /* Админ-шапка */
-.admin-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; background: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%); transition: background 0.4s ease; }
+.admin-header { display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 1rem 0; 
+    background: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%); 
+    transition: background 0.4s ease; }
 
 .admin-header .header-inner { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 20px; }
 .admin-header .logo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: 700; color: var(--white); text-decoration: none; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
@@ -865,6 +870,9 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
     height: 100%;
     object-fit: cover;
 }
+
+
+
 .no-photo { font-size: 2.5rem; opacity: 0.5; }
 .dish-info { flex: 1; padding: 1rem 1.5rem; }
 .dish-info h4 { margin: 0 0 0.3rem; font-size: 1.2rem; font-weight: 600; color: var(--dark); }
@@ -965,6 +973,7 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
         max-height: 85vh;
         overflow-y: auto;
     }
+   
     .booking-form button[type="submit"] {
         width: 100%;
         min-width: auto;
@@ -1025,25 +1034,31 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
         padding: 0.3rem 0.5rem;
         font-size: 0.8rem;
     }
-    .admin-nav-mobile { 
-        display: block !important; 
-        flex: 1; 
-        min-width: 0; 
+     .admin-nav-mobile {
+        display: block !important;
+        flex: 1;
+        min-width: 0;
+        position: relative;
+        z-index: 1001;
     }
-    .admin-nav-mobile select {
-        width: 100%; 
-        padding: 0.5rem 0.8rem; 
-        border-radius: 8px;
-        border: 2px solid rgba(255, 255, 255, 0.5); 
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--white); 
-        font-family: 'Montserrat', sans-serif; 
+        .admin-nav-mobile select {
+        width: 100%;
+        padding: 0.6rem 2.2rem 0.6rem 1rem;
+        border-radius: 10px;
+        border: 1.5px solid rgba(255, 255, 255, 0.634);
+        background: rgba(255, 255, 255, 0.0);
+        color: var(--white);
+        font-family: 'Montserrat', sans-serif;
         font-size: 0.85rem;
-        font-weight: 500; 
-        cursor: pointer; appearance: none;
+        font-weight: 500;
+        cursor: pointer;
+        appearance: none;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='white' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat; 
-        background-position: right 10px center;
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        backdrop-filter: blur(10px);
+         position: relative;
+        z-index: 1001;
     }
     .admin-nav-mobile select option { 
         background: var(--dark); 
@@ -1054,6 +1069,13 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
         font-weight: 600; 
     }
     /* Логотип и надпись */
+        .admin-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
         .admin-header .logo {
         font-size: 1.1rem;
         flex-shrink: 0;
@@ -1258,4 +1280,49 @@ tr.selected-row:hover { background-color: #bbdefb !important; }
    
         
    
+}
+/* ========== КУКИ-БАННЕР (в самом конце) ========== */
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--dark);
+    color: var(--white);
+    padding: 0.8rem 1rem;
+    z-index: 10000;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.cookie-banner button {
+    padding: 0.5rem 1rem !important;
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    border-radius: 4px !important;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .cookie-banner {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem;
+        text-align: center;
+    }
+    
+    .cookie-banner button {
+        width: auto;
+        padding: 0.4rem 1.5rem !important;
+    }
 }

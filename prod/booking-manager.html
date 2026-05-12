@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Управление - У Ратуши</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
-    <script src="utils.js"></script>
-    <script src="admin-panel.js"></script>
-    <script src="admin-menu.js"></script>
+    <script src="utils.min.js"></script>
+    <script src="admin-panel.min.js"></script>
+    <script src="admin-menu.min.js"></script>
 </head>
 <body id="admin-login-page">
     <div class="login-container" id="login-container">
@@ -38,7 +38,7 @@
         <ul>
             <li><a href="#" class="admin-nav-link active" data-tab="bookings-tab">Бронирования</a></li>
             <li><a href="#" class="admin-nav-link" data-tab="tables-tab">Столики</a></li>
-            <li><a href="#" class="admin-nav-link" data-tab="menu-tab">Управление меню</a></li>
+            <li><a href="#" class="admin-nav-link" data-tab="menu-tab">Меню</a></li>
         </ul>
     </nav>
 
@@ -47,7 +47,7 @@
     <select id="mobile-nav-select" onchange="handleMobileNav(this.value)">
         <option value="bookings-tab">Бронирования</option>
         <option value="tables-tab">Столики</option>
-        <option value="menu-tab">Управление меню</option>
+        <option value="menu-tab">Меню</option>
         <option value="logout" class="logout-option">Выйти</option>
     </select>
 </div>
