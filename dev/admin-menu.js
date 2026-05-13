@@ -246,21 +246,21 @@ window.cancelDishForm = function() {
 };
 
     // Save dish (insert or update)
-    async function saveDish(event) {
-        event.preventDefault();
-        const client = window.supabaseClient;
-        if (!client) return;
+ async function saveDish(event) {
+    event.preventDefault();
+    const client = window.supabaseClient;
+    if (!client) return;
 
-        const name = document.getElementById('dish-name').value.trim();
-        const category = document.getElementById('dish-category').value;
-        const description = document.getElementById('dish-description').value.trim();
-        const price = parseFloat(document.getElementById('dish-price').value);
-        const isActive = document.getElementById('dish-is-active').checked;
+    const name = document.getElementById('dish-name').value.trim();
+    const category = document.getElementById('dish-category').value;
+    const description = document.getElementById('dish-description').value.trim();
+    const price = parseFloat(document.getElementById('dish-price').value);
+    const isActive = document.getElementById('dish-is-active').checked;
 
-        if (!name || !category || isNaN(price) || price < 0) {
-            showToast('Заполните название, категорию и корректную цену', 'warning');
-            return;
-        }
+    if (!name || !category || isNaN(price) || price < 0) {
+        showToast('Заполните название, категорию и корректную цену', 'warning');
+        return;
+    }
 
     const btn = document.querySelector('#add-dish-form button[type="submit"]');
     btn.disabled = true;
@@ -272,14 +272,27 @@ window.cancelDishForm = function() {
         // Upload new photo if provided
         const photoInput = document.getElementById('dish-photo');
         if (photoInput.files[0]) {
-            try {
-                photo_url = await uploadDishImage(photoInput.files[0], name, category);
-            } catch (err) {
-                showToast('Ошибка загрузки фото', 'error');
-                btn.disabled = false;
-                btn.textContent = 'Сохранить';
-                return;
+            // Если редактируем и есть старое фото — удаляем его
+            if (editingDishId) {
+                const oldDish = allMenuItems.find(d => d.id === editingDishId);
+                if (oldDish && oldDish.photo_url) {
+                    try {
+                        const { error: deleteError } = await client.storage
+                            .from('menu-images')
+                            .remove([oldDish.photo_url]);
+                        if (deleteError) {
+                            console.warn('Failed to delete old photo:', deleteError);
+                        } else {
+                            console.log('Old photo deleted:', oldDish.photo_url);
+                        }
+                    } catch (err) {
+                        console.warn('Error deleting old photo:', err);
+                    }
+                }
             }
+            
+            // Загружаем новое фото
+            photo_url = await uploadDishImage(photoInput.files[0], name, category);
         }
 
         const dishData = {
@@ -307,11 +320,9 @@ window.cancelDishForm = function() {
         }
 
         cancelDishForm();
-        // Preserve current filter state and reload
         const categoryFilter = document.getElementById('category-filter');
         const currentCategory = categoryFilter ? categoryFilter.value : '';
         await window.loadMenuItems(currentCategory || null);
-        // Trigger filter via change event to reapply search if any
         if (categoryFilter) {
             categoryFilter.dispatchEvent(new Event('change', { bubbles: true }));
         }
