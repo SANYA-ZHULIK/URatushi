@@ -717,7 +717,7 @@ footer { background: var(--dark); color: var(--white); padding: 3rem 0; }
 .bookings-table td:nth-child(2) { width: 50px; min-width: 50px; }
 .bookings-table td:nth-child(3) { width: 70px; min-width: 70px; }
 .bookings-table td:nth-child(4) { width: 130px; min-width: 130px; max-width: 130px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
-.bookings-table td:nth-child(5) { width: 110px; min-width: 110px; text-align: left; }
+.bookings-table td:nth-child(5) { width: 110px; min-width: 110px; text-align: center; }
 .bookings-table td:nth-child(6) { width: 80px; min-width: 80px; }
 .bookings-table td:nth-child(7) { width: 60px; min-width: 60px; }
 .bookings-table td:nth-child(8) { width: 50px; min-width: 50px; }

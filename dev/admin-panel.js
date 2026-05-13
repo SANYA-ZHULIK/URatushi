@@ -10,7 +10,23 @@
 function getClient() {
     return window.supabaseClient;
 }
-
+function formatPhoneForDisplay(phone) {
+    if (!phone) return '-';
+    const digits = phone.toString().replace(/\D/g, '');
+    
+    // Беларусь +375
+    if (digits.startsWith('375') && digits.length === 12) {
+        return `+375 ${digits.slice(3, 5)} ${digits.slice(5, 11)}`;
+    }
+    // Россия +7
+    if (digits.startsWith('7') && digits.length === 11) {
+        return `+7 ${digits.slice(1, 4)} ${digits.slice(4, 11)}`;
+    }
+    if (digits.length === 10) {
+        return `+7 ${digits.slice(0, 3)} ${digits.slice(3, 10)}`;
+    }
+    return `+${digits}`;
+}
 // Header scroll effect (identical to main site)
 function initHeaderScroll() {
     const header = document.querySelector('header');
@@ -242,7 +258,7 @@ function renderBookingsTable() {
             <td>${safeId}</td>
             <td><strong>Стол ${getTableNumber(b.table_id)}</strong></td>
             <td>${isEditing ? '<input type="text" id="edit-name" value="' + (b.customer_name || '') + '" class="edit-input">' : '<span title="' + (b.customer_name || '') + '">' + (b.customer_name || '-') + '</span>'}</td>
-            <td>${isEditing ? '<input type="tel" id="edit-phone" value="' + (b.customer_phone || '') + '" class="edit-input">' : (b.customer_phone || '-')}</td>
+            <td class="phone-cell">${isEditing ? '<input type="tel" id="edit-phone" value="' + (b.customer_phone || '') + '" class="edit-input">' : formatPhoneForDisplay(b.customer_phone)}</td>
             <td>${b.date || '-'}</td>
             <td>${b.time_slot || '-'}</td>
             <td>${b.guests_count || '-'}</td>
@@ -336,7 +352,7 @@ function openBookingDetail(id) {
         </div>
         <div class="booking-detail-row">
             <span class="booking-detail-label">Телефон:</span>
-            <span class="booking-detail-value" id="detail-phone-text">${escapeHtml(booking.customer_phone || '—')}</span>
+            <span class="booking-detail-value" id="detail-phone-text">${formatPhoneForDisplay(booking.customer_phone)}</span>
             <input type="tel" id="detail-phone-input" class="edit-input" value="${escapeHtml(booking.customer_phone || '')}" style="display:none; flex:1;">
         </div>
         <div class="booking-detail-row">
